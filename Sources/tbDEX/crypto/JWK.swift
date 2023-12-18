@@ -14,7 +14,7 @@ public struct Jwk: Codable, Equatable {
 
     /// Supported `kty` key types.
     public enum KeyType: String, Codable {
-        case ecdsa = "EC"
+        case elliptic = "EC"
         case octetKeyPair = "OKP"
     }
 
@@ -121,7 +121,7 @@ extension Jwk {
         let normalized: Jwk
 
         switch keyType {
-        case .ecdsa:
+        case .elliptic:
             normalized = Jwk(
                 keyType: self.keyType,
                 curve: self.curve,
