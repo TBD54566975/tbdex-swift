@@ -19,7 +19,11 @@ final class Ed25519Tests: XCTestCase {
     }
 
     func test_bytesToPrivateKey_testVectors() throws {
-        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(fileName: "bytes-to-private-key")
+        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(
+            fileName: "bytes-to-private-key",
+            subdirectory: "ed25519"
+        )
+
         for vector in testVector.vectors {
             let privateKeyBytes = Data.fromHexString(vector.input["privateKeyBytes"]!)!
             let privateKey = try Ed25519.bytesToPrivateKey(privateKeyBytes)
@@ -28,7 +32,11 @@ final class Ed25519Tests: XCTestCase {
     }
 
     func test_bytesToPublicKey_testVectors() throws {
-        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(fileName: "bytes-to-public-key")
+        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(
+            fileName: "bytes-to-public-key",
+            subdirectory: "ed25519"
+        )
+
         for vector in testVector.vectors {
             let publicKeyBytes = Data.fromHexString(vector.input["publicKeyBytes"]!)!
             let publicKey = try Ed25519.bytesToPublicKey(publicKeyBytes)
@@ -37,7 +45,11 @@ final class Ed25519Tests: XCTestCase {
     }
 
     func test_computePublicKey_testVectors() throws {
-        let testVector: TestVector<[String: Jwk], Jwk> = try loadTestVector(fileName: "compute-public-key")
+        let testVector: TestVector<[String: Jwk], Jwk> = try loadTestVector(
+            fileName: "compute-public-key",
+            subdirectory: "ed25519"
+        )
+
         for vector in testVector.vectors {
             let publicKey = try Ed25519.computePublicKey(privateKey: vector.input["privateKey"]!)
             XCTAssertEqual(publicKey, vector.output)
@@ -45,7 +57,11 @@ final class Ed25519Tests: XCTestCase {
     }
 
     func test_privateKeyToBytes_testVectors() throws {
-        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(fileName: "private-key-to-bytes")
+        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(
+            fileName: "private-key-to-bytes",
+            subdirectory: "ed25519"
+        )
+
         for vector in testVector.vectors {
             let privateKeyBytes = try Ed25519.privateKeyToBytes(privateKey: vector.input["privateKey"]!)
             XCTAssertEqual(privateKeyBytes, Data.fromHexString(vector.output)!)
@@ -53,7 +69,11 @@ final class Ed25519Tests: XCTestCase {
     }
 
     func test_publicKeyToBytes_testVectors() throws {
-        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(fileName: "public-key-to-bytes")
+        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(
+            fileName: "public-key-to-bytes",
+            subdirectory: "ed25519"
+        )
+
         for vector in testVector.vectors {
             let publicKeyBytes = try Ed25519.publicKeyToBytes(publicKey: vector.input["publicKey"]!)
             XCTAssertEqual(publicKeyBytes, Data.fromHexString(vector.output)!)
@@ -67,7 +87,11 @@ final class Ed25519Tests: XCTestCase {
     }
 
     func test_sign_testVectors() throws {
-        let testVector: TestVector<SignInputData, String> = try loadTestVector(fileName: "sign")
+        let testVector: TestVector<SignInputData, String> = try loadTestVector(
+            fileName: "sign",
+            subdirectory: "ed25519"
+        )
+
         for vector in testVector.vectors {
             let signature = try Ed25519.sign(
                 privateKey: vector.input.key,
@@ -106,7 +130,11 @@ final class Ed25519Tests: XCTestCase {
     }
 
     func test_verify_testVectors() throws {
-        let testVector: TestVector<VerifyInputData, Bool> = try loadTestVector(fileName: "verify")
+        let testVector: TestVector<VerifyInputData, Bool> = try loadTestVector(
+            fileName: "verify",
+            subdirectory: "ed25519"
+        )
+        
         for vector in testVector.vectors {
             let isValid = try Ed25519.verify(
                 publicKey: vector.input.key,

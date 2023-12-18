@@ -29,7 +29,7 @@ let package = Package(
             name: "tbDEXTests",
             dependencies: ["tbDEX"],
             resources: [
-                .process("Resources")
+                .copy("TestVectors/ed25519")
             ]
         ),
     ]
