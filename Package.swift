@@ -14,18 +14,23 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/GigaBitcoin/secp256k1.swift.git", from: "0.14.0")
+        .package(url: "https://github.com/GigaBitcoin/secp256k1.swift.git", from: "0.14.0"),
+        .package(url: "https://github.com/swift-extras/swift-extras-base64.git", from: "0.7.0")
     ],
     targets: [
         .target(
             name: "tbDEX",
             dependencies: [
-                .product(name: "secp256k1", package: "secp256k1.swift")
+                .product(name: "secp256k1", package: "secp256k1.swift"),
+                .product(name: "ExtrasBase64", package: "swift-extras-base64")
             ]
         ),
         .testTarget(
             name: "tbDEXTests",
-            dependencies: ["tbDEX"]
+            dependencies: ["tbDEX"],
+            resources: [
+                .process("Resources")
+            ]
         ),
     ]
 )
