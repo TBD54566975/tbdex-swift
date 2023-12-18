@@ -1,7 +1,9 @@
 import Foundation
 import secp256k1
 
-public enum Secp256k1 {
+public enum Secp256k1: KeyGenerator, Signer {
+
+    static let keyType: KeyType = .secp256k1
 
     // MARK: - Constants
 

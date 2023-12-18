@@ -14,7 +14,7 @@ final class Ed25519Tests: XCTestCase {
         XCTAssertNotNil(privateKey.x)
 
         // Generated private key should always be 32 bytes in length
-        let privateKeyBytes = try Ed25519.privateKeyToBytes(privateKey: privateKey)
+        let privateKeyBytes = try Ed25519.privateKeyToBytes(privateKey)
         XCTAssertEqual(privateKeyBytes.count, 32)
     }
 
@@ -63,7 +63,7 @@ final class Ed25519Tests: XCTestCase {
         )
 
         for vector in testVector.vectors {
-            let privateKeyBytes = try Ed25519.privateKeyToBytes(privateKey: vector.input["privateKey"]!)
+            let privateKeyBytes = try Ed25519.privateKeyToBytes(vector.input["privateKey"]!)
             XCTAssertEqual(privateKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
@@ -75,7 +75,7 @@ final class Ed25519Tests: XCTestCase {
         )
 
         for vector in testVector.vectors {
-            let publicKeyBytes = try Ed25519.publicKeyToBytes(publicKey: vector.input["publicKey"]!)
+            let publicKeyBytes = try Ed25519.publicKeyToBytes(vector.input["publicKey"]!)
             XCTAssertEqual(publicKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
