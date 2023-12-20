@@ -37,7 +37,7 @@ public protocol KeyManager {
     ///   - keyAlias: The alias referencing the stored private key.
     ///   - payload: The data to be signed
     /// - Returns: The signature in JWS R+S format
-    func sign(keyAlias: String, payload: Data) throws -> Data
+    func sign<D>(keyAlias: String, payload: D) throws -> Data where D: DataProtocol
 
     /// Return the alias of `publicKey`, as was originally returned by `generatePrivateKey`.
     /// 

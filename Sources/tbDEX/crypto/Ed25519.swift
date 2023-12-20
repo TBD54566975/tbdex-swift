@@ -6,7 +6,9 @@ import Foundation
 ///
 /// This class uses Apple's CryptoKit, specifically `Curve25519.Signing`, for it's cryptographic operations:
 /// https://developer.apple.com/documentation/cryptokit/curve25519/signing
-public enum Ed25519 {
+public enum Ed25519: KeyGenerator, Signer {
+
+    static let keyType: KeyType = .ed25519
 
     // MARK: - Public Functions
 
@@ -40,7 +42,7 @@ public enum Ed25519 {
     }
 
     /// Converts a private key from JSON Web Key (JWK) format to a raw bytes.
-    public static func privateKeyToBytes(privateKey: Jwk) throws -> Data {
+    public static func privateKeyToBytes(_ privateKey: Jwk) throws -> Data {
         guard let d = privateKey.d else {
             throw Ed25519Error.invalidPrivateJwk
         }
@@ -49,7 +51,7 @@ public enum Ed25519 {
     }
 
     /// Converts a public key from JSON Web Key (JWK) format to a raw bytes.
-    public static func publicKeyToBytes(publicKey: Jwk) throws -> Data {
+    public static func publicKeyToBytes(_ publicKey: Jwk) throws -> Data {
         guard let x = publicKey.x else {
             throw Ed25519Error.invalidPublicJwk
         }
