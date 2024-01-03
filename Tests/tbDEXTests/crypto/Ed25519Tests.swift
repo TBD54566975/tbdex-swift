@@ -134,7 +134,7 @@ final class Ed25519Tests: XCTestCase {
             fileName: "verify",
             subdirectory: "ed25519"
         )
-
+        
         for vector in testVector.vectors {
             let isValid = try Ed25519.verify(
                 publicKey: vector.input.key,

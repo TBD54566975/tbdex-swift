@@ -2,7 +2,7 @@ import Foundation
 
 /// Protocol defining the contract for signing and verifying signatures on payloads
 protocol Signer {
-
+    
     /// Sign a given payload using a private key.
     ///
     /// - Parameters:
@@ -18,6 +18,5 @@ protocol Signer {
     ///   - signature: The signature to be verified against the payload and public key.
     ///   - signedPayload: The original payload that was signed, to be verified.
     /// - Returns: Boolean indicating if the publicKey and signature are valid for the given payload.
-    static func verify<S, D>(publicKey: Jwk, signature: S, signedPayload: D) throws -> Bool
-    where S: DataProtocol, D: DataProtocol
+    static func verify<S, D>(publicKey: Jwk, signature: S, signedPayload: D) throws -> Bool where S: DataProtocol, D: DataProtocol
 }

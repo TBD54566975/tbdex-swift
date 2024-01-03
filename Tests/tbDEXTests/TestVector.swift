@@ -4,13 +4,11 @@ public func loadTestVector<Input: Codable, Output: Codable>(
     fileName: String,
     subdirectory: String? = nil
 ) throws -> TestVector<Input, Output> {
-    guard
-        let url = Bundle.module.url(
-            forResource: fileName,
-            withExtension: "json",
-            subdirectory: subdirectory
-        )
-    else {
+    guard let url = Bundle.module.url(
+        forResource: fileName,
+        withExtension: "json",
+        subdirectory: subdirectory
+    ) else {
         fatalError("Missing file: \(fileName).json")
     }
 

@@ -80,8 +80,7 @@ public enum Ed25519: KeyGenerator, Signer {
 
     /// Verifies an RFC8032-compliant EdDSA signature against given data using an Ed25519 public key in JSON Web Key
     /// (JWK) format.
-    public static func verify<S, D>(publicKey: Jwk, signature: S, signedPayload: D) throws -> Bool
-    where S: DataProtocol, D: DataProtocol {
+    public static func verify<S,D>(publicKey: Jwk, signature: S, signedPayload: D) throws -> Bool where S: DataProtocol, D: DataProtocol {
         guard let x = publicKey.x else {
             throw Ed25519Error.invalidPublicJwk
         }
@@ -89,6 +88,7 @@ public enum Ed25519: KeyGenerator, Signer {
         let publicKey = try Curve25519.Signing.PublicKey(rawRepresentation: try x.decodeBase64Url())
         return publicKey.isValidSignature(signature, for: signedPayload)
     }
+
 
     // MARK: - Private Functions
 

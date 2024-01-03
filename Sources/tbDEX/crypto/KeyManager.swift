@@ -20,7 +20,7 @@ public protocol KeyManager {
 
     /// Generates and securely stores a private key based on the provided keyType,
     /// returning a unique alias that can be utilized to reference the generated key for future operations.
-    ///
+    ///  
     /// - Parameter keyType: The `KeyType` to use for key generation
     /// - Returns: A unique alias that can be used to reference the stored key.
     func generatePrivateKey(keyType: KeyType) throws -> String
@@ -40,7 +40,7 @@ public protocol KeyManager {
     func sign<D>(keyAlias: String, payload: D) throws -> Data where D: DataProtocol
 
     /// Return the alias of `publicKey`, as was originally returned by `generatePrivateKey`.
-    ///
+    /// 
     /// - Parameter publicKey: A public key in JSON Web Key (JWK) format
     /// - Returns: The alias belonging to `publicKey`
     func getDeterministicAlias(publicKey: Jwk) -> String
