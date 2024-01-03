@@ -85,7 +85,8 @@ extension Ed25519: KeyGenerator {
 
     private func generatePrivateJwk(privateKey: Curve25519.Signing.PrivateKey) throws -> Jwk {
         var jwk = Jwk(
-            keyType: .octetKeyPair,
+            keyType: self.keyType,
+            algorithm: self.algorithm,
             curve: .ed25519,
             d: privateKey.rawRepresentation.base64UrlEncodedString(),
             x: privateKey.publicKey.rawRepresentation.base64UrlEncodedString()
@@ -98,7 +99,8 @@ extension Ed25519: KeyGenerator {
 
     private func generatePublicJwk(publicKey: Curve25519.Signing.PublicKey) throws -> Jwk {
         var jwk = Jwk(
-            keyType: .octetKeyPair,
+            keyType: self.keyType,
+            algorithm: self.algorithm,
             curve: .ed25519,
             x: publicKey.rawRepresentation.base64UrlEncodedString()
         )

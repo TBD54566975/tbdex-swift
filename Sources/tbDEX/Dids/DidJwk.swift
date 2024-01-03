@@ -1,0 +1,59 @@
+import Foundation
+
+struct DidJwk: Did {
+
+    let uri: String
+    let keyManager: KeyManager
+
+    // TODO: amika - add in opitons to allow caller to specify algorithm and curve
+    init(keyManager: KeyManager) throws {
+        let keyAlias = try keyManager.generatePrivateKey(algorithm: .eddsa, curve: .ed25519)
+        let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
+        let publicKeyBase64Url = try JSONEncoder().encode(publicKey).base64UrlEncodedString()
+
+        self.uri = "did:jwk:\(publicKeyBase64Url)"
+        self.keyManager = keyManager
+    }
+
+    /// Resolves a `did:jwk` URI into a `DidResolution.Result`
+    /// - Parameter didUri: The DID URI to resolve
+    /// - Returns: `DidResolution.Result` containing the resolved DID Document.
+    static func resolve(didUri: String) -> DidResolution.Result {
+        let parsedDid: ParsedDid
+        do {
+            parsedDid = try ParsedDid(uri: didUri)
+        } catch {
+            return DidResolution.Result.invalidDid()
+        }
+
+        guard parsedDid.method == "jwk" else {
+            return DidResolution.Result.invalidDid()
+        }
+
+        let jwk: Jwk
+
+        do {
+            jwk = try JSONDecoder().decode(Jwk.self, from: try parsedDid.id.decodeBase64Url())
+        } catch {
+            return DidResolution.Result.invalidDid()
+        }
+
+        let verifiationMethod = DidVerificationMethod(
+            id: "\(didUri)#0",
+            type: "JsonWebKey2020",
+            controller: didUri,
+            publicKeyJwk: jwk
+        )
+
+        let didDocument = DidDocument(
+            id: didUri,
+            verificationMethod: [verifiationMethod],
+            assertionMethod: [verifiationMethod.id],
+            authentication: [verifiationMethod.id],
+            capabilityDelegation: [verifiationMethod.id],
+            capabilityInvocation: [verifiationMethod.id]
+        )
+
+        return DidResolution.Result(didDocument: didDocument)
+    }
+}
