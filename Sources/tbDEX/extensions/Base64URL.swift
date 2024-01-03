@@ -1,5 +1,5 @@
-import Foundation
 import ExtrasBase64
+import Foundation
 
 extension Collection where Element == UInt8 {
     /// Encodes a collection of bytes to a Base64URL encoded string
