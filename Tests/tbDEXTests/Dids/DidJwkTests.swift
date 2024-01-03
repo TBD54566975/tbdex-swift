@@ -35,7 +35,25 @@ final class DidJwkTests: XCTestCase {
         XCTAssertEqual(resolutionResult.didResolutionMetadata.error, "invalidDid")
     }
 
-    func test_resolveWithDidDocument() {
+    func test_resolveNewlyCratedDidJwk() throws {
+        let keyManager = InMemoryKeyManager()
+        let didJwk = try DidJwk(
+            keyManager: keyManager,
+            options: .init(algorithm: .es256k, curve: .secp256k1)
+        )
+
+        let resolutionResult = DidJwk.resolve(didUri: didJwk.uri)
+        XCTAssertNotNil(resolutionResult.didDocument)
+        XCTAssertEqual(resolutionResult.didDocument?.id, didJwk.uri)
+        XCTAssertEqual(resolutionResult.didDocument?.verificationMethod?.first?.id, "\(didJwk.uri)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, "\(didJwk.uri)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, "\(didJwk.uri)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, "\(didJwk.uri)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, "\(didJwk.uri)#0")
+        XCTAssertNil(resolutionResult.didResolutionMetadata.error)
+    }
+
+    func test_resolveWithKnownDidUri() {
         let didUri =
             "did:jwk:eyJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpGZk1iek9qTW1RNGVmVDZrdndUSUpqZWxUcWpsMHhqRUlXUTJxb2JzUk1NIiwia3R5IjoiT0tQIiwiY3J2IjoiRWQyNTUxOSIsImFsZyI6IkVkRFNBIiwieCI6IkFOUmpIX3p4Y0tCeHNqUlBVdHpSYnA3RlNWTEtKWFE5QVBYOU1QMWo3azQifQ"
         let resolutionResult = DidJwk.resolve(didUri: didUri)
