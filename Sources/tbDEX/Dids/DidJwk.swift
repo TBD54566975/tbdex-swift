@@ -2,12 +2,16 @@ import Foundation
 
 struct DidJwk: Did {
 
+    struct Options {
+        let algorithm: Jwk.Algorithm
+        let curve: Jwk.Curve
+    }
+
     let uri: String
     let keyManager: KeyManager
 
-    // TODO: amika - add in opitons to allow caller to specify algorithm and curve
-    init(keyManager: KeyManager) throws {
-        let keyAlias = try keyManager.generatePrivateKey(algorithm: .eddsa, curve: .ed25519)
+    init(keyManager: KeyManager, options: Options) throws {
+        let keyAlias = try keyManager.generatePrivateKey(algorithm: options.algorithm, curve: options.curve)
         let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
         let publicKeyBase64Url = try JSONEncoder().encode(publicKey).base64UrlEncodedString()
 

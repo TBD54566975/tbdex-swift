@@ -6,7 +6,10 @@ final class DidJwkTests: XCTestCase {
 
     func test_initializer() throws {
         let keyManager = InMemoryKeyManager()
-        let didJwk = try DidJwk(keyManager: keyManager)
+        let didJwk = try DidJwk(
+            keyManager: keyManager,
+            options: .init(algorithm: .eddsa, curve: .ed25519)
+        )
 
         XCTAssert(didJwk.uri.starts(with: "did:jwk:"))
     }
