@@ -1,6 +1,6 @@
-import Foundation
 import CryptoKit
 import ExtrasBase64
+import Foundation
 
 public struct Jwk: Codable, Equatable {
 
