@@ -1,6 +1,6 @@
 import Foundation
 
-public func loadTestVector<Input: Codable, Output: Codable>(
+func loadTestVector<Input: Codable, Output: Codable>(
     fileName: String,
     subdirectory: String? = nil
 ) throws -> TestVector<Input, Output> {
@@ -19,14 +19,14 @@ public func loadTestVector<Input: Codable, Output: Codable>(
     return testVector
 }
 
-public struct TestVector<Input: Codable, Output: Codable>: Codable {
+struct TestVector<Input: Codable, Output: Codable>: Codable {
 
-    public let description: String
-    public let vectors: [Vector]
+    let description: String
+    let vectors: [Vector]
 
-    public struct Vector: Codable {
-        public let input: Input
-        public let output: Output
+    struct Vector: Codable {
+        let input: Input
+        let output: Output
     }
 
 }

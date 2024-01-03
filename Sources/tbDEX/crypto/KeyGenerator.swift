@@ -2,24 +2,27 @@ import Foundation
 
 protocol KeyGenerator {
 
-    /// Indicates the `KeyType` intended to bse used with the key.
-    static var keyType: KeyType { get }
+    /// Indicates the algorithm intended to be used with the key.
+    var algorithm: Jwk.Algorithm { get }
+
+    /// Indicates the cryptographic algorithm family used with the key.
+    var keyType: Jwk.KeyType { get }
 
     /// Generates a private key.
-    static func generatePrivateKey() throws -> Jwk
+    func generatePrivateKey() throws -> Jwk
 
     /// Derives a public key from the private key provided.
-    static func computePublicKey(privateKey: Jwk) throws -> Jwk
+    func computePublicKey(privateKey: Jwk) throws -> Jwk
 
     /// Converts a private key to bytes.
-    static func privateKeyToBytes(_ privateKey: Jwk) throws -> Data
+    func privateKeyToBytes(_ privateKey: Jwk) throws -> Data
 
     /// Converts a public key to bytes.
-    static func publicKeyToBytes(_ publicKey: Jwk) throws -> Data
+    func publicKeyToBytes(_ publicKey: Jwk) throws -> Data
 
     /// Converts a private key as bytes into a JWK.
-    static func bytesToPrivateKey(_ bytes: Data) throws -> Jwk
+    func bytesToPrivateKey(_ bytes: Data) throws -> Jwk
 
     /// Converts a public key as bytes into a JWK.
-    static func bytesToPublicKey(_ bytes: Data) throws -> Jwk
+    func bytesToPublicKey(_ bytes: Data) throws -> Jwk
 }

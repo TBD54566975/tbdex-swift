@@ -5,7 +5,7 @@ import XCTest
 final class Ed25519Tests: XCTestCase {
 
     func test_generateKey() throws {
-        let privateKey = try Ed25519.generatePrivateKey()
+        let privateKey = try Ed25519.shared.generatePrivateKey()
 
         XCTAssertEqual(privateKey.keyType, .octetKeyPair)
         XCTAssertEqual(privateKey.curve, .ed25519)
@@ -14,7 +14,7 @@ final class Ed25519Tests: XCTestCase {
         XCTAssertNotNil(privateKey.x)
 
         // Generated private key should always be 32 bytes in length
-        let privateKeyBytes = try Ed25519.privateKeyToBytes(privateKey)
+        let privateKeyBytes = try Ed25519.shared.privateKeyToBytes(privateKey)
         XCTAssertEqual(privateKeyBytes.count, 32)
     }
 
@@ -26,7 +26,7 @@ final class Ed25519Tests: XCTestCase {
 
         for vector in testVector.vectors {
             let privateKeyBytes = Data.fromHexString(vector.input["privateKeyBytes"]!)!
-            let privateKey = try Ed25519.bytesToPrivateKey(privateKeyBytes)
+            let privateKey = try Ed25519.shared.bytesToPrivateKey(privateKeyBytes)
             XCTAssertEqual(privateKey, vector.output)
         }
     }
@@ -39,7 +39,7 @@ final class Ed25519Tests: XCTestCase {
 
         for vector in testVector.vectors {
             let publicKeyBytes = Data.fromHexString(vector.input["publicKeyBytes"]!)!
-            let publicKey = try Ed25519.bytesToPublicKey(publicKeyBytes)
+            let publicKey = try Ed25519.shared.bytesToPublicKey(publicKeyBytes)
             XCTAssertEqual(publicKey, vector.output)
         }
     }
@@ -51,7 +51,7 @@ final class Ed25519Tests: XCTestCase {
         )
 
         for vector in testVector.vectors {
-            let publicKey = try Ed25519.computePublicKey(privateKey: vector.input["privateKey"]!)
+            let publicKey = try Ed25519.shared.computePublicKey(privateKey: vector.input["privateKey"]!)
             XCTAssertEqual(publicKey, vector.output)
         }
     }
@@ -63,7 +63,7 @@ final class Ed25519Tests: XCTestCase {
         )
 
         for vector in testVector.vectors {
-            let privateKeyBytes = try Ed25519.privateKeyToBytes(vector.input["privateKey"]!)
+            let privateKeyBytes = try Ed25519.shared.privateKeyToBytes(vector.input["privateKey"]!)
             XCTAssertEqual(privateKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
@@ -75,7 +75,7 @@ final class Ed25519Tests: XCTestCase {
         )
 
         for vector in testVector.vectors {
-            let publicKeyBytes = try Ed25519.publicKeyToBytes(vector.input["publicKey"]!)
+            let publicKeyBytes = try Ed25519.shared.publicKeyToBytes(vector.input["publicKey"]!)
             XCTAssertEqual(publicKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
@@ -93,7 +93,7 @@ final class Ed25519Tests: XCTestCase {
         )
 
         for vector in testVector.vectors {
-            let signature = try Ed25519.sign(
+            let signature = try Ed25519.shared.sign(
                 privateKey: vector.input.key,
                 payload: Data.fromHexString(vector.input.data)!
             )
@@ -104,14 +104,14 @@ final class Ed25519Tests: XCTestCase {
             //
             // Because of this, the signature we just generated will NOT be the same as the vector's output,
             // but both will be valid signatures.
-            let isVectorOutputSignatureValid = try Ed25519.verify(
-                publicKey: try Ed25519.computePublicKey(privateKey: vector.input.key),
+            let isVectorOutputSignatureValid = try Ed25519.shared.verify(
+                publicKey: try Ed25519.shared.computePublicKey(privateKey: vector.input.key),
                 signature: Data.fromHexString(vector.output)!,
                 signedPayload: Data.fromHexString(vector.input.data)!
             )
 
-            let isGeneratedSignatureValid = try Ed25519.verify(
-                publicKey: try Ed25519.computePublicKey(privateKey: vector.input.key),
+            let isGeneratedSignatureValid = try Ed25519.shared.verify(
+                publicKey: try Ed25519.shared.computePublicKey(privateKey: vector.input.key),
                 signature: signature,
                 signedPayload: Data.fromHexString(vector.input.data)!
             )
@@ -136,7 +136,7 @@ final class Ed25519Tests: XCTestCase {
         )
 
         for vector in testVector.vectors {
-            let isValid = try Ed25519.verify(
+            let isValid = try Ed25519.shared.verify(
                 publicKey: vector.input.key,
                 signature: Data.fromHexString(vector.input.signature)!,
                 signedPayload: Data.fromHexString(vector.input.data)!
