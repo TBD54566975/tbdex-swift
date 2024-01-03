@@ -195,8 +195,7 @@ extension Secp256k1: KeyGenerator {
         let (x, y) = try getCurvePoints(keyBytes: privateKey.dataRepresentation)
 
         var jwk = Jwk(
-            keyType: self.keyType,
-            algorithm: self.algorithm,
+            keyType: .elliptic,
             curve: .secp256k1,
             d: privateKey.dataRepresentation.base64UrlEncodedString(),
             x: x.base64UrlEncodedString(),
@@ -212,8 +211,7 @@ extension Secp256k1: KeyGenerator {
         let (x, y) = try getCurvePoints(keyBytes: publicKey.dataRepresentation)
 
         var jwk = Jwk(
-            keyType: self.keyType,
-            algorithm: self.algorithm,
+            keyType: .elliptic,
             curve: .secp256k1,
             x: x.base64UrlEncodedString(),
             y: y.base64UrlEncodedString()

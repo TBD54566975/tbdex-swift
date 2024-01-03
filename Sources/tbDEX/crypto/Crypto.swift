@@ -74,7 +74,8 @@ enum Crypto {
             (Secp256k1.shared.algorithm, nil),
             (Secp256k1.shared.algorithm, .secp256k1):
             return Secp256k1.shared
-        case (Ed25519.shared.algorithm, .ed25519):
+        case (Ed25519.shared.algorithm, .ed25519),
+            (nil, .ed25519):
             return Ed25519.shared
         default:
             throw CryptoError.illegalArgument(
