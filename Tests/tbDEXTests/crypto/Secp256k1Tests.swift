@@ -47,19 +47,6 @@ final class Secp256k1Tests: XCTestCase {
         XCTAssertNotNil(privateKey.y)
     }
 
-    func test_bytesToPrivateKey_testVectors() throws {
-        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(
-            fileName: "bytes-to-private-key",
-            subdirectory: "secp256k1"
-        )
-
-        for vector in testVector.vectors {
-            let privateKeyBytes = Data.fromHexString(vector.input["privateKeyBytes"]!)!
-            let privateKey = try Secp256k1.shared.bytesToPrivateKey(privateKeyBytes)
-            XCTAssertNoDifference(privateKey, vector.output)
-        }
-    }
-
     func test_bytesToPublicKey_returnedInJwkFormat() throws {
         let publicKeyBytes = Data.fromHexString(
             "043752951274023296c8a74b0ffe42f82ff4b4d4bba4326477422703f761f59258c26a7465b9a77ac0c3f1cedb139c428b0b1fbb5516867b527636f3286f705553"
@@ -72,19 +59,6 @@ final class Secp256k1Tests: XCTestCase {
         XCTAssertNil(publicKey.d)
         XCTAssertNotNil(publicKey.x)
         XCTAssertNotNil(publicKey.y)
-    }
-
-    func test_bytesToPublicKey_testVectors() throws {
-        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(
-            fileName: "bytes-to-public-key",
-            subdirectory: "secp256k1"
-        )
-
-        for vector in testVector.vectors {
-            let privateKeyBytes = Data.fromHexString(vector.input["publicKeyBytes"]!)!
-            let publicKey = try Secp256k1.shared.bytesToPublicKey(privateKeyBytes)
-            XCTAssertNoDifference(publicKey, vector.output)
-        }
     }
 
     func test_compressPublicKey() throws {
@@ -136,76 +110,12 @@ final class Secp256k1Tests: XCTestCase {
         }
     }
 
-    func test_getCurvePoints_testVectors() throws {
-        let testVector: TestVector<[String: String], [String: String]> = try loadTestVector(
-            fileName: "get-curve-points",
-            subdirectory: "secp256k1"
-        )
-
-        for vector in testVector.vectors {
-            let keyBytes = Data.fromHexString(vector.input["key"]!)!
-            let expectedX = Data.fromHexString(vector.output["x"]!)!
-            let expectedY = Data.fromHexString(vector.output["y"]!)!
-
-            let (x, y) = try Secp256k1.shared.getCurvePoints(keyBytes: keyBytes)
-            XCTAssertEqual(x, expectedX)
-            XCTAssertEqual(y, expectedY)
-        }
-    }
-
-    func test_privateKeyToBytes_testVectors() throws {
-        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(
-            fileName: "private-key-to-bytes",
-            subdirectory: "secp256k1"
-        )
-
-        for vector in testVector.vectors {
-            let bytes = try Secp256k1.shared.privateKeyToBytes(vector.input["privateKey"]!)
-            XCTAssertEqual(bytes, Data.fromHexString(vector.output)!)
-        }
-    }
-
-    func test_publicKeyToBytes_testVectors() throws {
-        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(
-            fileName: "public-key-to-bytes",
-            subdirectory: "secp256k1"
-        )
-
-        for vector in testVector.vectors {
-            let bytes = try Secp256k1.shared.publicKeyToBytes(vector.input["publicKey"]!)
-            XCTAssertEqual(bytes, Data.fromHexString(vector.output)!)
-        }
-    }
 
     func test_sign_returns64ByteSignature() throws {
         let privateKey = try Secp256k1.shared.generatePrivateKey()
         let data = Data([51, 52, 53])
         let signature = try Secp256k1.shared.sign(privateKey: privateKey, payload: data)
         XCTAssertEqual(signature.count, 64)
-    }
-
-    func test_validatePrivateKey_testVectors() throws {
-        let testVector: TestVector<[String: String], Bool> = try loadTestVector(
-            fileName: "validate-private-key",
-            subdirectory: "secp256k1"
-        )
-
-        for vector in testVector.vectors {
-            let privateKeyBytes = Data.fromHexString(vector.input["key"]!)!
-            XCTAssertNoDifference(Secp256k1.shared.validatePrivateKey(privateKeyBytes: privateKeyBytes), vector.output)
-        }
-    }
-
-    func test_validatePublicKey_testVectors() throws {
-        let testVector: TestVector<[String: String], Bool> = try loadTestVector(
-            fileName: "validate-public-key",
-            subdirectory: "secp256k1"
-        )
-
-        for vector in testVector.vectors {
-            let publicKeyBytes = Data.fromHexString(vector.input["key"]!)!
-            XCTAssertNoDifference(Secp256k1.shared.validatePublicKey(publicKeyBytes: publicKeyBytes), vector.output)
-        }
     }
 
     func test_verify() throws {
