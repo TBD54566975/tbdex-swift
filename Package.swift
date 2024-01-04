@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/GigaBitcoin/secp256k1.swift.git", from: "0.14.0"),
         .package(url: "https://github.com/swift-extras/swift-extras-base64.git", from: "0.7.0"),
+        .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.1.2"),
     ],
     targets: [
         .target(
@@ -27,7 +28,10 @@ let package = Package(
         ),
         .testTarget(
             name: "tbDEXTests",
-            dependencies: ["tbDEX"],
+            dependencies: [
+                "tbDEX",
+                .product(name: "CustomDump", package: "swift-custom-dump"),
+            ],
             resources: [
                 .copy("TestVectors/ed25519"),
                 .copy("TestVectors/secp256k1"),
