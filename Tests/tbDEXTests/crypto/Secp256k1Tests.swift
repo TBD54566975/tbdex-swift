@@ -1,6 +1,6 @@
 import CustomDump
-import secp256k1
 import XCTest
+import secp256k1
 
 @testable import tbDEX
 
