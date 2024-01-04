@@ -6,67 +6,91 @@ import XCTest
 final class Web5TestVectorsEd25519: XCTestCase {
 
     func test_bytesToPrivateKey() throws {
-        let testVector = try TestVector<[String: String], Jwk>(
+        /// Input data format for `bytes-to-private-key` test vectors
+        struct Input: Codable {
+            let privateKeyBytes: String
+        }
+
+        let testVector = try TestVector<Input, Jwk>(
             fileName: "bytes-to-private-key",
             subdirectory: "ed25519"
         )
 
         testVector.run { vector in
-            let privateKeyBytes = Data.fromHexString(vector.input["privateKeyBytes"]!)!
+            let privateKeyBytes = try XCTUnwrap(Data.fromHexString(vector.input.privateKeyBytes))
             let privateKey = try Ed25519.shared.bytesToPrivateKey(privateKeyBytes)
             XCTAssertNoDifference(privateKey, vector.output)
         }
     }
 
     func test_bytesToPublicKey() throws {
-        let testVector = try TestVector<[String: String], Jwk>(
+        /// Input data format for `bytes-to-public-key` test vectors
+        struct Input: Codable {
+            let publicKeyBytes: String
+        }
+
+        let testVector = try TestVector<Input, Jwk>(
             fileName: "bytes-to-public-key",
             subdirectory: "ed25519"
         )
 
         testVector.run { vector in
-            let publicKeyBytes = Data.fromHexString(vector.input["publicKeyBytes"]!)!
+            let publicKeyBytes = try XCTUnwrap(Data.fromHexString(vector.input.publicKeyBytes))
             let publicKey = try Ed25519.shared.bytesToPublicKey(publicKeyBytes)
             XCTAssertNoDifference(publicKey, vector.output)
         }
     }
 
     func test_computePublicKey() throws {
-        let testVector = try TestVector<[String: Jwk], Jwk>(
+        /// Input data format for `compute-public-key` test vectors
+        struct Input: Codable {
+            let privateKey: Jwk
+        }
+
+        let testVector = try TestVector<Input, Jwk>(
             fileName: "compute-public-key",
             subdirectory: "ed25519"
         )
 
         testVector.run { vector in
-            let publicKey = try Ed25519.shared.computePublicKey(privateKey: vector.input["privateKey"]!)
+            let publicKey = try Ed25519.shared.computePublicKey(privateKey: vector.input.privateKey)
             XCTAssertNoDifference(publicKey, vector.output)
         }
     }
 
     func test_privateKeyToBytes() throws {
-        let testVector = try TestVector<[String: Jwk], String>(
+        /// Input data format for `private-key-to-bytes` test vectors
+        struct Input: Codable {
+            let privateKey: Jwk
+        }
+
+        let testVector = try TestVector<Input, String>(
             fileName: "private-key-to-bytes",
             subdirectory: "ed25519"
         )
 
         testVector.run { vector in
-            let privateKeyBytes = try Ed25519.shared.privateKeyToBytes(vector.input["privateKey"]!)
-            XCTAssertNoDifference(privateKeyBytes, Data.fromHexString(vector.output)!)
+            let privateKeyBytes = try Ed25519.shared.privateKeyToBytes(vector.input.privateKey)
+            XCTAssertNoDifference(privateKeyBytes, try XCTUnwrap(Data.fromHexString(vector.output)))
         }
     }
 
     func test_publicKeyToBytes() throws {
-        let testVector = try TestVector<[String: Jwk], String>(
+        /// Input data format for `public-key-to-bytes` test vectors
+        struct Input: Codable {
+            let publicKey: Jwk
+        }
+
+        let testVector = try TestVector<Input, String>(
             fileName: "public-key-to-bytes",
             subdirectory: "ed25519"
         )
 
         testVector.run { vector in
-            let publicKeyBytes = try Ed25519.shared.publicKeyToBytes(vector.input["publicKey"]!)
-            XCTAssertNoDifference(publicKeyBytes, Data.fromHexString(vector.output)!)
+            let publicKeyBytes = try Ed25519.shared.publicKeyToBytes(vector.input.publicKey)
+            XCTAssertNoDifference(publicKeyBytes, try XCTUnwrap(Data.fromHexString(vector.output)))
         }
     }
-
 
     func test_sign() throws {
         /// Input data format for `sign` test vectors
@@ -83,7 +107,7 @@ final class Web5TestVectorsEd25519: XCTestCase {
         testVector.run { vector in
             let signature = try Ed25519.shared.sign(
                 privateKey: vector.input.key,
-                payload: Data.fromHexString(vector.input.data)!
+                payload: try XCTUnwrap(Data.fromHexString(vector.input.data))
             )
 
             // Apple's Ed25519 implementation employs randomization to generate different signatures
@@ -94,14 +118,14 @@ final class Web5TestVectorsEd25519: XCTestCase {
             // but both will be valid signatures.
             let isVectorOutputSignatureValid = try Ed25519.shared.verify(
                 publicKey: try Ed25519.shared.computePublicKey(privateKey: vector.input.key),
-                signature: Data.fromHexString(vector.output)!,
-                signedPayload: Data.fromHexString(vector.input.data)!
+                signature: try XCTUnwrap(Data.fromHexString(vector.output)),
+                signedPayload: try XCTUnwrap(Data.fromHexString(vector.input.data))
             )
 
             let isGeneratedSignatureValid = try Ed25519.shared.verify(
                 publicKey: try Ed25519.shared.computePublicKey(privateKey: vector.input.key),
                 signature: signature,
-                signedPayload: Data.fromHexString(vector.input.data)!
+                signedPayload: try XCTUnwrap(Data.fromHexString(vector.input.data))
             )
 
             XCTAssertTrue(isVectorOutputSignatureValid)
@@ -126,12 +150,11 @@ final class Web5TestVectorsEd25519: XCTestCase {
         testVector.run { vector in
             let isValid = try Ed25519.shared.verify(
                 publicKey: vector.input.key,
-                signature: Data.fromHexString(vector.input.signature)!,
-                signedPayload: Data.fromHexString(vector.input.data)!
+                signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
+                signedPayload: try XCTUnwrap(Data.fromHexString(vector.input.data))
             )
             XCTAssertNoDifference(isValid, vector.output)
         }
     }
-
 
 }
