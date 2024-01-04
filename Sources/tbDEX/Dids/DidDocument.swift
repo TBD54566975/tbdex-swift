@@ -11,9 +11,9 @@ import Foundation
 ///   repository services.
 ///
 /// A DID Document can be retrieved by _resolving_ a DID URI
-struct DidDocument: Codable {
+struct DidDocument: Codable, Equatable {
 
-    let context: String?
+    let context: OneOrMany<String>?
 
     /// The DID URI for a particular DID subject is expressed using the id property in the DID document.
     let id: String
@@ -26,7 +26,7 @@ struct DidDocument: Codable {
     /// A DID controller is an entity that is authorized to make changes to a
     /// DID document. The process of authorizing a DID controller is defined
     /// by the DID method.
-    var controller: DidController?
+    var controller: OneOrMany<String>?
 
     /// Cryptographic public keys, which can be used to authenticate or authorize
     /// interactions with the DID subject or associated parties.
@@ -80,10 +80,10 @@ struct DidDocument: Codable {
     var capabilityInvocation: [String]?
 
     init(
-        context: String? = nil,
+        context: OneOrMany<String>? = nil,
         id: String,
         alsoKnownAs: [String]? = nil,
-        controller: DidController? = nil,
+        controller: OneOrMany<String>? = nil,
         verificationMethod: [DidVerificationMethod]? = nil,
         service: [DidService]? = nil,
         assertionMethod: [String]? = nil,
@@ -125,7 +125,7 @@ struct DidDocument: Codable {
     /// changes, as it represents metadata about the DID document.
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#dfn-diddocumentmetadata)
-    struct Metadata: Codable {
+    struct Metadata: Codable, Equatable {
 
         /// Timestamp of the Create operation. The value of the property MUST be a
         /// string formatted as an XML Datetime normalized to UTC 00:00:00 and
@@ -195,55 +195,6 @@ struct DidDocument: Codable {
     }
 }
 
-/// DID Controller
-///
-/// [Specification Reference](https://www.w3.org/TR/did-core/#did-controller)
-/// This is necessary, as the controller can be either a String, or a set of strings.
-/// Swift does not allow multiple types, and must handle both cases when encoding/decoding.
-struct DidController: Codable {
-    var value: Either<String, [String]>
-
-    init(_ value: Either<String, [String]>) {
-        self.value = value
-    }
-
-    enum CodingKeys: CodingKey {
-        case value
-    }
-
-    enum Either<A, B> {
-        case left(A)
-        case right(B)
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        if let singleValue = try? container.decode(String.self) {
-            self.value = .left(singleValue)
-        } else if let arrayValue = try? container.decode([String].self) {
-            self.value = .right(arrayValue)
-        } else {
-            throw DecodingError.typeMismatch(
-                DidController.self,
-                DecodingError.Context(
-                    codingPath: decoder.codingPath,
-                    debugDescription: "Expected either String or [String]"
-                )
-            )
-        }
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch value {
-        case .left(let singleValue):
-            try container.encode(singleValue)
-        case .right(let arrayValue):
-            try container.encode(arrayValue)
-        }
-    }
-}
-
 /// A DID document can express verification methods, such as cryptographic
 /// public keys, which can be used to authenticate or authorize interactions
 /// with the DID subject or associated parties. For example,
@@ -252,7 +203,7 @@ struct DidController: Codable {
 /// signer could use the associated cryptographic private key
 ///
 /// [Specification Reference](https://www.w3.org/TR/did-core/#verification-methods)
-struct DidVerificationMethod: Codable {
+struct DidVerificationMethod: Codable, Equatable {
     let id: String
     let type: String
     let controller: String
@@ -279,7 +230,7 @@ struct DidVerificationMethod: Codable {
 /// A service can be any type of service the DID subject wants to advertise.
 ///
 /// [Specification Reference](https://www.w3.org/TR/did-core/#services)
-struct DidService: Codable {
+struct DidService: Codable, Equatable {
     let id: String
     let type: String
     let serviceEndpoint: String

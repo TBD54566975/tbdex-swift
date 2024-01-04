@@ -5,7 +5,7 @@ enum DidResolution {
     /// Representation of the result of a DID (Decentralized Identifier) resolution
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#resolution)
-    struct Result {
+    struct Result: Codable, Equatable {
 
         /// The metadata associated with the DID resolution process.
         ///
@@ -52,7 +52,7 @@ enum DidResolution {
     /// the resolution process itself
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#dfn-didresolutionmetadata)
-    struct Metadata: Codable {
+    struct Metadata: Codable, Equatable {
 
         /// The Media Type of the returned didDocumentStream. This property is
         /// REQUIRED if resolution is successful and if the resolveRepresentation
