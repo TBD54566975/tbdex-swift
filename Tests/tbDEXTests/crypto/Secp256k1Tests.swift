@@ -1,3 +1,4 @@
+import CustomDump
 import XCTest
 import secp256k1
 
@@ -55,7 +56,7 @@ final class Secp256k1Tests: XCTestCase {
         for vector in testVector.vectors {
             let privateKeyBytes = Data.fromHexString(vector.input["privateKeyBytes"]!)!
             let privateKey = try Secp256k1.shared.bytesToPrivateKey(privateKeyBytes)
-            XCTAssertEqual(privateKey, vector.output)
+            XCTAssertNoDifference(privateKey, vector.output)
         }
     }
 
@@ -82,7 +83,7 @@ final class Secp256k1Tests: XCTestCase {
         for vector in testVector.vectors {
             let privateKeyBytes = Data.fromHexString(vector.input["publicKeyBytes"]!)!
             let publicKey = try Secp256k1.shared.bytesToPublicKey(privateKeyBytes)
-            XCTAssertEqual(publicKey, vector.output)
+            XCTAssertNoDifference(publicKey, vector.output)
         }
     }
 
@@ -191,7 +192,7 @@ final class Secp256k1Tests: XCTestCase {
 
         for vector in testVector.vectors {
             let privateKeyBytes = Data.fromHexString(vector.input["key"]!)!
-            XCTAssertEqual(Secp256k1.shared.validatePrivateKey(privateKeyBytes: privateKeyBytes), vector.output)
+            XCTAssertNoDifference(Secp256k1.shared.validatePrivateKey(privateKeyBytes: privateKeyBytes), vector.output)
         }
     }
 
@@ -203,7 +204,7 @@ final class Secp256k1Tests: XCTestCase {
 
         for vector in testVector.vectors {
             let publicKeyBytes = Data.fromHexString(vector.input["key"]!)!
-            XCTAssertEqual(Secp256k1.shared.validatePublicKey(publicKeyBytes: publicKeyBytes), vector.output)
+            XCTAssertNoDifference(Secp256k1.shared.validatePublicKey(publicKeyBytes: publicKeyBytes), vector.output)
         }
     }
 

@@ -1,3 +1,4 @@
+import CustomDump
 import XCTest
 
 @testable import tbDEX
@@ -27,7 +28,7 @@ final class Ed25519Tests: XCTestCase {
         for vector in testVector.vectors {
             let privateKeyBytes = Data.fromHexString(vector.input["privateKeyBytes"]!)!
             let privateKey = try Ed25519.shared.bytesToPrivateKey(privateKeyBytes)
-            XCTAssertEqual(privateKey, vector.output)
+            XCTAssertNoDifference(privateKey, vector.output)
         }
     }
 
@@ -40,7 +41,7 @@ final class Ed25519Tests: XCTestCase {
         for vector in testVector.vectors {
             let publicKeyBytes = Data.fromHexString(vector.input["publicKeyBytes"]!)!
             let publicKey = try Ed25519.shared.bytesToPublicKey(publicKeyBytes)
-            XCTAssertEqual(publicKey, vector.output)
+            XCTAssertNoDifference(publicKey, vector.output)
         }
     }
 
@@ -52,7 +53,7 @@ final class Ed25519Tests: XCTestCase {
 
         for vector in testVector.vectors {
             let publicKey = try Ed25519.shared.computePublicKey(privateKey: vector.input["privateKey"]!)
-            XCTAssertEqual(publicKey, vector.output)
+            XCTAssertNoDifference(publicKey, vector.output)
         }
     }
 
@@ -64,7 +65,7 @@ final class Ed25519Tests: XCTestCase {
 
         for vector in testVector.vectors {
             let privateKeyBytes = try Ed25519.shared.privateKeyToBytes(vector.input["privateKey"]!)
-            XCTAssertEqual(privateKeyBytes, Data.fromHexString(vector.output)!)
+            XCTAssertNoDifference(privateKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
 
@@ -76,7 +77,7 @@ final class Ed25519Tests: XCTestCase {
 
         for vector in testVector.vectors {
             let publicKeyBytes = try Ed25519.shared.publicKeyToBytes(vector.input["publicKey"]!)
-            XCTAssertEqual(publicKeyBytes, Data.fromHexString(vector.output)!)
+            XCTAssertNoDifference(publicKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
 
@@ -141,7 +142,7 @@ final class Ed25519Tests: XCTestCase {
                 signature: Data.fromHexString(vector.input.signature)!,
                 signedPayload: Data.fromHexString(vector.input.data)!
             )
-            XCTAssertEqual(isValid, vector.output)
+            XCTAssertNoDifference(isValid, vector.output)
         }
     }
 
