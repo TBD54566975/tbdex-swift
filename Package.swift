@@ -35,6 +35,7 @@ let package = Package(
             resources: [
                 .copy("TestVectors/ed25519"),
                 .copy("TestVectors/secp256k1"),
+                .copy("TestVectors/did_jwk"),
             ]
         ),
     ]
