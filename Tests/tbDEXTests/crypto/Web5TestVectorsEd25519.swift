@@ -6,12 +6,12 @@ import XCTest
 final class Web5TestVectorsEd25519: XCTestCase {
 
     func test_bytesToPrivateKey() throws {
-        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(
+        let testVector = try TestVector<[String: String], Jwk>(
             fileName: "bytes-to-private-key",
             subdirectory: "ed25519"
         )
 
-        for vector in testVector.vectors {
+        testVector.run { vector in
             let privateKeyBytes = Data.fromHexString(vector.input["privateKeyBytes"]!)!
             let privateKey = try Ed25519.shared.bytesToPrivateKey(privateKeyBytes)
             XCTAssertNoDifference(privateKey, vector.output)
@@ -19,12 +19,12 @@ final class Web5TestVectorsEd25519: XCTestCase {
     }
 
     func test_bytesToPublicKey() throws {
-        let testVector: TestVector<[String: String], Jwk> = try loadTestVector(
+        let testVector = try TestVector<[String: String], Jwk>(
             fileName: "bytes-to-public-key",
             subdirectory: "ed25519"
         )
 
-        for vector in testVector.vectors {
+        testVector.run { vector in
             let publicKeyBytes = Data.fromHexString(vector.input["publicKeyBytes"]!)!
             let publicKey = try Ed25519.shared.bytesToPublicKey(publicKeyBytes)
             XCTAssertNoDifference(publicKey, vector.output)
@@ -32,54 +32,55 @@ final class Web5TestVectorsEd25519: XCTestCase {
     }
 
     func test_computePublicKey() throws {
-        let testVector: TestVector<[String: Jwk], Jwk> = try loadTestVector(
+        let testVector = try TestVector<[String: Jwk], Jwk>(
             fileName: "compute-public-key",
             subdirectory: "ed25519"
         )
 
-        for vector in testVector.vectors {
+        testVector.run { vector in
             let publicKey = try Ed25519.shared.computePublicKey(privateKey: vector.input["privateKey"]!)
             XCTAssertNoDifference(publicKey, vector.output)
         }
     }
 
     func test_privateKeyToBytes() throws {
-        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(
+        let testVector = try TestVector<[String: Jwk], String>(
             fileName: "private-key-to-bytes",
             subdirectory: "ed25519"
         )
 
-        for vector in testVector.vectors {
+        testVector.run { vector in
             let privateKeyBytes = try Ed25519.shared.privateKeyToBytes(vector.input["privateKey"]!)
             XCTAssertNoDifference(privateKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
 
     func test_publicKeyToBytes() throws {
-        let testVector: TestVector<[String: Jwk], String> = try loadTestVector(
+        let testVector = try TestVector<[String: Jwk], String>(
             fileName: "public-key-to-bytes",
             subdirectory: "ed25519"
         )
 
-        for vector in testVector.vectors {
+        testVector.run { vector in
             let publicKeyBytes = try Ed25519.shared.publicKeyToBytes(vector.input["publicKey"]!)
             XCTAssertNoDifference(publicKeyBytes, Data.fromHexString(vector.output)!)
         }
     }
 
-    /// Input data format for `sign` test vectors
-    struct SignInputData: Codable {
-        let data: String
-        let key: Jwk
-    }
 
     func test_sign() throws {
-        let testVector: TestVector<SignInputData, String> = try loadTestVector(
+        /// Input data format for `sign` test vectors
+        struct Input: Codable {
+            let data: String
+            let key: Jwk
+        }
+
+        let testVector = try TestVector<Input, String>(
             fileName: "sign",
             subdirectory: "ed25519"
         )
 
-        for vector in testVector.vectors {
+        testVector.run { vector in
             let signature = try Ed25519.shared.sign(
                 privateKey: vector.input.key,
                 payload: Data.fromHexString(vector.input.data)!
@@ -109,20 +110,20 @@ final class Web5TestVectorsEd25519: XCTestCase {
         }
     }
 
-    /// Input data format for `verify` test vectors
-    struct VerifyInputData: Codable {
-        let data: String
-        let key: Jwk
-        let signature: String
-    }
-
     func test_verify() throws {
-        let testVector: TestVector<VerifyInputData, Bool> = try loadTestVector(
+        /// Input data format for `verify` test vectors
+        struct Input: Codable {
+            let data: String
+            let key: Jwk
+            let signature: String
+        }
+
+        let testVector = try TestVector<Input, Bool>(
             fileName: "verify",
             subdirectory: "ed25519"
         )
 
-        for vector in testVector.vectors {
+        testVector.run { vector in
             let isValid = try Ed25519.shared.verify(
                 publicKey: vector.input.key,
                 signature: Data.fromHexString(vector.input.signature)!,
