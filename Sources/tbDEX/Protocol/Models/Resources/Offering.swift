@@ -4,8 +4,6 @@ import TypeID
 /// Typealias for an Offering Resource
 public typealias Offering = Resource<OfferingData>
 
-// MARK: - OfferingData
-
 /// Data that makes up an Offering Resource
 ///
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#offering)
