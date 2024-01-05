@@ -1,6 +1,6 @@
 import Foundation
 
-extension Data {
+public extension Data {
     static func fromHexString(_ hexString: String) -> Self? {
         var data = Data()
         var hex = hexString

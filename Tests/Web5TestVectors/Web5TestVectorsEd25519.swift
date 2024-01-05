@@ -1,4 +1,5 @@
 import CustomDump
+import TestUtilities
 import XCTest
 
 @testable import tbDEX

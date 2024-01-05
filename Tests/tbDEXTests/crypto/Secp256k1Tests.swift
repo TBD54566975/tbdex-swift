@@ -1,4 +1,5 @@
 import CustomDump
+import TestUtilities
 import XCTest
 import secp256k1
 
