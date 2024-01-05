@@ -25,12 +25,12 @@ final class InMemoryKeyManagerTests: XCTestCase {
 
     func test_signSucceedsWhenKeyIsInKeyManager() throws {
         let keyAlias = try keyManager.generatePrivateKey(algorithm: .es256k)
-        let payload = "Hello, world!".data(using: .utf8)!
+        let payload = try XCTUnwrap("Hello, world!".data(using: .utf8))
         XCTAssertNoThrow(try keyManager.sign(keyAlias: keyAlias, payload: payload))
     }
 
     func test_signThrowsErrorWhenKeyIsNotInKeyManager() throws {
-        let payload = "Hello, world!".data(using: .utf8)!
+        let payload = try XCTUnwrap("Hello, world!".data(using: .utf8))
         XCTAssertThrowsError(try keyManager.sign(keyAlias: "InvalidAlias", payload: payload))
     }
 }

@@ -19,6 +19,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.1.2"),
     ],
     targets: [
+        // Main tbDEX library target
         .target(
             name: "tbDEX",
             dependencies: [
@@ -26,16 +27,32 @@ let package = Package(
                 .product(name: "ExtrasBase64", package: "swift-extras-base64"),
             ]
         ),
+        // Shared test utilities target
+        .target(
+            name: "TestUtilities",
+            path: "TestUtilities/"
+        ),
+        // Main tbDEX test target
         .testTarget(
             name: "tbDEXTests",
             dependencies: [
                 "tbDEX",
+                "TestUtilities",
+                .product(name: "CustomDump", package: "swift-custom-dump"),
+            ]
+        ),
+        // Web5 test vectors target
+        .testTarget(
+            name: "Web5TestVectors",
+            dependencies: [
+                "tbDEX",
+                "TestUtilities",
                 .product(name: "CustomDump", package: "swift-custom-dump"),
             ],
             resources: [
-                .copy("TestVectors/ed25519"),
-                .copy("TestVectors/secp256k1"),
-                .copy("TestVectors/did_jwk"),
+                .copy("Resources/ed25519"),
+                .copy("Resources/secp256k1"),
+                .copy("Resources/did_jwk"),
             ]
         ),
     ]
