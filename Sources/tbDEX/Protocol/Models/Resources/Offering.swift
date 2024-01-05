@@ -45,12 +45,12 @@ extension OfferingData: ResourceData {
 
 // MARK: - OfferingData.CurrencyDetails
 
-public extension OfferingData {
+extension OfferingData {
 
     /// Details about currency within an Offering
     ///
     /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#currencydetails)
-    struct CurrencyDetails: Codable {
+    public struct CurrencyDetails: Codable {
 
         /// ISO 3166 currency code string
         let currencyCode: String
@@ -78,12 +78,12 @@ public extension OfferingData {
 
 // MARK: - OfferingData.PaymentMethod
 
-public extension OfferingData {
+extension OfferingData {
 
     /// Details about payment methods within an Offering
     ///
     /// [Specficication Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#paymentmethod)
-    struct PaymentMethod: Codable {
+    public struct PaymentMethod: Codable {
 
         /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
         let kind: String
@@ -98,7 +98,7 @@ public extension OfferingData {
         /// Default initializer
         init(
             kind: String,
-            requiredPaymentDetails: [String : String]? = nil,
+            requiredPaymentDetails: [String: String]? = nil,
             feeSubunits: String? = nil
         ) {
             self.kind = kind

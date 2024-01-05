@@ -33,12 +33,12 @@ public struct Resource<D: ResourceData>: Codable {
 
 // MARK: - Kind
 
-public extension Resource {
+extension Resource {
 
     /// Enum containing the different types of resources
     ///
     /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#resource-kinds)
-    enum Kind: String, Codable {
+    public enum Kind: String, Codable {
         case offering
     }
 
@@ -46,10 +46,10 @@ public extension Resource {
 
 // MARK: - Metadata
 
-public extension Resource {
+extension Resource {
 
     /// Structure containining fields about the resource and is present in every tbDEX resource.
-    struct Metadata: Codable {
+    public struct Metadata: Codable {
 
         /// The resource's unique identifier
         let id: TypeID

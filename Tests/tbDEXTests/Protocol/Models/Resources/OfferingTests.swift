@@ -25,5 +25,4 @@ final class OfferingTests: XCTestCase {
         XCTAssertEqual(offering.data.payoutCurrency.currencyCode, "BTC")
     }
 
-
 }
