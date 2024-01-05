@@ -37,7 +37,9 @@ final class Secp256k1Tests: XCTestCase {
     }
 
     func test_bytesToPrivateKey_returnedInJwkFormat() throws {
-        let privateKeyBytes = Data.fromHexString("740ec69810de9ad1b8f298f1d2c0e6a52dd1e958dc2afc85764bec169c222e88")!
+        let privateKeyBytes = try XCTUnwrap(
+            Data.fromHexString("740ec69810de9ad1b8f298f1d2c0e6a52dd1e958dc2afc85764bec169c222e88")
+        )
         let privateKey = try Secp256k1.shared.bytesToPrivateKey(privateKeyBytes)
 
         XCTAssertEqual(privateKey.curve, .secp256k1)
@@ -49,9 +51,10 @@ final class Secp256k1Tests: XCTestCase {
     }
 
     func test_bytesToPublicKey_returnedInJwkFormat() throws {
-        let publicKeyBytes = Data.fromHexString(
-            "043752951274023296c8a74b0ffe42f82ff4b4d4bba4326477422703f761f59258c26a7465b9a77ac0c3f1cedb139c428b0b1fbb5516867b527636f3286f705553"
-        )!
+        let publicKeyBytes = try XCTUnwrap(
+            Data.fromHexString(
+                "043752951274023296c8a74b0ffe42f82ff4b4d4bba4326477422703f761f59258c26a7465b9a77ac0c3f1cedb139c428b0b1fbb5516867b527636f3286f705553"
+            ))
         let publicKey = try Secp256k1.shared.bytesToPublicKey(publicKeyBytes)
 
         XCTAssertEqual(publicKey.curve, .secp256k1)
@@ -63,11 +66,14 @@ final class Secp256k1Tests: XCTestCase {
     }
 
     func test_compressPublicKey() throws {
-        let compressedPublicKeyBytes = Data.fromHexString(
-            "026bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce214")!
-        let uncompressedPublicKeyBytes = Data.fromHexString(
-            "046bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce21465062296011dd076ae4e8ce5163ccf69d01496d3147656dcc96645b95211f3c6"
-        )!
+        let compressedPublicKeyBytes = try XCTUnwrap(
+            Data.fromHexString("026bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce214")
+        )
+        let uncompressedPublicKeyBytes = try XCTUnwrap(
+            Data.fromHexString(
+                "046bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce21465062296011dd076ae4e8ce5163ccf69d01496d3147656dcc96645b95211f3c6"
+            )
+        )
 
         let output = try Secp256k1.shared.compressPublicKey(publicKeyBytes: uncompressedPublicKeyBytes)
         XCTAssertEqual(output.count, 33)
@@ -75,9 +81,10 @@ final class Secp256k1Tests: XCTestCase {
     }
 
     func test_compressPublicKey_throwsForInvalidUncompressedPublickey() throws {
-        let invalidUncompressedPublicKeyBytes = Data.fromHexString(
-            "dfebc16793a5737ac51f606a43524df8373c063e41d5a99b2f1530afd987284bd1c7cde1658a9a756e71f44a97b4783ea9dee5ccb7f1447eb4836d8de9bd4f81fd"
-        )!
+        let invalidUncompressedPublicKeyBytes = try XCTUnwrap(
+            Data.fromHexString(
+                "dfebc16793a5737ac51f606a43524df8373c063e41d5a99b2f1530afd987284bd1c7cde1658a9a756e71f44a97b4783ea9dee5ccb7f1447eb4836d8de9bd4f81fd"
+            ))
 
         do {
             let _ = try Secp256k1.shared.compressPublicKey(publicKeyBytes: invalidUncompressedPublicKeyBytes)
@@ -88,11 +95,13 @@ final class Secp256k1Tests: XCTestCase {
     }
 
     func test_decompressPublicKey() throws {
-        let compressedPublicKeyBytes = Data.fromHexString(
-            "026bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce214")!
-        let uncompressedPublicKeyBytes = Data.fromHexString(
-            "046bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce21465062296011dd076ae4e8ce5163ccf69d01496d3147656dcc96645b95211f3c6"
-        )!
+        let compressedPublicKeyBytes = try XCTUnwrap(
+            Data.fromHexString(
+                "026bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce214"))
+        let uncompressedPublicKeyBytes = try XCTUnwrap(
+            Data.fromHexString(
+                "046bcdccc644b309921d3b0c266183a20786650c1634d34e8dfa1ed74cd66ce21465062296011dd076ae4e8ce5163ccf69d01496d3147656dcc96645b95211f3c6"
+            ))
 
         let output = try Secp256k1.shared.decompressPublicKey(publicKeyBytes: compressedPublicKeyBytes)
         XCTAssertEqual(output.count, 65)
@@ -100,8 +109,9 @@ final class Secp256k1Tests: XCTestCase {
     }
 
     func test_decompressPublicKey_throwsForInvalidCompressedPublicKey() throws {
-        let invalidCompressedPublicKeyBytes = Data.fromHexString(
-            "fef0b998921eafb58f49efdeb0adc47123aa28a4042924236f08274d50c72fe7b0")!
+        let invalidCompressedPublicKeyBytes = try XCTUnwrap(
+            Data.fromHexString(
+                "fef0b998921eafb58f49efdeb0adc47123aa28a4042924236f08274d50c72fe7b0"))
 
         do {
             let _ = try Secp256k1.shared.decompressPublicKey(publicKeyBytes: invalidCompressedPublicKeyBytes)
@@ -110,7 +120,6 @@ final class Secp256k1Tests: XCTestCase {
             XCTAssert(true, "Successfully threw an error")
         }
     }
-
 
     func test_sign_returns64ByteSignature() throws {
         let privateKey = try Secp256k1.shared.generatePrivateKey()

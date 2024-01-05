@@ -1,7 +1,7 @@
 import Foundation
 
-public extension Data {
-    static func fromHexString(_ hexString: String) -> Self? {
+extension Data {
+    public static func fromHexString(_ hexString: String) -> Self? {
         var data = Data()
         var hex = hexString
 
@@ -27,7 +27,7 @@ public extension Data {
         return data
     }
 
-    func toHexString() -> String {
+    public func toHexString() -> String {
         return map { String(format: "%02x", $0) }.joined()
     }
 }
