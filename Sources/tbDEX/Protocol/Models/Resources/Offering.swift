@@ -1,3 +1,4 @@
+import AnyCodable
 import Foundation
 import TypeID
 
@@ -27,7 +28,7 @@ public struct OfferingData {
 
     // TODO: amika - Update to PresentationDefinitionV2, requires third-party or custom implementation
     /// Articulates the claim(s) required when submitting an RFQ for this offering.
-    let requiredClaims: [String: String]
+    let requiredClaims: AnyCodable
 
 }
 
@@ -88,7 +89,7 @@ extension OfferingData {
 
         // TODO: amika - Update to JSONSchema, requires third-party or custom implementation
         /// A JSON Schema containing the fields that need to be collected in order to use this payment method
-        let requiredPaymentDetails: [String: String]?
+        let requiredPaymentDetails: AnyCodable?
 
         /// The fee expressed in the currency's sub units to make use of this payment method
         let feeSubunits: String?
@@ -96,7 +97,7 @@ extension OfferingData {
         /// Default initializer
         init(
             kind: String,
-            requiredPaymentDetails: [String: String]? = nil,
+            requiredPaymentDetails: AnyCodable? = nil,
             feeSubunits: String? = nil
         ) {
             self.kind = kind
