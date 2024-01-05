@@ -5,23 +5,31 @@ import XCTest
 class ParsedDidTests: XCTestCase {
 
     func test_initValidUri() throws {
-        let uri = "did:example:123abc"
-        let parsed = try ParsedDid(uri: uri)
-        XCTAssertEqual(parsed.uri, uri)
-        XCTAssertEqual(parsed.method, "example")
-        XCTAssertEqual(parsed.id, "123abc")
+        let didUri = "did:example:123abc"
+        let parsed = try ParsedDid(didUri: didUri)
+        XCTAssertEqual(parsed.uri, didUri)
+        XCTAssertEqual(parsed.methodName, "example")
+        XCTAssertEqual(parsed.methodSpecificId, "123abc")
     }
 
     func test_initValidUriWithParameters() throws {
-        let uri = "did:example:123abc;param=value/path?query#fragment"
-        let parsed = try ParsedDid(uri: uri)
-        XCTAssertEqual(parsed.uri, "did:example:123abc;param=value/path?query#fragment")
-        XCTAssertEqual(parsed.method, "example")
-        XCTAssertEqual(parsed.id, "123abc")
+        let didUri = "did:example:123abc;param=value/path?query#fragment"
+        let parsed = try ParsedDid(didUri: didUri)
+        XCTAssertEqual(parsed.uri, didUri)
+        XCTAssertEqual(parsed.methodName, "example")
+        XCTAssertEqual(parsed.methodSpecificId, "123abc;param=value/path?query#fragment")
+    }
+
+    func test_initWithDidWebUriThatContainsPath() throws {
+        let didUri = "did:web:w3c-ccg.github.io:user:alice"
+        let parsed = try ParsedDid(didUri: didUri)
+        XCTAssertEqual(parsed.uri, didUri)
+        XCTAssertEqual(parsed.methodName, "web")
+        XCTAssertEqual(parsed.methodSpecificId, "w3c-ccg.github.io:user:alice")
     }
 
     func test_initInvalidUri() throws {
-        let uri = "invalid:uri"
-        XCTAssertThrowsError(try ParsedDid(uri: uri))
+        let didUri = "invalid:uri"
+        XCTAssertThrowsError(try ParsedDid(didUri: didUri))
     }
 }

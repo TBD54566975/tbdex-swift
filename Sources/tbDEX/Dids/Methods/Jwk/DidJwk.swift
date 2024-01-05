@@ -25,19 +25,19 @@ struct DidJwk: Did {
     static func resolve(didUri: String) -> DidResolution.Result {
         let parsedDid: ParsedDid
         do {
-            parsedDid = try ParsedDid(uri: didUri)
+            parsedDid = try ParsedDid(didUri: didUri)
         } catch {
             return DidResolution.Result.invalidDid()
         }
 
-        guard parsedDid.method == "jwk" else {
+        guard parsedDid.methodName == "jwk" else {
             return DidResolution.Result.invalidDid()
         }
 
         let jwk: Jwk
 
         do {
-            jwk = try JSONDecoder().decode(Jwk.self, from: try parsedDid.id.decodeBase64Url())
+            jwk = try JSONDecoder().decode(Jwk.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
         } catch {
             return DidResolution.Result.invalidDid()
         }
