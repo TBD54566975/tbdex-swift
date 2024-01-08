@@ -33,7 +33,7 @@ struct DidJwk: Did {
             return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
-        let verifiationMethod = DidVerificationMethod(
+        let verifiationMethod = VerificationMethod(
             id: "\(didUri)#0",
             type: "JsonWebKey2020",
             controller: didUri,
@@ -47,10 +47,10 @@ struct DidJwk: Did {
             ]),
             id: didUri,
             verificationMethod: [verifiationMethod],
-            assertionMethod: [verifiationMethod.id],
-            authentication: [verifiationMethod.id],
-            capabilityDelegation: [verifiationMethod.id],
-            capabilityInvocation: [verifiationMethod.id]
+            assertionMethod: [.referenced(verifiationMethod.id)],
+            authentication: [.referenced(verifiationMethod.id)],
+            capabilityDelegation: [.referenced(verifiationMethod.id)],
+            capabilityInvocation: [.referenced(verifiationMethod.id)]
         )
 
         return DidResolution.Result(didDocument: didDocument)

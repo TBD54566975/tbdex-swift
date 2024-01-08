@@ -32,28 +32,38 @@ struct DidDocument: Codable, Equatable {
     /// interactions with the DID subject or associated parties.
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#verification-methods)
-    var verificationMethod: [DidVerificationMethod]?
+    var verificationMethod: [VerificationMethod]?
 
     /// Services are used in DID documents to express ways of communicating with
     /// the DID subject or associated entities.
     /// A service can be any type of service the DID subject wants to advertise.
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#services)
-    var service: [DidService]?
+    var service: [Service]?
 
     /// The assertionMethod verification relationship is used to specify how the
     /// DID subject is expected to express claims, such as for the purposes of
     /// issuing a Verifiable Credential
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#assertion)
-    var assertionMethod: [String]?
+    var assertionMethod: [EmbeddedOrReferencedVerificationMethod]?
+
+    /// `assertionMethod`, dereferencing any `VerificationMethod`s that are referenced
+    var assertionMethodDereferenced: [VerificationMethod]? {
+        assertionMethod?.compactMap { $0.dereferenced(with: self) }
+    }
 
     /// The authentication verification relationship is used to specify how the
     /// DID subject is expected to be authenticated, for purposes such as logging
     /// into a website or engaging in any sort of challenge-response protocol.
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#authentication)
-    var authentication: [String]?
+    var authentication: [EmbeddedOrReferencedVerificationMethod]?
+
+    /// `authentication`, dereferencing any `VerificationMethod`s that are referenced
+    var authenticationDereferenced: [VerificationMethod]? {
+        authentication?.compactMap { $0.dereferenced(with: self) }
+    }
 
     /// The keyAgreement verification relationship is used to specify how an
     /// entity can generate encryption material in order to transmit confidential
@@ -61,7 +71,12 @@ struct DidDocument: Codable, Equatable {
     /// establishing a secure communication channel with the recipient
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#key-agreement)
-    var keyAgreement: [String]?
+    var keyAgreement: [EmbeddedOrReferencedVerificationMethod]?
+
+    /// `authentication`, dereferencing any `VerificationMethod`s that are referenced
+    var keyAgreementDereferenced: [VerificationMethod]? {
+        keyAgreement?.compactMap { $0.dereferenced(with: self) }
+    }
 
     /// The capabilityDelegation verification relationship is used to specify a
     /// mechanism that might be used by the DID subject to delegate a
@@ -69,7 +84,12 @@ struct DidDocument: Codable, Equatable {
     /// authority to access a specific HTTP API to a subordinate.
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#capability-delegation)
-    var capabilityDelegation: [String]?
+    var capabilityDelegation: [EmbeddedOrReferencedVerificationMethod]?
+
+    /// `capabilityDelegation`, dereferencing any `VerificationMethod`s that are referenced
+    var capabilityDelegationDereferenced: [VerificationMethod]? {
+        capabilityDelegation?.compactMap { $0.dereferenced(with: self) }
+    }
 
     /// The capabilityInvocation verification relationship is used to specify a
     /// verification method that might be used by the DID subject to invoke a
@@ -77,20 +97,25 @@ struct DidDocument: Codable, Equatable {
     /// DID Document
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#capability-invocation)
-    var capabilityInvocation: [String]?
+    var capabilityInvocation: [EmbeddedOrReferencedVerificationMethod]?
+
+    /// `capabilityInvocation`, dereferencing any `VerificationMethod`s that are referenced
+    var capabilityInvocationDereferenced: [VerificationMethod]? {
+        capabilityInvocation?.compactMap { $0.dereferenced(with: self) }
+    }
 
     init(
         context: OneOrMany<String>? = nil,
         id: String,
         alsoKnownAs: [String]? = nil,
         controller: OneOrMany<String>? = nil,
-        verificationMethod: [DidVerificationMethod]? = nil,
-        service: [DidService]? = nil,
-        assertionMethod: [String]? = nil,
-        authentication: [String]? = nil,
-        keyAgreement: [String]? = nil,
-        capabilityDelegation: [String]? = nil,
-        capabilityInvocation: [String]? = nil
+        verificationMethod: [VerificationMethod]? = nil,
+        service: [Service]? = nil,
+        assertionMethod: [EmbeddedOrReferencedVerificationMethod]? = nil,
+        authentication: [EmbeddedOrReferencedVerificationMethod]? = nil,
+        keyAgreement: [EmbeddedOrReferencedVerificationMethod]? = nil,
+        capabilityDelegation: [EmbeddedOrReferencedVerificationMethod]? = nil,
+        capabilityInvocation: [EmbeddedOrReferencedVerificationMethod]? = nil
     ) {
         self.context = context
         self.id = id
@@ -203,12 +228,21 @@ struct DidDocument: Codable, Equatable {
 /// signer could use the associated cryptographic private key
 ///
 /// [Specification Reference](https://www.w3.org/TR/did-core/#verification-methods)
-struct DidVerificationMethod: Codable, Equatable {
+struct VerificationMethod: Codable, Equatable {
     let id: String
     let type: String
     let controller: String
     let publicKeyJwk: Jwk?
     let publicKeyMultibase: String?
+
+    /// Computed property that returns the absolute ID of the verification method.
+    var absoluteId: String {
+        if id.starts(with: "#") {
+            return controller + id
+        } else {
+            return id
+        }
+    }
 
     init(
         id: String,
@@ -230,8 +264,51 @@ struct DidVerificationMethod: Codable, Equatable {
 /// A service can be any type of service the DID subject wants to advertise.
 ///
 /// [Specification Reference](https://www.w3.org/TR/did-core/#services)
-struct DidService: Codable, Equatable {
+struct Service: Codable, Equatable {
     let id: String
     let type: String
     let serviceEndpoint: String
+}
+
+/// DID Documents can have embedded or referenced verification methods.
+/// This enum is used to represent both cases, and is able to parse either from JSON.
+enum EmbeddedOrReferencedVerificationMethod: Codable, Equatable {
+    case embedded(VerificationMethod)
+    case referenced(String)
+
+    func dereferenced(with didDocument: DidDocument) -> VerificationMethod? {
+        switch self {
+        case let .embedded(verificationMethod):
+            return verificationMethod
+        case let .referenced(verificationMethodId):
+            return didDocument.verificationMethod?.first(where: { $0.absoluteId.contains(verificationMethodId) })
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let verificationMethod = try? container.decode(VerificationMethod.self) {
+            self = .embedded(verificationMethod)
+        } else if let referencedId = try? container.decode(String.self) {
+            self = .referenced(referencedId)
+        } else {
+            throw DecodingError.typeMismatch(
+                EmbeddedOrReferencedVerificationMethod.self,
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Expected either VerificationMethod or String"
+                )
+            )
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case let .embedded(verificationMethod):
+            try container.encode(verificationMethod)
+        case let .referenced(referencedId):
+            try container.encode(referencedId)
+        }
+    }
 }
