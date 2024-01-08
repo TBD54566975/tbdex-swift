@@ -2,8 +2,7 @@ import Foundation
 
 struct DidWeb {
 
-    private static let wellKnownPath = "/.well-known"
-    private static let didDocumentFilename = "/did.json"
+    // MARK: - Public Static
 
     /// Resolves a `did:jwk` URI into a `DidResolution.Result`
     /// - Parameter didUri: The DID URI to resolve
@@ -27,6 +26,11 @@ struct DidWeb {
             return DidResolution.Result.resolutionError(.notFound)
         }
     }
+
+    // MARK: - Private Static
+
+    private static let wellKnownPath = "/.well-known"
+    private static let didDocumentFilename = "/did.json"
 
     private static func getDidDocumentUrl(methodSpecificId: String) -> URL? {
         let domainNameWithPath = methodSpecificId.replacingOccurrences(of: ":", with: "/")
