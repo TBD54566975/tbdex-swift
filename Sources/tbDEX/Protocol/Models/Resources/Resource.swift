@@ -1,13 +1,13 @@
 import Foundation
 import TypeID
 
-public struct Resource<D: ResourceData>: Codable {
+public struct Resource<D: ResourceData>: tbDEXObject {
 
     /// An object containing fields about the resource
-    let metadata: Metadata
+    public let metadata: Metadata
 
     /// The actual resource content (e.g. an `Offering`)
-    let data: D
+    public let data: D
 
     /// Signature that verifies the authenticity and integrity of the resource
     let signature: String?
@@ -44,12 +44,21 @@ extension Resource {
 
 }
 
+// MARK: - Data
+
+public protocol ResourceData: tbDEXData {
+
+    /// The kind of resource the data represents
+    var kind: Resource<Self>.Kind { get }
+
+}
+
 // MARK: - Metadata
 
 extension Resource {
 
     /// Structure containining fields about the resource and is present in every tbDEX resource.
-    public struct Metadata: Codable {
+    public struct Metadata: tbDEXMetadata {
 
         /// The resource's unique identifier
         let id: TypeID
