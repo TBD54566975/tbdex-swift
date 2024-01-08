@@ -49,15 +49,16 @@ struct ParsedDid {
         self.methodSpecificId = methodSpecificId
     }
 
+    // MARK: - Private Static
+
+    private static let methodNameRegex = "^[a-z0-9]+$"
+    private static let methodSpecificIdRegex = "^(([a-zA-Z0-9._-]*:)*[a-zA-Z0-9._-]+|%[0-9a-fA-F]{2})+$"
+
     private static func isValidMethodName(_ methodName: String) -> Bool {
-        return methodName.range(of: "^[a-z0-9]+$", options: .regularExpression) != nil
+        return methodName.range(of: methodNameRegex, options: .regularExpression) != nil
     }
 
     private static func isValidMethodSpecificId(_ id: String) -> Bool {
-        // Validate method-specific-id according to the ABNF
-        let pattern = "([a-zA-Z0-9._-]|(%[0-9a-fA-F]{2}))+"
-        let regex = try! NSRegularExpression(pattern: pattern, options: [])
-        let nsrange = NSRange(id.startIndex..<id.endIndex, in: id)
-        return regex.firstMatch(in: id, options: [], range: nsrange) != nil
+        return id.range(of: methodSpecificIdRegex, options: .regularExpression) != nil
     }
 }

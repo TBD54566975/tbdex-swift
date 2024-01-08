@@ -2,6 +2,13 @@ import Foundation
 
 enum DidResolution {
 
+    /// Errors that can occur during DID resolution process
+    enum Error: String {
+        case invalidDid
+        case methodNotSupported
+        case notFound
+    }
+
     /// Representation of the result of a DID (Decentralized Identifier) resolution
     ///
     /// [Specification Reference](https://www.w3.org/TR/did-core/#resolution)
@@ -37,9 +44,12 @@ enum DidResolution {
             self.didDocumentMetadata = didDocumentMetadata
         }
 
-        static func invalidDid() -> Result {
+        /// Convenience function to create a `DidResolution.Result` with an error
+        /// - Parameter error: Specific error which caused DID to not resolve
+        /// - Returns: DidResolution.Result with appropriate error metadata
+        static func resolutionError(_ error: DidResolution.Error) -> Result {
             Result(
-                didResolutionMetadata: Metadata(error: "invalidDid"),
+                didResolutionMetadata: Metadata(error: error.rawValue),
                 didDocument: nil,
                 didDocumentMetadata: DidDocument.Metadata()
             )

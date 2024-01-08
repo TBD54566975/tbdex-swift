@@ -19,6 +19,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.1.2"),
         .package(url: "https://github.com/Frizlab/swift-typeid.git", from: "0.3.0"),
         .package(url: "https://github.com/flight-school/anycodable.git", from: "0.6.7"),
+        .package(url: "https://github.com/WeTransfer/Mocker.git", .upToNextMajor(from: "3.0.1")),
     ],
     targets: [
         // Main tbDEX library target
@@ -42,7 +43,6 @@ let package = Package(
             dependencies: [
                 "tbDEX",
                 "TestUtilities",
-                .product(name: "CustomDump", package: "swift-custom-dump"),
             ]
         ),
         // Web5 test vectors target
@@ -52,11 +52,13 @@ let package = Package(
                 "tbDEX",
                 "TestUtilities",
                 .product(name: "CustomDump", package: "swift-custom-dump"),
+                .product(name: "Mocker", package: "Mocker"),
             ],
             resources: [
                 .copy("Resources/ed25519"),
                 .copy("Resources/secp256k1"),
                 .copy("Resources/did_jwk"),
+                .copy("Resources/did_web"),
             ]
         ),
     ]

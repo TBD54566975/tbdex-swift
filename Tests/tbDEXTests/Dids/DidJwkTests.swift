@@ -18,21 +18,31 @@ final class DidJwkTests: XCTestCase {
         let resolutionResult = DidJwk.resolve(didUri: "hi")
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, "invalidDid")
+        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.invalidDid.rawValue)
     }
 
     func test_resolveWithError_ifDidUriNotJwk() {
         let resolutionResult = DidJwk.resolve(didUri: "did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH")
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, "invalidDid")
+        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.invalidDid.rawValue)
     }
 
     func test_resolveWithError_ifDidUriIsNotValidBase64Url() {
         let resolutionResult = DidJwk.resolve(didUri: "did:jwk:!!!")
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, "invalidDid")
+        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.invalidDid.rawValue)
+    }
+
+    func test_resolveWithError_ifMethodNotJwk() {
+        let resolutionResult = DidJwk.resolve(
+            didUri:
+                "did:web:eyJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpGZk1iek9qTW1RNGVmVDZrdndUSUpqZWxUcWpsMHhqRUlXUTJxb2JzUk1NIiwia3R5IjoiT0tQIiwiY3J2IjoiRWQyNTUxOSIsImFsZyI6IkVkRFNBIiwieCI6IkFOUmpIX3p4Y0tCeHNqUlBVdHpSYnA3RlNWTEtKWFE5QVBYOU1QMWo3azQifQ"
+        )
+
+        XCTAssertNil(resolutionResult.didDocument)
+        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.methodNotSupported.rawValue)
     }
 
     func test_resolveNewlyCratedDidJwk() throws {

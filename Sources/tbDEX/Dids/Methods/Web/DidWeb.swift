@@ -9,17 +9,14 @@ struct DidWeb {
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) async -> DidResolution.Result {
-        let parsedDid: ParsedDid
-        do {
-            parsedDid = try ParsedDid(didUri: didUri)
-        } catch {
-            return DidResolution.Result.invalidDid()
-        }
-
-        guard parsedDid.methodName == "web",
+        guard let parsedDid = try? ParsedDid(didUri: didUri),
             let url = getDidDocumentUrl(methodSpecificId: parsedDid.methodSpecificId)
         else {
-            return DidResolution.Result.invalidDid()
+            return DidResolution.Result.resolutionError(.invalidDid)
+        }
+
+        guard parsedDid.methodName == "web" else {
+            return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
         do {
@@ -27,16 +24,14 @@ struct DidWeb {
             let didDocument = try JSONDecoder().decode(DidDocument.self, from: response.0)
             return DidResolution.Result(didDocument: didDocument)
         } catch {
-            // TODO: throw error
-            return DidResolution.Result.invalidDid()
+            return DidResolution.Result.resolutionError(.notFound)
         }
-
     }
 
     private static func getDidDocumentUrl(methodSpecificId: String) -> URL? {
         let domainNameWithPath = methodSpecificId.replacingOccurrences(of: ":", with: "/")
         guard let decodedDomain = domainNameWithPath.removingPercentEncoding,
-            var url = URL(string: "https//\(decodedDomain)")
+            var url = URL(string: "https://\(decodedDomain)")
         else {
             return nil
         }
