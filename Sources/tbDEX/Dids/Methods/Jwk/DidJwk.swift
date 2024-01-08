@@ -23,23 +23,14 @@ struct DidJwk: Did {
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) -> DidResolution.Result {
-        let parsedDid: ParsedDid
-        do {
-            parsedDid = try ParsedDid(uri: didUri)
-        } catch {
-            return DidResolution.Result.invalidDid()
+        guard let parsedDid = try? ParsedDid(didUri: didUri),
+            let jwk = try? JSONDecoder().decode(Jwk.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
+        else {
+            return DidResolution.Result.resolutionError(.invalidDid)
         }
 
-        guard parsedDid.method == "jwk" else {
-            return DidResolution.Result.invalidDid()
-        }
-
-        let jwk: Jwk
-
-        do {
-            jwk = try JSONDecoder().decode(Jwk.self, from: try parsedDid.id.decodeBase64Url())
-        } catch {
-            return DidResolution.Result.invalidDid()
+        guard parsedDid.methodName == "jwk" else {
+            return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
         let verifiationMethod = DidVerificationMethod(
