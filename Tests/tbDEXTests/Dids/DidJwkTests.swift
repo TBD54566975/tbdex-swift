@@ -56,10 +56,10 @@ final class DidJwkTests: XCTestCase {
         XCTAssertNotNil(resolutionResult.didDocument)
         XCTAssertEqual(resolutionResult.didDocument?.id, didJwk.uri)
         XCTAssertEqual(resolutionResult.didDocument?.verificationMethod?.first?.id, "\(didJwk.uri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, "\(didJwk.uri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, "\(didJwk.uri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, "\(didJwk.uri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, "\(didJwk.uri)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, .referenced("\(didJwk.uri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, .referenced("\(didJwk.uri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, .referenced("\(didJwk.uri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, .referenced("\(didJwk.uri)#0"))
         XCTAssertNil(resolutionResult.didResolutionMetadata.error)
     }
 
@@ -71,10 +71,10 @@ final class DidJwkTests: XCTestCase {
         XCTAssertNotNil(resolutionResult.didDocument)
         XCTAssertEqual(resolutionResult.didDocument?.id, didUri)
         XCTAssertEqual(resolutionResult.didDocument?.verificationMethod?.first?.id, "\(didUri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, "\(didUri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, "\(didUri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, "\(didUri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, "\(didUri)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, .referenced("\(didUri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, .referenced("\(didUri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, .referenced("\(didUri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, .referenced("\(didUri)#0"))
         XCTAssertNil(resolutionResult.didResolutionMetadata.error)
     }
 
