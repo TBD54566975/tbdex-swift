@@ -4,7 +4,6 @@ import XCTest
 
 final class DidDocumentTests: XCTestCase {
 
-
     func test_embeddedVerifiationMethod() {
         let value = EmbeddedOrReferencedVerificationMethod.embedded(TestData.verificationMethod)
         XCTAssertEqual(value.dereferenced(with: TestData.didDocument), TestData.verificationMethod)
@@ -21,7 +20,6 @@ final class DidDocumentTests: XCTestCase {
     }
 
 }
-
 
 private enum TestData {
 
