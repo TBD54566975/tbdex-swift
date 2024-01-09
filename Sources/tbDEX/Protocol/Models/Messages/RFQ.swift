@@ -34,8 +34,6 @@ public struct RFQData: MessageData {
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#selectedpaymentmethod)
 public struct SelectedPaymentMethod: Codable {
 
-    // TODO: Should this be an enum? Check KT and JS impls.
-
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String
 
