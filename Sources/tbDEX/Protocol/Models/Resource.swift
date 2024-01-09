@@ -1,16 +1,20 @@
 import Foundation
 import TypeID
 
+/// tbDEX Resources are published by PFIs for anyone to consume and generally used as a part of the discovery process.
+/// They are not part of the message exchange, i.e Alice cannot reply to a Resource.
+///
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#resources)
 public struct Resource<D: ResourceData>: Codable {
 
-    /// An object containing fields about the resource
-    let metadata: Metadata
+    /// An object containing fields about the Resource.
+    public let metadata: Metadata
 
-    /// The actual resource content (e.g. an `Offering`)
-    let data: D
+    /// The actual Resource content.
+    public let data: D
 
-    /// Signature that verifies the authenticity and integrity of the resource
-    let signature: String?
+    /// Signature that verifies the authenticity and integrity of the Resource
+    public let signature: String?
 
     /// Default Initializer
     init(
@@ -18,7 +22,6 @@ public struct Resource<D: ResourceData>: Codable {
         data: D
     ) {
         let now = Date()
-        self.data = data
         self.metadata = Metadata(
             id: TypeID(prefix: data.kind.rawValue)!,
             kind: data.kind,
@@ -26,54 +29,52 @@ public struct Resource<D: ResourceData>: Codable {
             createdAt: now,
             updatedAt: now
         )
+        self.data = data
         self.signature = nil
     }
 
 }
 
-// MARK: - Kind
+// MARK: - ResourceData
+
+/// The actual content of a `Resource`.
+public protocol ResourceData: Codable {
+
+    /// The kind of Resource the data represents
+    var kind: Resource<Self>.Kind { get }
+
+}
+
+// MARK: - Nested Types
 
 extension Resource {
 
-    /// Enum containing the different types of resources
+    /// Enum containing the different types of Resources
     ///
     /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#resource-kinds)
     public enum Kind: String, Codable {
         case offering
     }
 
-}
-
-// MARK: - Data
-
-public protocol ResourceData: Codable {
-
-    /// The kind of resource the data represents
-    var kind: Resource<Self>.Kind { get }
-
-}
-
-// MARK: - Metadata
-
-extension Resource {
-
-    /// Structure containining fields about the resource and is present in every tbDEX resource.
+    /// Structure containining fields about the Resource and is present in every tbDEX Resource.
+    ///
+    /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#metadata)
     public struct Metadata: Codable {
 
         /// The resource's unique identifier
-        let id: TypeID
+        public let id: TypeID
 
         /// The data property's type. e.g. `offering`
-        let kind: Kind
+        public let kind: Kind
 
         /// The authors's DID URI
-        let from: String
+        public let from: String
 
         /// The time at which the resource was created
-        let createdAt: Date
+        public let createdAt: Date
 
         /// The time at which the resource was last updated
-        let updatedAt: Date?
+        public let updatedAt: Date?
 
         /// Default Initializer
         init(
@@ -90,5 +91,4 @@ extension Resource {
             self.updatedAt = updatedAt
         }
     }
-
 }
