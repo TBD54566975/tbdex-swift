@@ -40,4 +40,3 @@ public struct SelectedPaymentMethod: Codable {
     /// An object containing the properties defined in an Offering's `requiredPaymentDetails` json schema
     public let paymentDetails: AnyCodable?
 }
-
