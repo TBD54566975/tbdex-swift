@@ -44,20 +44,20 @@ public struct CurrencyDetails: Codable {
     public let currencyCode: String
 
     /// Minimum amount of currency that the offer is valid for
-    public let minSubunits: String?
+    public let minAmount: String?
 
     /// Maximum amount of currency that the offer is valid for
-    public let maxSubunits: String?
+    public let maxAmount: String?
 
     /// Default initializer
     init(
         currencyCode: String,
-        minSubunits: String? = nil,
-        maxSubunits: String? = nil
+        minAmount: String? = nil,
+        maxAmount: String? = nil
     ) {
         self.currencyCode = currencyCode
-        self.minSubunits = minSubunits
-        self.maxSubunits = maxSubunits
+        self.minAmount = minAmount
+        self.maxAmount = maxAmount
     }
 
 }
@@ -75,17 +75,17 @@ public struct PaymentMethod: Codable {
     public let requiredPaymentDetails: AnyCodable?
 
     /// The fee expressed in the currency's sub units to make use of this payment method
-    public let feeSubunits: String?
+    public let fee: String?
 
     /// Default initializer
     init(
         kind: String,
         requiredPaymentDetails: AnyCodable? = nil,
-        feeSubunits: String? = nil
+        fee: String? = nil
     ) {
         self.kind = kind
         self.requiredPaymentDetails = requiredPaymentDetails
-        self.feeSubunits = feeSubunits
+        self.fee = fee
     }
 
 }

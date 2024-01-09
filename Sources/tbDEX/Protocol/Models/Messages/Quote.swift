@@ -34,10 +34,10 @@ public struct QuoteDetails: Codable {
     public let currencyCode: String
 
     /// The amount of currency expressed in the smallest respective unit
-    public let amount: Double
+    public let amount: String
 
     /// The amount paid in fees
-    public let feeSubunits: String?
+    public let fee: String?
 
 }
 
