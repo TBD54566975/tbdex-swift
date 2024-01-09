@@ -112,6 +112,7 @@ struct JWS {
         let header: Header
         let payload: any DataProtocol
         let signingInput: Data
+        let signature: String?
 
         init(header: Header, payload: any DataProtocol) throws {
             self.header = header
@@ -124,6 +125,7 @@ struct JWS {
 
             // TODO: Remove this force unwrap
             self.signingInput = signingInputString.data(using: .utf8)!
+            self.signature = nil
         }
     }
 
