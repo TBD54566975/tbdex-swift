@@ -44,6 +44,15 @@ extension Resource {
 
 }
 
+// MARK: - Data
+
+public protocol ResourceData: Codable {
+
+    /// The kind of resource the data represents
+    var kind: Resource<Self>.Kind { get }
+
+}
+
 // MARK: - Metadata
 
 extension Resource {
