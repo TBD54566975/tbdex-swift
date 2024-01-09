@@ -20,8 +20,8 @@ struct Jwk: Codable, Equatable {
 
     /// Supported `alg` algorithms.
     enum Algorithm: String, Codable {
-        case eddsa = "EdDSA"
-        case es256k = "ES256K"
+        case EdDSA
+        case ES256K
     }
 
     /// Supported `use` values.

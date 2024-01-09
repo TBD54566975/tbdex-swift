@@ -14,7 +14,7 @@ enum SigningError: Error {
 
 extension Did {
 
-    func sign<D>(payload: D, assertionMethodId: String? = nil) async throws -> Data
+    func sign<D>(payload: D, assertionMethodId: String? = nil) async throws -> String
     where D: DataProtocol {
         let assertionMethod = try await getAssertionMethod(assertionMethodId)
         guard let publicKeyJwk = assertionMethod.publicKeyJwk else {
@@ -26,9 +26,22 @@ extension Did {
         // TODO: again, this seems wrong. Don't we already have the public key?
         let keyAlias = try keyManager.getDeterministicAlias(key: publicKeyJwk)
         let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
-        let algorithm = publicKey?.algorithm
+        // TODO: remove force unwrap
+        let algorithm = publicKey!.algorithm!
 
-        fatalError("Not implemented")
+        let jwsHeader = JWS.Header(
+            algorithm: algorithm.jwsAlgorithm,
+            keyID: assertionMethod.id
+        )
+
+        let jwsObject = try JWS.Object(header: jwsHeader, payload: payload)
+        let signatureBytes = try keyManager.sign(keyAlias: keyAlias, payload: jwsObject.signingInput)
+
+        // TODO: `JSONEncoder().encode(jwsHeader).base64UrlEncodedString()` is computed twice, which is inefficient
+        return
+            try JSONEncoder().encode(jwsHeader).base64UrlEncodedString()
+            + ".."
+            + signatureBytes.base64UrlEncodedString()
     }
 
 

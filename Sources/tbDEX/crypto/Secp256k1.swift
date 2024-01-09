@@ -118,7 +118,7 @@ enum Secpsecp256k1Error: Error {
 extension Secp256k1: KeyGenerator {
 
     var algorithm: Jwk.Algorithm {
-        .es256k
+        .ES256K
     }
 
     var keyType: Jwk.KeyType {

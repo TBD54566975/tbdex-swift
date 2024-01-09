@@ -27,7 +27,7 @@ enum Ed25519Error: Error {
 extension Ed25519: KeyGenerator {
 
     var algorithm: Jwk.Algorithm {
-        .eddsa
+        .EdDSA
     }
 
     var keyType: Jwk.KeyType {

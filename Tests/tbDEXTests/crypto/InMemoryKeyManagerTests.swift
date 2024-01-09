@@ -7,7 +7,7 @@ final class InMemoryKeyManagerTests: XCTestCase {
     let keyManager = InMemoryKeyManager()
 
     func test_aliasIsConsistent() throws {
-        let keyAlias = try keyManager.generatePrivateKey(algorithm: .es256k)
+        let keyAlias = try keyManager.generatePrivateKey(algorithm: .ES256K)
         let publicKey = try XCTUnwrap(try keyManager.getPublicKey(keyAlias: keyAlias))
         let defaultAlias = try keyManager.getDeterministicAlias(key: publicKey)
 
@@ -15,7 +15,7 @@ final class InMemoryKeyManagerTests: XCTestCase {
     }
 
     func test_getPublicKey_privateKeyInStore() throws {
-        let keyAlias = try keyManager.generatePrivateKey(algorithm: .es256k)
+        let keyAlias = try keyManager.generatePrivateKey(algorithm: .ES256K)
         XCTAssertNotNil(try keyManager.getPublicKey(keyAlias: keyAlias))
     }
 
@@ -24,7 +24,7 @@ final class InMemoryKeyManagerTests: XCTestCase {
     }
 
     func test_signSucceedsWhenKeyIsInKeyManager() throws {
-        let keyAlias = try keyManager.generatePrivateKey(algorithm: .es256k)
+        let keyAlias = try keyManager.generatePrivateKey(algorithm: .ES256K)
         let payload = try XCTUnwrap("Hello, world!".data(using: .utf8))
         XCTAssertNoThrow(try keyManager.sign(keyAlias: keyAlias, payload: payload))
     }
