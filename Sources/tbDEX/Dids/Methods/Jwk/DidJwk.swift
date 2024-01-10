@@ -1,10 +1,10 @@
 import Foundation
 
-struct DidJwk: Did {
+struct DidJWK: Did {
 
     struct Options {
-        let algorithm: Jwk.Algorithm
-        let curve: Jwk.Curve
+        let algorithm: JWK.Algorithm
+        let curve: JWK.Curve
     }
 
     let uri: String
@@ -24,7 +24,7 @@ struct DidJwk: Did {
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) -> DidResolution.Result {
         guard let parsedDid = try? ParsedDid(didUri: didUri),
-            let jwk = try? JSONDecoder().decode(Jwk.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
+            let jwk = try? JSONDecoder().decode(JWK.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
         else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
@@ -37,7 +37,7 @@ struct DidJwk: Did {
             id: "\(didUri)#0",
             type: "JsonWebKey2020",
             controller: didUri,
-            publicKeyJwk: jwk
+            publicKeyJWK: jwk
         )
 
         let didDocument = DidDocument(
