@@ -16,13 +16,13 @@ protocol KeyManager {
     /// - Parameters:
     ///   - algorithm: The cryptographic algorithm to use for key generation.
     ///   - curve: The elliptic curve to use (relevant for EC algorithms).
-    func generatePrivateKey(algorithm: JWK.Algorithm, curve: JWK.Curve?) throws -> String
+    func generatePrivateKey(algorithm: Jwk.Algorithm, curve: Jwk.Curve?) throws -> String
 
     /// Retrieves the public key associated with a previously stored private key, identified by the provided alias.
     ///
     /// - Parameter keyAlias: The alias referencing the stored private key.
     /// - Returns: The associated public key in JSON Web Key (JWK) format (if available).
-    func getPublicKey(keyAlias: String) throws -> JWK?
+    func getPublicKey(keyAlias: String) throws -> Jwk?
 
     /// Signs the provided payload using the private key identified by the provided alias.
     ///
@@ -36,7 +36,7 @@ protocol KeyManager {
     ///
     /// - Parameter key: A key in JSON Web Key (JWK) format
     /// - Returns: The alias belonging to `key`
-    func getDeterministicAlias(key: JWK) throws -> String
+    func getDeterministicAlias(key: Jwk) throws -> String
 }
 
 enum KeyManagerError: Error {

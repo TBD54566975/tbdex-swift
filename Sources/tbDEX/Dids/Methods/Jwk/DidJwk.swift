@@ -1,10 +1,10 @@
 import Foundation
 
-struct DIDJWK: DID {
+struct DidJwk: Did {
 
     struct Options {
-        let algorithm: JWK.Algorithm
-        let curve: JWK.Curve
+        let algorithm: Jwk.Algorithm
+        let curve: Jwk.Curve
     }
 
     let uri: String
@@ -19,28 +19,28 @@ struct DIDJWK: DID {
         self.keyManager = keyManager
     }
 
-    /// Resolves a `did:jwk` URI into a `DIDResolution.Result`
+    /// Resolves a `did:jwk` URI into a `DidResolution.Result`
     /// - Parameter didUri: The DID URI to resolve
-    /// - Returns: `DIDResolution.Result` containing the resolved DID Document.
-    static func resolve(didUri: String) -> DIDResolution.Result {
-        guard let parsedDID = try? ParsedDID(didUri: didUri),
-            let jwk = try? JSONDecoder().decode(JWK.self, from: try parsedDID.methodSpecificId.decodeBase64Url())
+    /// - Returns: `DidResolution.Result` containing the resolved DID Document.
+    static func resolve(didUri: String) -> DidResolution.Result {
+        guard let parsedDid = try? ParsedDid(didUri: didUri),
+            let jwk = try? JSONDecoder().decode(Jwk.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
         else {
-            return DIDResolution.Result.resolutionError(.invalidDID)
+            return DidResolution.Result.resolutionError(.invalidDid)
         }
 
-        guard parsedDID.methodName == "jwk" else {
-            return DIDResolution.Result.resolutionError(.methodNotSupported)
+        guard parsedDid.methodName == "jwk" else {
+            return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
         let verifiationMethod = VerificationMethod(
             id: "\(didUri)#0",
             type: "JsonWebKey2020",
             controller: didUri,
-            publicKeyJWK: jwk
+            publicKeyJwk: jwk
         )
 
-        let didDocument = DIDDocument(
+        let didDocument = DidDocument(
             context: .many([
                 "https://www.w3.org/ns/did/v1",
                 "https://w3id.org/security/suites/jws-2020/v1",
@@ -53,6 +53,6 @@ struct DIDJWK: DID {
             capabilityInvocation: [.referenced(verifiationMethod.id)]
         )
 
-        return DIDResolution.Result(didDocument: didDocument)
+        return DidResolution.Result(didDocument: didDocument)
     }
 }

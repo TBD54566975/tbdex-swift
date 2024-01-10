@@ -11,7 +11,7 @@ import Foundation
 ///   repository services.
 ///
 /// A DID Document can be retrieved by _resolving_ a DID URI
-struct DIDDocument: Codable, Equatable {
+struct DidDocument: Codable, Equatable {
 
     let context: OneOrMany<String>?
 
@@ -232,7 +232,7 @@ struct VerificationMethod: Codable, Equatable {
     let id: String
     let type: String
     let controller: String
-    let publicKeyJWK: JWK?
+    let publicKeyJwk: Jwk?
     let publicKeyMultibase: String?
 
     /// Computed property that returns the absolute ID of the verification method.
@@ -248,13 +248,13 @@ struct VerificationMethod: Codable, Equatable {
         id: String,
         type: String,
         controller: String,
-        publicKeyJWK: JWK? = nil,
+        publicKeyJwk: Jwk? = nil,
         publicKeyMultibase: String? = nil
     ) {
         self.id = id
         self.type = type
         self.controller = controller
-        self.publicKeyJWK = publicKeyJWK
+        self.publicKeyJwk = publicKeyJwk
         self.publicKeyMultibase = publicKeyMultibase
     }
 }
@@ -276,7 +276,7 @@ enum EmbeddedOrReferencedVerificationMethod: Codable, Equatable {
     case embedded(VerificationMethod)
     case referenced(String)
 
-    func dereferenced(with didDocument: DIDDocument) -> VerificationMethod? {
+    func dereferenced(with didDocument: DidDocument) -> VerificationMethod? {
         switch self {
         case let .embedded(verificationMethod):
             return verificationMethod

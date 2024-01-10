@@ -38,7 +38,7 @@ class Secp256k1 {
         guard publicKeyBytes.count == Self.uncompressedKeySize,
             publicKeyBytes.first == Self.uncompressedKeyID
         else {
-            throw Secp256k1Error.internalError(reason: "Public key must be 65 bytes long an start with 0x04")
+            throw Secpsecp256k1Error.internalError(reason: "Public key must be 65 bytes long an start with 0x04")
         }
 
         let xBytes = publicKeyBytes[1...32]
@@ -104,11 +104,11 @@ class Secp256k1 {
     }
 }
 
-enum Secp256k1Error: Error {
-    /// The privateJWK provide did not have the appropriate parameters set on it
-    case invalidPrivateJWK
-    /// The publicJWK provide did not have the appropriate parameters set on it
-    case invalidPublicJWK
+enum Secpsecp256k1Error: Error {
+    /// The private Jwk provide did not have the appropriate parameters set on it
+    case invalidPrivateJwk
+    /// The public Jwk provide did not have the appropriate parameters set on it
+    case invalidPublicJwk
     /// Something internally went wrong, check `reason` for more information about the exact error
     case internalError(reason: String)
 }
@@ -117,48 +117,48 @@ enum Secp256k1Error: Error {
 
 extension Secp256k1: KeyGenerator {
 
-    var algorithm: JWK.Algorithm {
+    var algorithm: Jwk.Algorithm {
         .es256k
     }
 
-    var keyType: JWK.KeyType {
+    var keyType: Jwk.KeyType {
         .elliptic
     }
 
     /// Generates an Secp256k1 private key in JSON Web Key (JWK) format.
-    func generatePrivateKey() throws -> JWK {
-        return try generatePrivateJWK(
+    func generatePrivateKey() throws -> Jwk {
+        return try generatePrivateJwk(
             privateKey: secp256k1.Signing.PrivateKey()
         )
     }
 
     /// Derives the public key in JSON Web Key (JWK) format from a given Secp256k1 private key in JWK format.
-    func computePublicKey(privateKey: JWK) throws -> JWK {
+    func computePublicKey(privateKey: Jwk) throws -> Jwk {
         guard let d = privateKey.d else {
-            throw Secp256k1Error.invalidPrivateJWK
+            throw Secpsecp256k1Error.invalidPrivateJwk
         }
 
         let privateKeyData = try d.decodeBase64Url()
         let privateKey = try secp256k1.Signing.PrivateKey(dataRepresentation: privateKeyData)
 
-        return try generatePublicJWK(publicKey: privateKey.publicKey)
+        return try generatePublicJwk(publicKey: privateKey.publicKey)
     }
 
     /// Converts a Secp256k1 private key from JSON Web Key (JWK) format to a raw bytes.
-    func privateKeyToBytes(_ privateKey: JWK) throws -> Data {
+    func privateKeyToBytes(_ privateKey: Jwk) throws -> Data {
         guard let d = privateKey.d else {
-            throw Secp256k1Error.invalidPrivateJWK
+            throw Secpsecp256k1Error.invalidPrivateJwk
         }
 
         return try d.decodeBase64Url()
     }
 
     /// Converts a Secp256k1 public key from JSON Web Key (JWK) format to a raw bytes.
-    func publicKeyToBytes(_ publicKey: JWK) throws -> Data {
+    func publicKeyToBytes(_ publicKey: Jwk) throws -> Data {
         guard let x = publicKey.x,
             let y = publicKey.y
         else {
-            throw Secp256k1Error.invalidPublicJWK
+            throw Secpsecp256k1Error.invalidPublicJwk
         }
 
         var data = Data()
@@ -167,34 +167,34 @@ extension Secp256k1: KeyGenerator {
         data.append(contentsOf: try y.decodeBase64Url())
 
         guard data.count == Self.uncompressedKeySize else {
-            throw Secp256k1Error.internalError(reason: "Public Key incorrect size: \(data.count)")
+            throw Secpsecp256k1Error.internalError(reason: "Public Key incorrect size: \(data.count)")
         }
 
         return data
     }
 
     /// Converts raw Secp256k1 private key in bytes to its corresponding JSON Web Key (JWK) format.
-    func bytesToPrivateKey(_ bytes: Data) throws -> JWK {
+    func bytesToPrivateKey(_ bytes: Data) throws -> Jwk {
         let privateKey = try secp256k1.Signing.PrivateKey(dataRepresentation: bytes)
-        return try generatePrivateJWK(privateKey: privateKey)
+        return try generatePrivateJwk(privateKey: privateKey)
     }
 
     /// Converts a raw Secp256k1 public key in bytes to its corresponding JSON Web Key (JWK) format.
-    func bytesToPublicKey(_ bytes: Data) throws -> JWK {
+    func bytesToPublicKey(_ bytes: Data) throws -> Jwk {
         let publicKey = try secp256k1.Signing.PublicKey(
             dataRepresentation: bytes,
             format: bytes.isCompressed() ? .compressed : .uncompressed
         )
 
-        return try generatePublicJWK(publicKey: publicKey)
+        return try generatePublicJwk(publicKey: publicKey)
     }
 
     // MARK: Private Functions
 
-    private func generatePrivateJWK(privateKey: secp256k1.Signing.PrivateKey) throws -> JWK {
+    private func generatePrivateJwk(privateKey: secp256k1.Signing.PrivateKey) throws -> Jwk {
         let (x, y) = try getCurvePoints(keyBytes: privateKey.dataRepresentation)
 
-        var jwk = JWK(
+        var jwk = Jwk(
             keyType: .elliptic,
             curve: .secp256k1,
             d: privateKey.dataRepresentation.base64UrlEncodedString(),
@@ -207,10 +207,10 @@ extension Secp256k1: KeyGenerator {
         return jwk
     }
 
-    private func generatePublicJWK(publicKey: secp256k1.Signing.PublicKey) throws -> JWK {
+    private func generatePublicJwk(publicKey: secp256k1.Signing.PublicKey) throws -> Jwk {
         let (x, y) = try getCurvePoints(keyBytes: publicKey.dataRepresentation)
 
-        var jwk = JWK(
+        var jwk = Jwk(
             keyType: .elliptic,
             curve: .secp256k1,
             x: x.base64UrlEncodedString(),
@@ -229,9 +229,9 @@ extension Secp256k1: Signer {
 
     /// Generates an RFC6979-compliant ECDSA signature of given data using a Secp256k1 private key in JSON Web Key
     /// (JWK) format.
-    func sign<D>(privateKey: JWK, payload: D) throws -> Data where D: DataProtocol {
+    func sign<D>(privateKey: Jwk, payload: D) throws -> Data where D: DataProtocol {
         guard let d = privateKey.d else {
-            throw Secp256k1Error.invalidPrivateJWK
+            throw Secpsecp256k1Error.invalidPrivateJwk
         }
 
         let privateKeyData = try d.decodeBase64Url()
@@ -244,7 +244,7 @@ extension Secp256k1: Signer {
 
     /// Verifies an RFC6979-compliant ECDSA signature against given data and a Secp256k1 public key in JSON Web Key
     /// (JWK) format.
-    func verify<S, D>(publicKey: JWK, signature: S, signedPayload: D) throws -> Bool
+    func verify<S, D>(publicKey: Jwk, signature: S, signedPayload: D) throws -> Bool
     where S: DataProtocol, D: DataProtocol {
         let publicKeyBytes = try publicKeyToBytes(publicKey)
         let publicKey = try secp256k1.Signing.PublicKey(dataRepresentation: publicKeyBytes, format: .uncompressed)
@@ -267,7 +267,7 @@ extension secp256k1.Signing.PublicKey {
     /// Get the uncompressed bytes for a given public key.
     ///
     /// With a compressed public key, there's no direct access to the y-coordinate for use within
-    /// a JWK. To avoid doing manual computations along the curve to compute the y-coordinate, this
+    /// a Jwk. To avoid doing manual computations along the curve to compute the y-coordinate, this
     /// function offloads the work to the `secp256k1` library to compute it for us.
     fileprivate func uncompressedBytes() -> Data {
         switch self.format {

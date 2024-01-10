@@ -1,29 +1,29 @@
 import Foundation
 
-struct DIDWeb {
+struct DidWeb {
 
     // MARK: - Public Static
 
-    /// Resolves a `did:jwk` URI into a `DIDResolution.Result`
+    /// Resolves a `did:jwk` URI into a `DidResolution.Result`
     /// - Parameter didUri: The DID URI to resolve
-    /// - Returns: `DIDResolution.Result` containing the resolved DID Document.
-    static func resolve(didUri: String) async -> DIDResolution.Result {
-        guard let parsedDID = try? ParsedDID(didUri: didUri),
-            let url = getDIDDocumentUrl(methodSpecificId: parsedDID.methodSpecificId)
+    /// - Returns: `DidResolution.Result` containing the resolved DID Document.
+    static func resolve(didUri: String) async -> DidResolution.Result {
+        guard let parsedDid = try? ParsedDid(didUri: didUri),
+            let url = getDidDocumentUrl(methodSpecificId: parsedDid.methodSpecificId)
         else {
-            return DIDResolution.Result.resolutionError(.invalidDID)
+            return DidResolution.Result.resolutionError(.invalidDid)
         }
 
-        guard parsedDID.methodName == "web" else {
-            return DIDResolution.Result.resolutionError(.methodNotSupported)
+        guard parsedDid.methodName == "web" else {
+            return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
         do {
             let response = try await URLSession.shared.data(from: url)
-            let didDocument = try JSONDecoder().decode(DIDDocument.self, from: response.0)
-            return DIDResolution.Result(didDocument: didDocument)
+            let didDocument = try JSONDecoder().decode(DidDocument.self, from: response.0)
+            return DidResolution.Result(didDocument: didDocument)
         } catch {
-            return DIDResolution.Result.resolutionError(.notFound)
+            return DidResolution.Result.resolutionError(.notFound)
         }
     }
 
@@ -32,7 +32,7 @@ struct DIDWeb {
     private static let wellKnownPath = "/.well-known"
     private static let didDocumentFilename = "/did.json"
 
-    private static func getDIDDocumentUrl(methodSpecificId: String) -> URL? {
+    private static func getDidDocumentUrl(methodSpecificId: String) -> URL? {
         let domainNameWithPath = methodSpecificId.replacingOccurrences(of: ":", with: "/")
         guard let decodedDomain = domainNameWithPath.removingPercentEncoding,
             var url = URL(string: "https://\(decodedDomain)")

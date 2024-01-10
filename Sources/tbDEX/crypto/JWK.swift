@@ -2,7 +2,7 @@ import CryptoKit
 import ExtrasBase64
 import Foundation
 
-struct JWK: Codable, Equatable {
+struct Jwk: Codable, Equatable {
 
     // MARK: - Types
 
@@ -116,20 +116,20 @@ struct JWK: Codable, Equatable {
     }
 }
 
-extension JWK {
+extension Jwk {
     func thumbprint() throws -> String {
-        let normalized: JWK
+        let normalized: Jwk
 
         switch keyType {
         case .elliptic:
-            normalized = JWK(
+            normalized = Jwk(
                 keyType: self.keyType,
                 curve: self.curve,
                 x: self.x,
                 y: self.y
             )
         case .octetKeyPair:
-            normalized = JWK(
+            normalized = Jwk(
                 keyType: self.keyType,
                 curve: self.curve,
                 x: self.x

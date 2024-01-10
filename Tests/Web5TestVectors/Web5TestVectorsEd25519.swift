@@ -12,7 +12,7 @@ final class Web5TestVectorsEd25519: XCTestCase {
             let privateKeyBytes: String
         }
 
-        let testVector = try TestVector<Input, JWK>(
+        let testVector = try TestVector<Input, Jwk>(
             fileName: "bytes-to-private-key",
             subdirectory: "ed25519"
         )
@@ -30,7 +30,7 @@ final class Web5TestVectorsEd25519: XCTestCase {
             let publicKeyBytes: String
         }
 
-        let testVector = try TestVector<Input, JWK>(
+        let testVector = try TestVector<Input, Jwk>(
             fileName: "bytes-to-public-key",
             subdirectory: "ed25519"
         )
@@ -45,10 +45,10 @@ final class Web5TestVectorsEd25519: XCTestCase {
     func test_computePublicKey() throws {
         /// Input data format for `compute-public-key` test vectors
         struct Input: Codable {
-            let privateKey: JWK
+            let privateKey: Jwk
         }
 
-        let testVector = try TestVector<Input, JWK>(
+        let testVector = try TestVector<Input, Jwk>(
             fileName: "compute-public-key",
             subdirectory: "ed25519"
         )
@@ -62,7 +62,7 @@ final class Web5TestVectorsEd25519: XCTestCase {
     func test_privateKeyToBytes() throws {
         /// Input data format for `private-key-to-bytes` test vectors
         struct Input: Codable {
-            let privateKey: JWK
+            let privateKey: Jwk
         }
 
         let testVector = try TestVector<Input, String>(
@@ -79,7 +79,7 @@ final class Web5TestVectorsEd25519: XCTestCase {
     func test_publicKeyToBytes() throws {
         /// Input data format for `public-key-to-bytes` test vectors
         struct Input: Codable {
-            let publicKey: JWK
+            let publicKey: Jwk
         }
 
         let testVector = try TestVector<Input, String>(
@@ -97,7 +97,7 @@ final class Web5TestVectorsEd25519: XCTestCase {
         /// Input data format for `sign` test vectors
         struct Input: Codable {
             let data: String
-            let key: JWK
+            let key: Jwk
         }
 
         let testVector = try TestVector<Input, String>(
@@ -139,7 +139,7 @@ final class Web5TestVectorsEd25519: XCTestCase {
         /// Input data format for `verify` test vectors
         struct Input: Codable {
             let data: String
-            let key: JWK
+            let key: Jwk
             let signature: String
         }
 

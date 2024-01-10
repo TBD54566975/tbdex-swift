@@ -2,7 +2,7 @@ import XCTest
 
 @testable import tbDEX
 
-final class DIDDocumentTests: XCTestCase {
+final class DidDocumentTests: XCTestCase {
 
     func test_embeddedVerifiationMethod() {
         let value = EmbeddedOrReferencedVerificationMethod.embedded(TestData.verificationMethod)
@@ -29,7 +29,7 @@ private enum TestData {
         controller: "did:example:123456789abcdefghi"
     )
 
-    static let didDocument = DIDDocument(
+    static let didDocument = DidDocument(
         id: "did:example:123456789abcdefghi",
         verificationMethod: [Self.verificationMethod]
     )
