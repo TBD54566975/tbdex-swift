@@ -1,10 +1,10 @@
 import Foundation
 
-enum DidResolution {
+enum DIDResolution {
 
     /// Errors that can occur during DID resolution process
     enum Error: String {
-        case invalidDid
+        case invalidDID = "invalidDid"
         case methodNotSupported
         case notFound
     }
@@ -18,40 +18,40 @@ enum DidResolution {
         ///
         /// This includes information about the resolution process itself, such as any errors
         /// that occurred. If not provided in the constructor, it defaults to an empty
-        /// `DidResolution.Metadata`.
-        let didResolutionMetadata: DidResolution.Metadata
+        /// `DIDResolution.Metadata`.
+        let didResolutionMetadata: DIDResolution.Metadata
 
         /// The resolved DID document, if available.
         ///
         /// This is the document that represents the resolved state of the DID. It may be `null`
         /// if the DID could not be resolved or if the document is not available.
-        let didDocument: DidDocument?
+        let didDocument: DIDDocument?
 
         /// The metadata associated with the DID document.
         ///
         /// This includes information about the document such as when it was created and
         /// any other relevant metadata. If not provided in the constructor, it defaults to an
-        /// empty `DidDocument.Metadata`.
-        let didDocumentMetadata: DidDocument.Metadata
+        /// empty `DIDDocument.Metadata`.
+        let didDocumentMetadata: DIDDocument.Metadata
 
         init(
-            didResolutionMetadata: DidResolution.Metadata = DidResolution.Metadata(),
-            didDocument: DidDocument? = nil,
-            didDocumentMetadata: DidDocument.Metadata = DidDocument.Metadata()
+            didResolutionMetadata: DIDResolution.Metadata = DIDResolution.Metadata(),
+            didDocument: DIDDocument? = nil,
+            didDocumentMetadata: DIDDocument.Metadata = DIDDocument.Metadata()
         ) {
             self.didResolutionMetadata = didResolutionMetadata
             self.didDocument = didDocument
             self.didDocumentMetadata = didDocumentMetadata
         }
 
-        /// Convenience function to create a `DidResolution.Result` with an error
+        /// Convenience function to create a `DIDResolution.Result` with an error
         /// - Parameter error: Specific error which caused DID to not resolve
-        /// - Returns: DidResolution.Result with appropriate error metadata
-        static func resolutionError(_ error: DidResolution.Error) -> Result {
+        /// - Returns: DIDResolution.Result with appropriate error metadata
+        static func resolutionError(_ error: DIDResolution.Error) -> Result {
             Result(
                 didResolutionMetadata: Metadata(error: error.rawValue),
                 didDocument: nil,
-                didDocumentMetadata: DidDocument.Metadata()
+                didDocumentMetadata: DIDDocument.Metadata()
             )
         }
     }

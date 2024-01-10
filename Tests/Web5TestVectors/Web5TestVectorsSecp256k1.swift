@@ -11,7 +11,7 @@ final class Web5TestVectorsSecp256k1: XCTestCase {
             let privateKeyBytes: String
         }
 
-        let testVector = try TestVector<Input, Jwk>(
+        let testVector = try TestVector<Input, JWK>(
             fileName: "bytes-to-private-key",
             subdirectory: "secp256k1"
         )
@@ -29,7 +29,7 @@ final class Web5TestVectorsSecp256k1: XCTestCase {
             let publicKeyBytes: String
         }
 
-        let testVector = try TestVector<Input, Jwk>(
+        let testVector = try TestVector<Input, JWK>(
             fileName: "bytes-to-public-key",
             subdirectory: "secp256k1"
         )
@@ -72,7 +72,7 @@ final class Web5TestVectorsSecp256k1: XCTestCase {
     func test_privateKeyToBytes() throws {
         /// Input data format for `private-key-to-bytes` test vectors
         struct Input: Codable {
-            let privateKey: Jwk
+            let privateKey: JWK
         }
 
         let testVector = try TestVector<Input, String>(
@@ -89,7 +89,7 @@ final class Web5TestVectorsSecp256k1: XCTestCase {
     func test_publicKeyToBytes() throws {
         /// Input data format for `public-key-to-bytes` test vectors
         struct Input: Codable {
-            let publicKey: Jwk
+            let publicKey: JWK
         }
 
         let testVector = try TestVector<Input, String>(

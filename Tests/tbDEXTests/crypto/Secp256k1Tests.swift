@@ -36,7 +36,7 @@ final class Secp256k1Tests: XCTestCase {
         XCTAssertEqual(publicKey.y, privateKey.y)
     }
 
-    func test_bytesToPrivateKey_returnedInJwkFormat() throws {
+    func test_bytesToPrivateKey_returnedInJWKFormat() throws {
         let privateKeyBytes = try XCTUnwrap(
             Data.fromHexString("740ec69810de9ad1b8f298f1d2c0e6a52dd1e958dc2afc85764bec169c222e88")
         )
@@ -50,7 +50,7 @@ final class Secp256k1Tests: XCTestCase {
         XCTAssertNotNil(privateKey.y)
     }
 
-    func test_bytesToPublicKey_returnedInJwkFormat() throws {
+    func test_bytesToPublicKey_returnedInJWKFormat() throws {
         let publicKeyBytes = try XCTUnwrap(
             Data.fromHexString(
                 "043752951274023296c8a74b0ffe42f82ff4b4d4bba4326477422703f761f59258c26a7465b9a77ac0c3f1cedb139c428b0b1fbb5516867b527636f3286f705553"

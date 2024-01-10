@@ -1,6 +1,6 @@
 import Foundation
 
-protocol Did {
+protocol DID {
     var uri: String { get }
     var keyManager: KeyManager { get }
 }

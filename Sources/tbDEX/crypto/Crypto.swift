@@ -11,7 +11,7 @@ enum Crypto {
     ///   - algorithm: The JWA algorithm identifier.
     ///   - curve: The elliptic curve. Null for algorithms that do not use elliptic curves.
     /// - Returns: The generated private key as a JWK object.
-    static func generatePrivateKey(algorithm: Jwk.Algorithm, curve: Jwk.Curve? = nil) throws -> Jwk {
+    static func generatePrivateKey(algorithm: JWK.Algorithm, curve: JWK.Curve? = nil) throws -> JWK {
         let keyGenerator = try getKeyGenerator(algorithm: algorithm, curve: curve)
         return try keyGenerator.generatePrivateKey()
     }
@@ -19,7 +19,7 @@ enum Crypto {
     /// Computes a public key from the given private key, utilizing relevant `KeyGenerator`.
     /// - Parameter privateKey: The private key used to compute the public key.
     /// - Returns: The computed public key as a JWK object.
-    static func computePublicKey(privateKey: Jwk) throws -> Jwk {
+    static func computePublicKey(privateKey: JWK) throws -> JWK {
         let keyGenerator = try getKeyGenerator(algorithm: privateKey.algorithm, curve: privateKey.curve)
         return try keyGenerator.computePublicKey(privateKey: privateKey)
     }
@@ -29,7 +29,7 @@ enum Crypto {
     ///   - privateKey: The JWK private key to be used for generating the signature.
     ///   - payload: The data to be signed.
     /// - Returns: The digital signature as a byte array.
-    static func sign<D>(privateKey: Jwk, payload: D) throws -> Data where D: DataProtocol {
+    static func sign<D>(privateKey: JWK, payload: D) throws -> Data where D: DataProtocol {
         let signer = try getSigner(algorithm: privateKey.algorithm, curve: privateKey.curve)
         return try signer.sign(privateKey: privateKey, payload: payload)
     }
@@ -43,20 +43,20 @@ enum Crypto {
     ///   - algorithm: The algorithm used for signing/verification, only used if not provided in the JWK.
     /// - Returns:  Boolean indicating if the publicKey and signature are valid for the given payload.
     static func verify<S, D>(
-        publicKey: Jwk,
+        publicKey: JWK,
         signature: S,
         signedPayload: D,
-        algorithm: Jwk.Algorithm? = nil
+        algorithm: JWK.Algorithm? = nil
     ) throws -> Bool where S: DataProtocol, D: DataProtocol {
         let algorithm = publicKey.algorithm ?? algorithm
         let verifier = try getVerifier(algorithm: algorithm, curve: publicKey.curve)
         return try verifier.verify(publicKey: publicKey, signature: signature, signedPayload: signedPayload)
     }
 
-    /// Converts a `Jwk` public key into its byte array representation.
-    /// - Parameter publicKey: `Jwk` object representing the public key to be converted.
+    /// Converts a `JWK` public key into its byte array representation.
+    /// - Parameter publicKey: `JWK` object representing the public key to be converted.
     /// - Returns: Data representing the byte-level information of the provided public key
-    static func publicKeyToBytes(publicKey: Jwk) throws -> Data {
+    static func publicKeyToBytes(publicKey: JWK) throws -> Data {
         let keyGenerator = try getKeyGenerator(algorithm: publicKey.algorithm, curve: publicKey.curve)
         return try keyGenerator.publicKeyToBytes(publicKey)
     }
@@ -68,7 +68,7 @@ enum Crypto {
     ///   - algorithm: The cryptographic algorithm to find a key generator for.
     ///   - curve: The cryptographic curve to find a key generator for.
     /// - Returns: The corresponding `KeyGenerator`.
-    private static func getKeyGenerator(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws -> KeyGenerator {
+    private static func getKeyGenerator(algorithm: JWK.Algorithm?, curve: JWK.Curve? = nil) throws -> KeyGenerator {
         switch (algorithm, curve) {
         case (nil, .secp256k1),
             (Secp256k1.shared.algorithm, nil),
@@ -84,11 +84,11 @@ enum Crypto {
         }
     }
 
-    private static func getSigner(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws -> Signer {
+    private static func getSigner(algorithm: JWK.Algorithm?, curve: JWK.Curve? = nil) throws -> Signer {
         return try getKeyGenerator(algorithm: algorithm, curve: curve) as! Signer
     }
 
-    private static func getVerifier(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws -> Signer {
+    private static func getVerifier(algorithm: JWK.Algorithm?, curve: JWK.Curve? = nil) throws -> Signer {
         return try getSigner(algorithm: algorithm, curve: curve)
     }
 }
