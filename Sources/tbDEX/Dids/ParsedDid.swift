@@ -1,6 +1,6 @@
 import Foundation
 
-enum ParsedDidError: Error {
+enum ParsedDIDError: Error {
     case invalidUri
     case invalidMethodName
     case invalidMethodSpecificId
@@ -8,7 +8,7 @@ enum ParsedDidError: Error {
 
 /// Parsed Decentralized Identifier (DID), according to the specifications
 /// defined by the [W3C DID Core specification](https://www.w3.org/TR/did-core).
-struct ParsedDid {
+struct ParsedDID {
 
     /// The complete DID URI.
     private(set) var uri: String
@@ -26,22 +26,22 @@ struct ParsedDid {
     /// Parses a DID URI in accordance to the ABNF rules specified in the specification
     /// [here](https://www.w3.org/TR/did-core/#did-syntax).
     /// - Parameter didUri: URI of DID to parse
-    /// - Returns: `ParsedDid` instance if parsing was successful. Throws error otherwise.
+    /// - Returns: `ParsedDID` instance if parsing was successful. Throws error otherwise.
     init(didUri: String) throws {
         let components = didUri.components(separatedBy: ":")
 
         guard components.count >= 3 else {
-            throw ParsedDidError.invalidUri
+            throw ParsedDIDError.invalidUri
         }
 
         let methodName = components[1]
         guard Self.isValidMethodName(methodName) else {
-            throw ParsedDidError.invalidMethodName
+            throw ParsedDIDError.invalidMethodName
         }
 
         let methodSpecificId = components.dropFirst(2).joined(separator: ":")
         guard Self.isValidMethodSpecificId(methodSpecificId) else {
-            throw ParsedDidError.invalidMethodSpecificId
+            throw ParsedDIDError.invalidMethodSpecificId
         }
 
         self.uri = didUri
