@@ -22,7 +22,7 @@ struct DidJwk: Did {
     /// Resolves a `did:jwk` URI into a `DidResolution.Result`
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
-    static func resolve(didUri: String) -> DidResolution.Result {
+    static func resolve(didUri: String) async -> DidResolution.Result {
         guard let parsedDid = try? ParsedDid(didUri: didUri),
             let jwk = try? JSONDecoder().decode(Jwk.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
         else {

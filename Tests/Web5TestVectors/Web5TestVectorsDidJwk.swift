@@ -12,9 +12,15 @@ final class Web5TestVectorsDidJwk: XCTestCase {
         )
 
         testVector.run { vector in
-            let didUri = vector.input
-            let result = DidJwk.resolve(didUri: didUri)
-            XCTAssertNoDifference(result, vector.output)
+            let expectation = XCTestExpectation(description: "async resolve")
+            Task {
+                let didUri = vector.input
+                let result = await DidJwk.resolve(didUri: didUri)
+                XCTAssertNoDifference(result, vector.output)
+                expectation.fulfill()
+            }
+
+            wait(for: [expectation], timeout: 1)
         }
     }
 
