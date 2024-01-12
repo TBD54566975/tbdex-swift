@@ -78,4 +78,12 @@ final class DidJwkTests: XCTestCase {
         XCTAssertNil(resolutionResult.didResolutionMetadata.error)
     }
 
+    func test_resolveIon() async throws {
+        let didUri =
+            "did:ion:EiC8RWXbMYyFsqQ5hxP3k2GVvqPaeP8EAN6i9wQblzj__Q:eyJkZWx0YSI6eyJwYXRjaGVzIjpbeyJhY3Rpb24iOiJyZXBsYWNlIiwiZG9jdW1lbnQiOnsicHVibGljS2V5cyI6W3siaWQiOiJkd24tc2lnIiwicHVibGljS2V5SndrIjp7ImNydiI6IkVkMjU1MTkiLCJrdHkiOiJPS1AiLCJ4IjoiSUM3NnB5QnAtNXFYbFpHS2I1M1V3M1NEWXJfY3AzaUpyLTFzSlBqb2hsSSJ9LCJwdXJwb3NlcyI6WyJhdXRoZW50aWNhdGlvbiIsImFzc2VydGlvbk1ldGhvZCJdLCJ0eXBlIjoiSnNvbldlYktleTIwMjAifV0sInNlcnZpY2VzIjpbeyJpZCI6InBmaSIsInNlcnZpY2VFbmRwb2ludCI6Imh0dHA6Ly9sb2NhbGhvc3Q6OTAwMCIsInR5cGUiOiJQRkkifV19fV0sInVwZGF0ZUNvbW1pdG1lbnQiOiJFaUN6SENrVEJtNDIwbEo3alluZElCa1VzamktanJoMnhYdEt4NHoxWm1QVEpBIn0sInN1ZmZpeERhdGEiOnsiZGVsdGFIYXNoIjoiRWlBZFJYbHhJNlpadzhUbE9NR2xEcUtaLVkwdlF4WV8xanJWVVUtcWgtUWZHUSIsInJlY292ZXJ5Q29tbWl0bWVudCI6IkVpQ1hZaVEyOWdZTXEzWHk0WEt2QnVTcjItNFRVWHhBVEY0QXpKald2Y3ptc1EifX0"
+
+        let resolutionResult = await DidIon.resolve(didUri: didUri)
+        XCTAssertNotNil(resolutionResult.didDocument)
+    }
+
 }

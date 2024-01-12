@@ -54,6 +54,24 @@ enum DidResolution {
                 didDocumentMetadata: DidDocument.Metadata()
             )
         }
+
+        init(from decoder: Decoder) throws {
+            let container: KeyedDecodingContainer<DidResolution.Result.CodingKeys> = try decoder.container(
+                keyedBy: DidResolution.Result.CodingKeys.self
+            )
+
+            self.didResolutionMetadata =
+                try container.decodeIfPresent(
+                    DidResolution.Metadata.self,
+                    forKey: DidResolution.Result.CodingKeys.didResolutionMetadata
+                ) ?? DidResolution.Metadata()
+            self.didDocument = try container.decodeIfPresent(
+                DidDocument.self, forKey: DidResolution.Result.CodingKeys.didDocument
+            )
+            self.didDocumentMetadata = try container.decode(
+                DidDocument.Metadata.self, forKey: DidResolution.Result.CodingKeys.didDocumentMetadata
+            )
+        }
     }
 
     /// A metadata structure consisting of values relating to the results of the
