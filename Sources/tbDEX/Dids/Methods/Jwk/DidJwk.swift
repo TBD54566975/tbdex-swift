@@ -41,9 +41,9 @@ struct DidJwk: Did {
         )
 
         let didDocument = DidDocument(
-            context: .many([
-                "https://www.w3.org/ns/did/v1",
-                "https://w3id.org/security/suites/jws-2020/v1",
+            context: .list([
+                .string("https://www.w3.org/ns/did/v1"),
+                .string("https://w3id.org/security/suites/jws-2020/v1"),
             ]),
             id: didUri,
             verificationMethod: [verifiationMethod],

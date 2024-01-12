@@ -7,6 +7,7 @@ enum DidResolver {
     private static var methodResolvers: [String: DidMethodResolver] = [
         "jwk": DidJwk.resolve,
         "web": DidWeb.resolve,
+        "ion": DidIon.resolve,
     ]
 
     /// Resolves a DID URI to its DID Document

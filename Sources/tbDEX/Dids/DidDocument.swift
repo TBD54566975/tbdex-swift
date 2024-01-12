@@ -13,7 +13,7 @@ import Foundation
 /// A DID Document can be retrieved by _resolving_ a DID URI
 struct DidDocument: Codable, Equatable {
 
-    let context: OneOrMany<String>?
+    let context: Context?
 
     /// The DID URI for a particular DID subject is expressed using the id property in the DID document.
     let id: String
@@ -105,7 +105,7 @@ struct DidDocument: Codable, Equatable {
     }
 
     init(
-        context: OneOrMany<String>? = nil,
+        context: Context? = nil,
         id: String,
         alsoKnownAs: [String]? = nil,
         controller: OneOrMany<String>? = nil,
@@ -190,7 +190,7 @@ struct DidDocument: Codable, Equatable {
         /// In this case, the DID method specification might need to express one or
         /// more DIDs that are logically equivalent to the resolved DID as a property
         /// of the DID document. This is the purpose of the equivalentId property.
-        let equivalentId: String?
+        let equivalentId: [String]?
 
         /// The canonicalId property is identical to the equivalentId property except:
         /// * It is associated with a single value rather than a set
@@ -205,7 +205,7 @@ struct DidDocument: Codable, Equatable {
             versionId: String? = nil,
             nextUpdate: String? = nil,
             nextVersionId: String? = nil,
-            equivalentId: String? = nil,
+            equivalentId: [String]? = nil,
             canonicalId: String? = nil
         ) {
             self.created = created
