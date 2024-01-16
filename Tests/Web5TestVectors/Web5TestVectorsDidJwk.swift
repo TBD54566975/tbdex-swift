@@ -11,7 +11,7 @@ final class Web5TestVectorsDidJwk: XCTestCase {
             subdirectory: "did_jwk"
         )
 
-        testVector.run { [unowned self] vector in
+        testVector.run { vector in
             let expectation = XCTestExpectation(description: "async resolve")
             Task {
                 let didUri = vector.input
@@ -20,7 +20,7 @@ final class Web5TestVectorsDidJwk: XCTestCase {
                 expectation.fulfill()
             }
 
-            self.wait(for: [expectation], timeout: 1)
+            wait(for: [expectation], timeout: 1)
         }
     }
 
