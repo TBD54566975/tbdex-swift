@@ -196,6 +196,7 @@ extension Secp256k1: KeyGenerator {
 
         var jwk = Jwk(
             keyType: .elliptic,
+            algorithm: .es256k,
             curve: .secp256k1,
             d: privateKey.dataRepresentation.base64UrlEncodedString(),
             x: x.base64UrlEncodedString(),
@@ -212,6 +213,7 @@ extension Secp256k1: KeyGenerator {
 
         var jwk = Jwk(
             keyType: .elliptic,
+            algorithm: .es256k,
             curve: .secp256k1,
             x: x.base64UrlEncodedString(),
             y: y.base64UrlEncodedString()

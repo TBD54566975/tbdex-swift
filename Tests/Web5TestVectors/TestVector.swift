@@ -76,7 +76,7 @@ extension TestVector {
         let input: Input
 
         /// The expected output for the test vector, which can be of any type.
-        let output: Output
+        let output: Output?
 
         /// Indicates whether the test vector is expected to produce an error.
         let errors: Bool?

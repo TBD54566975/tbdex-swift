@@ -34,7 +34,7 @@ final class Web5TestVectorsDidWeb: XCTestCase {
             subdirectory: "did_web"
         )
 
-        testVector.run { vector in
+        testVector.run { [unowned self] vector in
             let expectation = XCTestExpectation(description: "async resolve")
             Task {
                 /// Register each of the mock network responses
@@ -46,7 +46,7 @@ final class Web5TestVectorsDidWeb: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 1)
+            self.wait(for: [expectation], timeout: 1)
         }
     }
 
