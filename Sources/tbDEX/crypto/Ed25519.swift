@@ -60,7 +60,9 @@ extension Ed25519: KeyGenerator {
 
     /// Converts a public key from JSON Web Key (JWK) format to a raw bytes.
     func publicKeyToBytes(_ publicKey: Jwk) throws -> Data {
-        guard let x = publicKey.x else {
+        guard publicKey.d == nil,
+            let x = publicKey.x
+        else {
             throw Ed25519Error.invalidPublicJwk
         }
 
@@ -86,6 +88,7 @@ extension Ed25519: KeyGenerator {
     private func generatePrivateJwk(privateKey: Curve25519.Signing.PrivateKey) throws -> Jwk {
         var jwk = Jwk(
             keyType: .octetKeyPair,
+            algorithm: .eddsa,
             curve: .ed25519,
             d: privateKey.rawRepresentation.base64UrlEncodedString(),
             x: privateKey.publicKey.rawRepresentation.base64UrlEncodedString()
@@ -99,6 +102,7 @@ extension Ed25519: KeyGenerator {
     private func generatePublicJwk(publicKey: Curve25519.Signing.PublicKey) throws -> Jwk {
         var jwk = Jwk(
             keyType: .octetKeyPair,
+            algorithm: .eddsa,
             curve: .ed25519,
             x: publicKey.rawRepresentation.base64UrlEncodedString()
         )
@@ -135,11 +139,8 @@ extension Ed25519: Signer {
     /// (JWK) format.
     func verify<S, D>(publicKey: Jwk, signature: S, signedPayload: D) throws -> Bool
     where S: DataProtocol, D: DataProtocol {
-        guard let x = publicKey.x else {
-            throw Ed25519Error.invalidPublicJwk
-        }
-
-        let publicKey = try Curve25519.Signing.PublicKey(rawRepresentation: try x.decodeBase64Url())
+        let publicKeyBytes = try publicKeyToBytes(publicKey)
+        let publicKey = try Curve25519.Signing.PublicKey(rawRepresentation: publicKeyBytes)
         return publicKey.isValidSignature(signature, for: signedPayload)
     }
 }

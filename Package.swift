@@ -56,8 +56,8 @@ let package = Package(
                 .product(name: "Mocker", package: "Mocker"),
             ],
             resources: [
-                .copy("Resources/ed25519"),
-                .copy("Resources/secp256k1"),
+                .copy("Resources/crypto_ed25519"),
+                .copy("Resources/crypto_es256k"),
                 .copy("Resources/did_jwk"),
                 .copy("Resources/did_web"),
             ]

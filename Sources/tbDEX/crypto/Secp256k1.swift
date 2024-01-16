@@ -155,7 +155,8 @@ extension Secp256k1: KeyGenerator {
 
     /// Converts a Secp256k1 public key from JSON Web Key (JWK) format to a raw bytes.
     func publicKeyToBytes(_ publicKey: Jwk) throws -> Data {
-        guard let x = publicKey.x,
+        guard publicKey.d == nil,
+            let x = publicKey.x,
             let y = publicKey.y
         else {
             throw Secpsecp256k1Error.invalidPublicJwk
@@ -196,6 +197,7 @@ extension Secp256k1: KeyGenerator {
 
         var jwk = Jwk(
             keyType: .elliptic,
+            algorithm: .es256k,
             curve: .secp256k1,
             d: privateKey.dataRepresentation.base64UrlEncodedString(),
             x: x.base64UrlEncodedString(),
@@ -212,6 +214,7 @@ extension Secp256k1: KeyGenerator {
 
         var jwk = Jwk(
             keyType: .elliptic,
+            algorithm: .es256k,
             curve: .secp256k1,
             x: x.base64UrlEncodedString(),
             y: y.base64UrlEncodedString()
@@ -239,7 +242,7 @@ extension Secp256k1: Signer {
             dataRepresentation: privateKeyData,
             format: privateKeyData.isCompressed() ? .compressed : .uncompressed
         )
-        return try privateKey.signature(for: payload).dataRepresentation
+        return try privateKey.signature(for: payload).compactRepresentation
     }
 
     /// Verifies an RFC6979-compliant ECDSA signature against given data and a Secp256k1 public key in JSON Web Key
@@ -249,8 +252,9 @@ extension Secp256k1: Signer {
         let publicKeyBytes = try publicKeyToBytes(publicKey)
         let publicKey = try secp256k1.Signing.PublicKey(dataRepresentation: publicKeyBytes, format: .uncompressed)
 
-        let ecdsaSignature = try secp256k1.Signing.ECDSASignature(dataRepresentation: signature)
-        return publicKey.isValidSignature(ecdsaSignature, for: signedPayload)
+        let ecdsaSignature = try secp256k1.Signing.ECDSASignature(compactRepresentation: signature)
+        let normalizedSignature = try ecdsaSignature.normalized()
+        return publicKey.isValidSignature(normalizedSignature, for: signedPayload)
     }
 }
 
@@ -283,5 +287,24 @@ extension secp256k1.Signing.PublicKey {
             secp256k1_ec_pubkey_serialize(context, &bytes, &keyLength, &key, targetFormat.rawValue)
             return Data(bytes)
         }
+    }
+}
+
+extension secp256k1.Signing.ECDSASignature {
+
+    /// Normalizes target ECDSASignature to low-s value.
+    func normalized() throws -> secp256k1.Signing.ECDSASignature {
+        let context = secp256k1.Context.rawRepresentation
+        var signature = secp256k1_ecdsa_signature()
+        dataRepresentation.copyToUnsafeMutableBytes(of: &signature.data)
+
+        var normalized = secp256k1_ecdsa_signature()
+        secp256k1_ecdsa_signature_normalize(
+            context,
+            &normalized,
+            &signature
+        )
+
+        return try Self(dataRepresentation: normalized.dataValue)
     }
 }
