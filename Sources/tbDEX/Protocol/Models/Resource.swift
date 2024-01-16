@@ -33,16 +33,16 @@ public struct Resource<D: ResourceData>: Codable {
         self.signature = nil
     }
 
-    func digest() throws -> Data {
+    private func digest() throws -> Data {
         try CryptoUtils.digest(data: data, metadata: metadata)
-    }
-
-    func verify() async throws {
-        _ = try await CryptoUtils.verify(didUri: metadata.from, signature: signature, detachedPayload: digest())
     }
 
     mutating func sign(did: Did, keyAlias: String? = nil) async throws {
         self.signature = try await CryptoUtils.sign(did: did, payload: digest(), assertionMethodId: keyAlias)
+    }
+
+    func verify() async throws {
+        _ = try await CryptoUtils.verify(didUri: metadata.from, signature: signature, detachedPayload: digest())
     }
 
 }

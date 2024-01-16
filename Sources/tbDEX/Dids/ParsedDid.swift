@@ -11,8 +11,11 @@ enum ParsedDidError: Error {
 struct ParsedDid {
 
     /// The complete DID URI.
-    var uri: String
+    let uri: String
 
+    /// The DID URI without the fragment part.
+    ///
+    /// Example: if the `uri` is `did:example:1234#keys-1`, `did:example:1234` would be the `uriWithoutFragment`
     var uriWithoutFragment: String {
         uri.components(separatedBy: "#")[0]
     }
@@ -20,12 +23,12 @@ struct ParsedDid {
     /// The method name specified in the DID URI.
     ///
     /// Example: if the `uri` is `did:example:123456`, "example" would be the method name
-    var methodName: String
+    let methodName: String
 
     /// The method specific identifier part of the DID URI.
     ///
     /// Example: if the `uri` is `did:example:123456`, "123456" would be the identifier
-    var methodSpecificId: String
+    let methodSpecificId: String
 
     /// The fragment part of the DID URI.
     ///
