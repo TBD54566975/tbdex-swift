@@ -1,6 +1,7 @@
 import AnyCodable
 import Foundation
 import TypeID
+import Web5
 
 /// Messages form exchanges between Alice and a PFI.
 ///

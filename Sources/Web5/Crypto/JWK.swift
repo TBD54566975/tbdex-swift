@@ -2,36 +2,36 @@ import CryptoKit
 import ExtrasBase64
 import Foundation
 
-struct Jwk: Codable, Equatable {
+public struct Jwk: Codable, Equatable {
 
     // MARK: - Types
 
     /// Supported `crv` curve types.
-    enum Curve: String, Codable {
+    public enum Curve: String, Codable {
         case ed25519 = "Ed25519"
         case secp256k1 = "secp256k1"
     }
 
     /// Supported `kty` key types.
-    enum KeyType: String, Codable {
+    public enum KeyType: String, Codable {
         case elliptic = "EC"
         case octetKeyPair = "OKP"
     }
 
     /// Supported `alg` algorithms.
-    enum Algorithm: String, Codable {
+    public enum Algorithm: String, Codable {
         case eddsa = "EdDSA"
         case es256k = "ES256K"
     }
 
     /// Supported `use` values.
-    enum PublicKeyUse: String, Codable {
+    public enum PublicKeyUse: String, Codable {
         case signature = "sig"
         case encryption = "enc"
     }
 
     /// Supported `key_ops` values.
-    enum KeyOperations: String, Codable {
+    public enum KeyOperations: String, Codable {
         case encrypt
         case decrypt
         case sign
@@ -49,53 +49,85 @@ struct Jwk: Codable, Equatable {
     /// on any of these parameters.
 
     /// The `kty` (key type) parameter identifies the cyrptographic algorithm family used with the key.
-    var keyType: KeyType
+    public let keyType: KeyType
 
     /// The `use` (public key use) parameter identifies the intended use of the public key.
-    var publicKeyUse: PublicKeyUse?
+    public let publicKeyUse: PublicKeyUse?
 
     /// The "key_ops" (key operations) parameter identifies the operation(s) for which the key is intended to be used.
-    var keyOperations: [KeyOperations]?
+    public let keyOperations: [KeyOperations]?
 
     /// The `alg` (algorithm) parameter identifies the cryptographic algorithm intended for use with the key.
-    var algorithm: Algorithm?
+    public let algorithm: Algorithm?
 
     /// The "alg" (algorithm) parameter identifies the algorithm intended for use with the key.
-    var keyIdentifier: String?
+    public internal(set) var keyIdentifier: String?
 
     /// The `crv` (curve) parameter identifies the cryptographic curve intended for use with the key.
-    var curve: Curve?
+    public let curve: Curve?
 
     /// The "x5u" (X.509 URL) parameter is a URI [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986) that refers
     /// to a resource for an X.509 public key certificate or certificate chain
     /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280).
-    var x509Url: String?
+    public let x509Url: String?
 
     /// The "x5c" (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates
     /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)
-    var x509CertificateChain: String?
+    public let x509CertificateChain: String?
 
     /// The "x5t" (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest)
     /// of the DER encoding of an X.509 certificate [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280).
-    var x509CertificateSha1Thumbprint: String?
+    public let x509CertificateSha1Thumbprint: String?
 
     /// The "x5t#S256" (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint
     /// (a.k.a. digest) of the DER encoding of an X.509 certificate
     /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280).
-    var x509CertificateSha256Thumbprint: String?
+    public let x509CertificateSha256Thumbprint: String?
 
     // MARK: - KeyType Specific JWK Properties
 
     /// The below properties represent JWK parameters that are unique to specific JWK key types.
 
     /// `d` Private exponent.
-    var d: String?
+    let d: String?
 
     /// The x-coordinate for the Elliptic Curve point.
-    var x: String?
+    let x: String?
 
     /// Elliptic Curve y-coordinate.
-    var y: String?
+    let y: String?
+
+    // MARK: - Lifecycle
+
+    init(
+        keyType: KeyType,
+        publicKeyUse: PublicKeyUse? = nil,
+        keyOperations: [KeyOperations]? = nil,
+        algorithm: Algorithm? = nil,
+        keyIdentifier: String? = nil,
+        curve: Curve? = nil,
+        x509Url: String? = nil,
+        x509CertificateChain: String? = nil,
+        x509CertificateSha1Thumbprint: String? = nil,
+        x509CertificateSha256Thumbprint: String? = nil,
+        d: String? = nil,
+        x: String? = nil,
+        y: String? = nil
+    ) {
+        self.keyType = keyType
+        self.publicKeyUse = publicKeyUse
+        self.keyOperations = keyOperations
+        self.algorithm = algorithm
+        self.keyIdentifier = keyIdentifier
+        self.curve = curve
+        self.x509Url = x509Url
+        self.x509CertificateChain = x509CertificateChain
+        self.x509CertificateSha1Thumbprint = x509CertificateSha1Thumbprint
+        self.x509CertificateSha256Thumbprint = x509CertificateSha256Thumbprint
+        self.d = d
+        self.x = x
+        self.y = y
+    }
 
     // MARK: - Codable
 

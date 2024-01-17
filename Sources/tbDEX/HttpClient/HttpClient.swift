@@ -1,4 +1,5 @@
 import Foundation
+import Web5
 
 public enum HttpClient {
 

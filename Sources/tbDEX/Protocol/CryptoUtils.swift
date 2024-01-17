@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import Web5
 
 enum CryptoUtils {}
 

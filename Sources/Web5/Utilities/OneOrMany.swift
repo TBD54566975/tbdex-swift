@@ -1,10 +1,10 @@
 import Foundation
 
-enum OneOrMany<T: Codable & Equatable>: Codable, Equatable {
+public enum OneOrMany<T: Codable & Equatable>: Codable, Equatable {
     case one(T)
     case many([T])
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let singleValue = try? container.decode(T.self) {
             self = .one(singleValue)
@@ -21,7 +21,7 @@ enum OneOrMany<T: Codable & Equatable>: Codable, Equatable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .one(let singleValue):

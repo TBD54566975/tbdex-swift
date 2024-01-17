@@ -3,7 +3,7 @@ import Mocker
 import TestUtilities
 import XCTest
 
-@testable import tbDEX
+@testable import Web5
 
 final class Web5TestVectorsDidWeb: XCTestCase {
 
