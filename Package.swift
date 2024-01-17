@@ -69,7 +69,6 @@ let package = Package(
             dependencies: [
                 "tbDEX",
                 "TestUtilities",
-                .product(name: "CustomDump", package: "swift-custom-dump"),
             ]
         ),
         // Shared test utilities target

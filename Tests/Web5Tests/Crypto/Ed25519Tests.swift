@@ -1,4 +1,3 @@
-import CustomDump
 import XCTest
 
 @testable import Web5
