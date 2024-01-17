@@ -5,17 +5,7 @@ import XCTest
 final class OfferingTests: XCTestCase {
 
     func test_init() {
-        let offering = Offering(
-            from: "pfi",
-            data: .init(
-                description: "test offering",
-                payoutUnitsPerPayinUnit: "1",
-                payinCurrency: .init(currencyCode: "AUD"),
-                payoutCurrency: .init(currencyCode: "BTC"),
-                payoutMethods: [],
-                requiredClaims: [:]
-            )
-        )
+        let offering = createOffering(from: "pfi")
 
         XCTAssertEqual(offering.metadata.id.prefix, "offering")
         XCTAssertEqual(offering.metadata.from, "pfi")
