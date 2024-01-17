@@ -14,7 +14,7 @@ public struct Resource<D: ResourceData>: Codable {
     public let data: D
 
     /// Signature that verifies the authenticity and integrity of the Resource
-    public let signature: String?
+    public private(set) var signature: String?
 
     /// Default Initializer
     init(
@@ -31,6 +31,18 @@ public struct Resource<D: ResourceData>: Codable {
         )
         self.data = data
         self.signature = nil
+    }
+
+    private func digest() throws -> Data {
+        try CryptoUtils.digest(data: data, metadata: metadata)
+    }
+
+    mutating func sign(did: Did, keyAlias: String? = nil) async throws {
+        self.signature = try await CryptoUtils.sign(did: did, payload: digest(), assertionMethodId: keyAlias)
+    }
+
+    func verify() async throws {
+        _ = try await CryptoUtils.verify(didUri: metadata.from, signature: signature, detachedPayload: digest())
     }
 
 }

@@ -14,7 +14,7 @@ public struct Message<D: MessageData>: Codable {
     public let data: D
 
     /// Signature that verifies the authenticity and integrity of the Message
-    public let signature: String?
+    public private(set) var signature: String?
 
     /// An ephemeral JSON object used to transmit sensitive data (e.g. PII)
     public let `private`: AnyCodable?
@@ -38,6 +38,18 @@ public struct Message<D: MessageData>: Codable {
         self.data = data
         self.signature = nil
         self.private = nil
+    }
+
+    private func digest() throws -> Data {
+        try CryptoUtils.digest(data: data, metadata: metadata)
+    }
+
+    mutating func sign(did: Did, keyAlias: String? = nil) async throws {
+        signature = try await CryptoUtils.sign(did: did, payload: try digest(), assertionMethodId: keyAlias)
+    }
+
+    func verify() async throws {
+        _ = try await CryptoUtils.verify(didUri: metadata.from, signature: signature, detachedPayload: try digest())
     }
 
 }
