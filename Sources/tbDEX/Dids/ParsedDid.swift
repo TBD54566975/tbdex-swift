@@ -47,7 +47,8 @@ struct ParsedDid {
     /// - Parameter didUri: URI of DID to parse
     /// - Returns: `ParsedDid` instance if parsing was successful. Throws error otherwise.
     init(didUri: String) throws {
-        let components = didUri
+        let components =
+            didUri
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "#")
             .first!

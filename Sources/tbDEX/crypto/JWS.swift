@@ -57,7 +57,7 @@ struct JWS {
         let type: String?
 
         /// The "cty" (content type) Header Parameter is used by JWS applications to declare the media type
-        /// [[IANA.MediaTypes](https://datatracker.ietf.org/doc/html/rfc7515#ref-IANA.MediaTypes)] of the secured 
+        /// [[IANA.MediaTypes](https://datatracker.ietf.org/doc/html/rfc7515#ref-IANA.MediaTypes)] of the secured
         /// content (the payload).
         let contentType: String?
 
@@ -106,29 +106,6 @@ struct JWS {
             case critical = "crit"
         }
     }
-
-
-    struct Object {
-        let header: Header
-        let payload: any DataProtocol
-        let signingInput: Data
-        let signature: String?
-
-        init(header: Header, payload: any DataProtocol) throws {
-            self.header = header
-            self.payload = payload
-
-            let signingInputString =
-                "\(try JSONEncoder().encode(header).base64UrlEncodedString())"
-                + "."
-                + payload.base64UrlEncodedString()
-
-            // TODO: Remove this force unwrap
-            self.signingInput = signingInputString.data(using: .utf8)!
-            self.signature = nil
-        }
-    }
-
 }
 
 extension Jwk.Algorithm {
@@ -142,7 +119,6 @@ extension Jwk.Algorithm {
             return .es256k
         }
     }
-
 }
 
 extension JWS.Algorithm {
@@ -156,5 +132,4 @@ extension JWS.Algorithm {
             return .es256k
         }
     }
-
 }

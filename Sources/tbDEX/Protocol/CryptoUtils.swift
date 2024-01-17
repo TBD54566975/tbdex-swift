@@ -6,7 +6,7 @@ enum CryptoUtils {}
 // MARK: - Digest
 
 extension CryptoUtils {
-    
+
     static func digest<D: Codable, M: Codable>(data: D, metadata: M) throws -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -18,7 +18,6 @@ extension CryptoUtils {
         let digest = SHA256.hash(data: serializedPayload)
         return Data(digest)
     }
-
 
     private struct DigestPayload<D: Codable, M: Codable>: Codable {
         let data: D
@@ -34,6 +33,7 @@ extension CryptoUtils {
     enum SigningError: Error {
         case assertionMethodNotFound
         case publicKeyJwkNotFound
+        case algorithmNotDefined
     }
 
     /// Signs the provided payload using the specified DID and key.
@@ -41,50 +41,47 @@ extension CryptoUtils {
     ///   - did: DID to use for signing.
     ///   - payload: The payload to sign.
     ///   - assertionMethodId: The alias of the key to be used for signing.
-    /// - Throws: DOCUMENT THIS!!!
     /// - Returns: The signed payload as a detached payload JWT (JSON Web Token).
     static func sign<D>(did: Did, payload: D, assertionMethodId: String? = nil) async throws -> String
-    where D: DataProtocol{
+    where D: DataProtocol {
         let assertionMethod = try await getAssertionMethod(did: did, assertionMethodId: assertionMethodId)
         guard let publicKeyJwk = assertionMethod.publicKeyJwk else {
-            // TODO: This seems wrong... What about trying `publicKeyMultibase`?
-            // This is just copied from `tbdex-kt` for now, but probably needs to be rethought
             throw SigningError.publicKeyJwkNotFound
         }
 
-        // TODO: again, this seems wrong. Don't we already have the public key?
         let keyAlias = try did.keyManager.getDeterministicAlias(key: publicKeyJwk)
-        let publicKey = try did.keyManager.getPublicKey(keyAlias: keyAlias)
-        // TODO: remove force unwrap
-        let algorithm = publicKey!.algorithm!
+        guard let publicKey = try did.keyManager.getPublicKey(keyAlias: keyAlias),
+            let algorithm = publicKey.algorithm
+        else {
+            throw SigningError.algorithmNotDefined
+        }
 
         let jwsHeader = JWS.Header(
             algorithm: algorithm.jwsAlgorithm,
             keyID: assertionMethod.id
         )
 
-        let jwsObject = try JWS.Object(header: jwsHeader, payload: payload)
-        let signatureBytes = try did.keyManager.sign(keyAlias: keyAlias, payload: jwsObject.signingInput)
+        let base64UrlEncodedHeader = try JSONEncoder().encode(jwsHeader).base64UrlEncodedString()
+        let base64UrlEncodedPayload = payload.base64UrlEncodedString()
 
-        // TODO: `JSONEncoder().encode(jwsHeader).base64UrlEncodedString()` is computed twice, which is inefficient
+        let toSign = "\(base64UrlEncodedHeader).\(base64UrlEncodedPayload)"
+        let signatureBytes = try did.keyManager.sign(keyAlias: keyAlias, payload: Data(toSign.utf8))
+        let base64UrlEncodedSignature = signatureBytes.base64UrlEncodedString()
 
-        let headerBase64 = try JSONEncoder().encode(jwsHeader).base64UrlEncodedString()
-        let signatureBase64 = signatureBytes.base64UrlEncodedString()
-        let signature = "\(headerBase64)..\(signatureBase64)"
-
-        return signature
+        return "\(base64UrlEncodedHeader)..\(base64UrlEncodedSignature)"
     }
 
     private static func getAssertionMethod(did: Did, assertionMethodId: String?) async throws -> VerificationMethod {
         let resolutionResult = await DidResolver.resolve(didUri: did.uri)
         let assertionMethods = resolutionResult.didDocument?.assertionMethodDereferenced
 
-        guard let assertionMethod =
-            if let assertionMethodId {
-                assertionMethods?.first(where: { $0.id == assertionMethodId })
-            } else {
-                assertionMethods?.first
-            }
+        guard
+            let assertionMethod =
+                if let assertionMethodId {
+                    assertionMethods?.first(where: { $0.id == assertionMethodId })
+                } else {
+                    assertionMethods?.first
+                }
         else {
             throw SigningError.assertionMethodNotFound
         }
@@ -93,7 +90,6 @@ extension CryptoUtils {
     }
 
 }
-
 
 // MARK: - Verify
 
@@ -136,7 +132,7 @@ extension CryptoUtils {
         }
 
         guard let jwsHeader = try? JSONDecoder().decode(JWS.Header.self, from: jwsHeader.decodeBase64Url()),
-            let verificationMethodID =  jwsHeader.keyID
+            let verificationMethodID = jwsHeader.keyID
         else {
             throw VerifyError(reason: "")
         }
@@ -153,10 +149,11 @@ extension CryptoUtils {
             throw VerifyError(reason: "Failed to resolve DID \(signingDidUri): \(error)")
         }
 
-        guard let assertionMethod =
-            resolutionResult.didDocument?.assertionMethodDereferenced?.first(
-                where: { $0.absoluteId == verificationMethodID }
-            )
+        guard
+            let assertionMethod =
+                resolutionResult.didDocument?.assertionMethodDereferenced?.first(
+                    where: { $0.absoluteId == verificationMethodID }
+                )
         else {
             throw VerifyError(reason: "Assertion method not found")
         }
