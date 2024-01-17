@@ -1,15 +1,15 @@
 extension DidDocument {
 
     /// [Specification Reference](https://www.w3.org/TR/did-core/#dfn-context)
-    enum Context: Codable, Equatable {
+    public enum Context: Codable, Equatable {
         case string(String)
         case list([ListElement])
 
-        enum ListElement: Codable, Equatable {
+        public enum ListElement: Codable, Equatable {
             case string(String)
             case orderedMap([String: String])
 
-            init(from decoder: Decoder) throws {
+            public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
                 if let str = try? container.decode(String.self) {
                     self = .string(str)
@@ -20,7 +20,7 @@ extension DidDocument {
                 }
             }
 
-            func encode(to encoder: Encoder) throws {
+            public func encode(to encoder: Encoder) throws {
                 var container = encoder.singleValueContainer()
                 switch self {
                 case .string(let str):
@@ -31,7 +31,7 @@ extension DidDocument {
             }
         }
 
-        init(from decoder: Decoder) throws {
+        public init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             if let str = try? container.decode(String.self) {
                 self = .string(str)
@@ -42,7 +42,7 @@ extension DidDocument {
             }
         }
 
-        func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: Encoder) throws {
             var container = encoder.singleValueContainer()
             switch self {
             case .string(let str):

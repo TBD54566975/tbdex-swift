@@ -1,16 +1,21 @@
 import Foundation
 
-struct DidJwk: Did {
+public struct DidJwk: Did {
 
-    struct Options {
-        let algorithm: Jwk.Algorithm
-        let curve: Jwk.Curve
+    public struct Options {
+        public let algorithm: Jwk.Algorithm
+        public let curve: Jwk.Curve
+
+        public init(algorithm: Jwk.Algorithm, curve: Jwk.Curve) {
+            self.algorithm = algorithm
+            self.curve = curve
+        }
     }
 
-    let uri: String
-    let keyManager: KeyManager
+    public let uri: String
+    public let keyManager: KeyManager
 
-    init(keyManager: KeyManager, options: Options) throws {
+    public init(keyManager: KeyManager, options: Options) throws {
         let keyAlias = try keyManager.generatePrivateKey(algorithm: options.algorithm, curve: options.curve)
         let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
         let publicKeyBase64Url = try JSONEncoder().encode(publicKey).base64UrlEncodedString()

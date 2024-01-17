@@ -1,7 +1,6 @@
-import CustomDump
 import XCTest
 
-@testable import tbDEX
+@testable import Web5
 
 final class Ed25519Tests: XCTestCase {
 

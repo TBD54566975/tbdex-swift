@@ -22,37 +22,35 @@ let package = Package(
         .package(url: "https://github.com/WeTransfer/Mocker.git", .upToNextMajor(from: "3.0.1")),
     ],
     targets: [
-        // Main tbDEX library target
+        // Web5 Library target
         .target(
-            name: "tbDEX",
+            name: "Web5",
             dependencies: [
                 .product(name: "secp256k1", package: "secp256k1.swift"),
                 .product(name: "ExtrasBase64", package: "swift-extras-base64"),
-                .product(name: "TypeID", package: "swift-typeid"),
-                .product(name: "AnyCodable", package: "anycodable"),
             ]
         ),
-        // Shared test utilities target
+        // Web5 test utilities target
         .target(
-            name: "TestUtilities",
-            path: "TestUtilities/"
-        ),
-        // Main tbDEX test target
-        .testTarget(
-            name: "tbDEXTests",
+            name: "Web5TestUtilities",
             dependencies: [
-                "tbDEX",
-                "TestUtilities",
                 .product(name: "CustomDump", package: "swift-custom-dump"),
+            ]
+        ),
+        // Web5 unit test target
+        .testTarget(
+            name: "Web5Tests",
+            dependencies: [
+                "Web5",
+                "Web5TestUtilities",
             ]
         ),
         // Web5 test vectors target
         .testTarget(
             name: "Web5TestVectors",
             dependencies: [
-                "tbDEX",
-                "TestUtilities",
-                .product(name: "CustomDump", package: "swift-custom-dump"),
+                "Web5",
+                "Web5TestUtilities",
                 .product(name: "Mocker", package: "Mocker"),
             ],
             resources: [
@@ -60,6 +58,23 @@ let package = Package(
                 .copy("Resources/crypto_es256k"),
                 .copy("Resources/did_jwk"),
                 .copy("Resources/did_web"),
+            ]
+        ),
+        // tbDEX library target
+        .target(
+            name: "tbDEX",
+            dependencies: [
+                "Web5",
+                .product(name: "TypeID", package: "swift-typeid"),
+                .product(name: "AnyCodable", package: "anycodable"),
+            ]
+        ),
+        // tbDEX unit test target
+        .testTarget(
+            name: "tbDEXTests",
+            dependencies: [
+                "tbDEX",
+                "Web5TestUtilities",
             ]
         ),
     ]

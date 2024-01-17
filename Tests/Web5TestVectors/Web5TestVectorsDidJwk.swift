@@ -1,7 +1,8 @@
 import CustomDump
+import Web5TestUtilities
 import XCTest
 
-@testable import tbDEX
+@testable import Web5
 
 final class Web5TestVectorsDidJwk: XCTestCase {
 

@@ -8,7 +8,7 @@ import Foundation
 /// Example implementations might provide key management through various Key Management Systems (KMS),
 /// such as AWS KMS, Google Cloud KMS, Hardware Security Modules (HSM), or simple in-memory storage,
 /// each adhering to the same consistent API for usage within applications.
-protocol KeyManager {
+public protocol KeyManager {
 
     /// Generates and securely stores a private key based on the provided keyType,
     /// returning a unique alias that can be utilized to reference the generated key for future operations.

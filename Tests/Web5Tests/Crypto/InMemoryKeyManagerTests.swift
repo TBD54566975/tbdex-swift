@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import tbDEX
+@testable import Web5
 
 final class InMemoryKeyManagerTests: XCTestCase {
 

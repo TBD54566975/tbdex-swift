@@ -1,10 +1,10 @@
 import Foundation
 
 /// [Specification Reference](https://datatracker.ietf.org/doc/html/rfc7515)]
-struct JWS {
+public struct JWS {
 
     // Supported JWS algorithms
-    enum Algorithm: String, Codable {
+    public enum Algorithm: String, Codable {
         case eddsa
         case es256k
     }
@@ -12,61 +12,61 @@ struct JWS {
     /// JWS JOSE Header
     ///
     /// [Specification Reference](https://datatracker.ietf.org/doc/html/rfc7515#section-4)
-    struct Header: Codable {
+    public struct Header: Codable {
 
         /// The "alg" (algorithm) Header Parameter identifies the cryptographic algorithm used to secure the JWS.
-        let algorithm: Algorithm
+        public let algorithm: Algorithm
 
         /// The "jku" (JWK Set URL) Header Parameter is a URI [[RFC3986](https://datatracker.ietf.org/doc/html/rfc3986)]
         /// that refers to a resource for a set of JSON-encoded public keys, one of which corresponds to the key used
         /// to digitally sign the JWS.
-        let jwkSetURL: String?
+        public let jwkSetURL: String?
 
         /// The "jwk" (JSON Web Key) Header Parameter is the public key that corresponds to the key used to digitally
         /// sign the JWS.
-        let jwk: Jwk?
+        public let jwk: Jwk?
 
         /// The "kid" (key ID) Header Parameter is a hint indicating which key was used to secure the JWS.
-        let keyID: String?
+        public let keyID: String?
 
         /// The "x5u" (X.509 URL) Header Parameter is a URI [[RFC3986](https://datatracker.ietf.org/doc/html/rfc3986)]
         /// that refers to a resource for the X.509 public key certificate or certificate chain
         /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280) corresponding to the key used to digitally sign
         /// the JWS.
-        let x509URL: String?
+        public let x509URL: String?
 
         /// The "x5c" (X.509 certificate chain) Header Parameter contains the X.509 public key certificate or
         /// certificate chain [[RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)] corresponding to the key used
         /// to digitally sign the JWS.
-        let x509CertificateChain: String?
+        public let x509CertificateChain: String?
 
         /// The "x5t" (X.509 certificate SHA-1 thumbprint) Header Parameter is a base64url-encoded SHA-1 thumbprint
         /// (a.k.a. digest) of the DER encoding of the X.509 certificate
         /// [[RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)] corresponding to the key used to digitally sign
         /// the JWS.
-        let x509CertificateSHA1Thumbprint: String?
+        public let x509CertificateSHA1Thumbprint: String?
 
         /// The "x5t#S256" (X.509 certificate SHA-256 thumbprint) Header Parameter is a base64url-encoded SHA-256
         /// thumbprint (a.k.a. digest) of the DER encoding of the X.509 certificate
         /// [[RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)] corresponding to the key used to digitally sign
         /// the JWS.
-        let x509CertificateSHA256Thumbprint: String?
+        public let x509CertificateSHA256Thumbprint: String?
 
         /// The "typ" (type) Header Parameter is used by JWS applications to declare the media type
         /// [[IANA.MediaTypes](https://datatracker.ietf.org/doc/html/rfc7515#ref-IANA.MediaTypes)] of this complete JWS.
-        let type: String?
+        public let type: String?
 
         /// The "cty" (content type) Header Parameter is used by JWS applications to declare the media type
         /// [[IANA.MediaTypes](https://datatracker.ietf.org/doc/html/rfc7515#ref-IANA.MediaTypes)] of the secured
         /// content (the payload).
-        let contentType: String?
+        public let contentType: String?
 
         /// The "crit" (critical) Header Parameter indicates that extensions to this specification
         /// and/or [[JWA](https://datatracker.ietf.org/doc/html/rfc7515#ref-JWA)] are being used that
         /// MUST be understood and processed.
-        let critical: [String]?
+        public let critical: [String]?
 
-        init(
+        public init(
             algorithm: JWS.Algorithm,
             jwkSetURL: String? = nil,
             jwk: Jwk? = nil,
@@ -111,7 +111,7 @@ struct JWS {
 extension Jwk.Algorithm {
 
     /// Converts a JWK algorithm to a JWS algorithm.
-    var jwsAlgorithm: JWS.Algorithm {
+    public var jwsAlgorithm: JWS.Algorithm {
         switch self {
         case .eddsa:
             return .eddsa
@@ -124,7 +124,7 @@ extension Jwk.Algorithm {
 extension JWS.Algorithm {
 
     /// Converts a JWS algorithm to a JWK algorithm.
-    var jwkAlgorithm: Jwk.Algorithm {
+    public var jwkAlgorithm: Jwk.Algorithm {
         switch self {
         case .eddsa:
             return .eddsa

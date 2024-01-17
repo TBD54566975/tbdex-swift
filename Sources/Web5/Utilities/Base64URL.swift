@@ -3,7 +3,7 @@ import Foundation
 
 extension Collection where Element == UInt8 {
     /// Encodes a collection of bytes to a Base64URL encoded string
-    func base64UrlEncodedString(padded: Bool = false) -> String {
+    public func base64UrlEncodedString(padded: Bool = false) -> String {
         let options: Base64.EncodingOptions =
             padded
             ? [.base64UrlAlphabet]
@@ -15,7 +15,7 @@ extension Collection where Element == UInt8 {
 
 extension String {
     /// Decodes a Base64URL encoded string into bytes
-    func decodeBase64Url(padded: Bool = false) throws -> Data {
+    public func decodeBase64Url(padded: Bool = false) throws -> Data {
         let options: Base64.DecodingOptions =
             padded
             ? [.base64UrlAlphabet]

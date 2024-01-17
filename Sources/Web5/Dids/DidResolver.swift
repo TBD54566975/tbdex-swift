@@ -2,7 +2,7 @@ import Foundation
 
 typealias DidMethodResolver = (String) async -> DidResolution.Result
 
-enum DidResolver {
+public enum DidResolver {
 
     private static var methodResolvers: [String: DidMethodResolver] = [
         "jwk": DidJwk.resolve,

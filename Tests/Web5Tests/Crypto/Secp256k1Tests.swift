@@ -1,9 +1,8 @@
-import CustomDump
-import TestUtilities
+import Web5TestUtilities
 import XCTest
 import secp256k1
 
-@testable import tbDEX
+@testable import Web5
 
 final class Secp256k1Tests: XCTestCase {
 

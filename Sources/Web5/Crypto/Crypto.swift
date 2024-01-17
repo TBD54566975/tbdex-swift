@@ -4,7 +4,7 @@ enum CryptoError: Error {
     case illegalArgument(description: String)
 }
 
-enum Crypto {
+public enum Crypto {
 
     /// Generates a private key using the specified algorithm and curve, utilizing the appropriate `KeyGenerator`.
     /// - Parameters:
@@ -42,7 +42,7 @@ enum Crypto {
     ///   - signedPayload: The data that was signed.
     ///   - algorithm: The algorithm used for signing/verification, only used if not provided in the JWK.
     /// - Returns:  Boolean indicating if the publicKey and signature are valid for the given payload.
-    static func verify<S, D>(
+    public static func verify<S, D>(
         publicKey: Jwk,
         signature: S,
         signedPayload: D,
