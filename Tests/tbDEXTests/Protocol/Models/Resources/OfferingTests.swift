@@ -1,4 +1,4 @@
-import TestUtilities
+import Web5TestUtilities
 import Web5
 import XCTest
 

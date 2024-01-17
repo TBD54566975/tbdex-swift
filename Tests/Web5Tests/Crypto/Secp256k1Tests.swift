@@ -1,4 +1,4 @@
-import TestUtilities
+import Web5TestUtilities
 import XCTest
 import secp256k1
 

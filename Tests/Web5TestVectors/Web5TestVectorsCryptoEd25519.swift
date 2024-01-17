@@ -1,5 +1,5 @@
 import CustomDump
-import TestUtilities
+import Web5TestUtilities
 import XCTest
 
 @testable import Web5

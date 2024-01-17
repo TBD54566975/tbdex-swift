@@ -30,12 +30,19 @@ let package = Package(
                 .product(name: "ExtrasBase64", package: "swift-extras-base64"),
             ]
         ),
+        // Web5 test utilities target
+        .target(
+            name: "Web5TestUtilities",
+            dependencies: [
+                .product(name: "CustomDump", package: "swift-custom-dump"),
+            ]
+        ),
         // Web5 unit test target
         .testTarget(
             name: "Web5Tests",
             dependencies: [
                 "Web5",
-                "TestUtilities",
+                "Web5TestUtilities",
             ]
         ),
         // Web5 test vectors target
@@ -43,8 +50,7 @@ let package = Package(
             name: "Web5TestVectors",
             dependencies: [
                 "Web5",
-                "TestUtilities",
-                .product(name: "CustomDump", package: "swift-custom-dump"),
+                "Web5TestUtilities",
                 .product(name: "Mocker", package: "Mocker"),
             ],
             resources: [
@@ -68,13 +74,8 @@ let package = Package(
             name: "tbDEXTests",
             dependencies: [
                 "tbDEX",
-                "TestUtilities",
+                "Web5TestUtilities",
             ]
-        ),
-        // Shared test utilities target
-        .target(
-            name: "TestUtilities",
-            path: "TestUtilities/"
         ),
     ]
 )
