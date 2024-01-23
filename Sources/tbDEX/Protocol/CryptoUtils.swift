@@ -51,14 +51,13 @@ extension CryptoUtils {
         }
 
         let keyAlias = try did.keyManager.getDeterministicAlias(key: publicKeyJwk)
-        guard let publicKey = try did.keyManager.getPublicKey(keyAlias: keyAlias),
-            let algorithm = publicKey.algorithm
-        else {
+        let publicKey = try did.keyManager.getPublicKey(keyAlias: keyAlias)
+        guard let algorithm = publicKey.algorithm?.jwsAlgorithm else {
             throw SigningError.algorithmNotDefined
         }
 
         let jwsHeader = JWS.Header(
-            algorithm: algorithm.jwsAlgorithm,
+            algorithm: algorithm,
             keyID: assertionMethod.id
         )
 

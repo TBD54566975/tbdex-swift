@@ -6,34 +6,6 @@ enum CryptoError: Error {
 
 public enum Crypto {
 
-    /// Generates a private key using the specified algorithm and curve, utilizing the appropriate `KeyGenerator`.
-    /// - Parameters:
-    ///   - algorithm: The JWA algorithm identifier.
-    ///   - curve: The elliptic curve. Null for algorithms that do not use elliptic curves.
-    /// - Returns: The generated private key as a JWK object.
-    static func generatePrivateKey(algorithm: Jwk.Algorithm, curve: Jwk.Curve? = nil) throws -> Jwk {
-        let keyGenerator = try getKeyGenerator(algorithm: algorithm, curve: curve)
-        return try keyGenerator.generatePrivateKey()
-    }
-
-    /// Computes a public key from the given private key, utilizing relevant `KeyGenerator`.
-    /// - Parameter privateKey: The private key used to compute the public key.
-    /// - Returns: The computed public key as a JWK object.
-    static func computePublicKey(privateKey: Jwk) throws -> Jwk {
-        let keyGenerator = try getKeyGenerator(algorithm: privateKey.algorithm, curve: privateKey.curve)
-        return try keyGenerator.computePublicKey(privateKey: privateKey)
-    }
-
-    /// Signs a payload using a private key.
-    /// - Parameters:
-    ///   - privateKey: The JWK private key to be used for generating the signature.
-    ///   - payload: The data to be signed.
-    /// - Returns: The digital signature as a byte array.
-    static func sign<D>(privateKey: Jwk, payload: D) throws -> Data where D: DataProtocol {
-        let signer = try getSigner(algorithm: privateKey.algorithm, curve: privateKey.curve)
-        return try signer.sign(privateKey: privateKey, payload: payload)
-    }
-
     /// Verifies a signature against a signed payload using a public key.
     ///
     /// - Parameters:
@@ -51,14 +23,6 @@ public enum Crypto {
         let algorithm = publicKey.algorithm ?? algorithm
         let verifier = try getVerifier(algorithm: algorithm, curve: publicKey.curve)
         return try verifier.verify(publicKey: publicKey, signature: signature, signedPayload: signedPayload)
-    }
-
-    /// Converts a `Jwk` public key into its byte array representation.
-    /// - Parameter publicKey: `Jwk` object representing the public key to be converted.
-    /// - Returns: Data representing the byte-level information of the provided public key
-    static func publicKeyToBytes(publicKey: Jwk) throws -> Data {
-        let keyGenerator = try getKeyGenerator(algorithm: publicKey.algorithm, curve: publicKey.curve)
-        return try keyGenerator.publicKeyToBytes(publicKey)
     }
 
     // MARK: Private

@@ -20,7 +20,7 @@ final class InMemoryKeyManagerTests: XCTestCase {
     }
 
     func test_getPublicKey_privateKeyNotInStore() throws {
-        XCTAssertNil(try keyManager.getPublicKey(keyAlias: "keyAliasNotInStore"))
+        XCTAssertThrowsError(try keyManager.getPublicKey(keyAlias: "keyAliasNotInStore"))
     }
 
     func test_signSucceedsWhenKeyIsInKeyManager() throws {

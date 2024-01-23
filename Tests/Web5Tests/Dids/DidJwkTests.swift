@@ -8,7 +8,7 @@ final class DidJwkTests: XCTestCase {
         let keyManager = InMemoryKeyManager()
         let didJwk = try DidJwk(
             keyManager: keyManager,
-            options: .init(algorithm: .eddsa, curve: .ed25519)
+            options: .init(algorithm: .ed25519)
         )
 
         XCTAssert(didJwk.uri.starts(with: "did:jwk:"))
@@ -49,7 +49,7 @@ final class DidJwkTests: XCTestCase {
         let keyManager = InMemoryKeyManager()
         let didJwk = try DidJwk(
             keyManager: keyManager,
-            options: .init(algorithm: .es256k, curve: .secp256k1)
+            options: .init(algorithm: .es256k)
         )
 
         let resolutionResult = await DidJwk.resolve(didUri: didJwk.uri)
