@@ -10,19 +10,21 @@ import Foundation
 /// each adhering to the same consistent API for usage within applications.
 public protocol KeyManager {
 
+    associatedtype CryptoAlgorithm
+
     /// Generates and securely stores a private key based on the provided keyType,
     /// returning a unique alias that can be utilized to reference the generated key for future operations.
     ///
     /// - Parameters:
     ///   - algorithm: The cryptographic algorithm to use for key generation.
     ///   - curve: The elliptic curve to use (relevant for EC algorithms).
-    func generatePrivateKey(algorithm: Jwk.Algorithm, curve: Jwk.Curve?) throws -> String
+    func generatePrivateKey(algorithm: CryptoAlgorithm) throws -> String
 
     /// Retrieves the public key associated with a previously stored private key, identified by the provided alias.
     ///
     /// - Parameter keyAlias: The alias referencing the stored private key.
-    /// - Returns: The associated public key in JSON Web Key (JWK) format (if available).
-    func getPublicKey(keyAlias: String) throws -> Jwk?
+    /// - Returns: The associated public key in JSON Web Key (JWK) format.
+    func getPublicKey(keyAlias: String) throws -> Jwk
 
     /// Signs the provided payload using the private key identified by the provided alias.
     ///
@@ -43,3 +45,4 @@ enum KeyManagerError: Error {
     /// Provided `keyAlias` is not present in the target `KeyManager`
     case keyAliasNotFound
 }
+
