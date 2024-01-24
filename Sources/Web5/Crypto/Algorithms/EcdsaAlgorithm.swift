@@ -64,3 +64,18 @@ extension EcdsaAlgorithm: Signer_v2 {
         }
     }
 }
+
+// MARK: - Verifier_v2
+
+extension EcdsaAlgorithm: Verifier_v2 {
+
+    public static func verify<S, D>(signature: S, payload: D, publicKey: Jwk) throws -> Bool
+    where S: DataProtocol, D: DataProtocol {
+        switch publicKey.curve {
+        case .secp256k1:
+            return try Secp256k1_v2.verify(signature: signature, payload: payload, publicJwk: publicKey)
+        default:
+            throw EcdsaAlgorithmError.unsupportedCurve(publicKey.curve)
+        }
+    }
+}
