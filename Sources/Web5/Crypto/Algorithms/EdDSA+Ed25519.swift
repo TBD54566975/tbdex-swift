@@ -44,10 +44,12 @@ extension EdDSA {
 extension Curve25519.Signing.PrivateKey {
 
     init(privateJwk: Jwk) throws {
-        guard case .octetKeyPair = privateJwk.keyType,
-            privateJwk.x == nil,
+        guard
+            privateJwk.keyType == .octetKeyPair,
+            privateJwk.algorithm == .eddsa,
+            privateJwk.curve == .ed25519,
             privateJwk.y == nil,
-            let d = privateJwk.d,
+            let d = privateJwk.d
         else {
             throw EdDSA.Ed25519.Error.invalidPrivateJwk
         }
@@ -66,10 +68,14 @@ extension Curve25519.Signing.PrivateKey {
 extension Curve25519.Signing.PublicKey {
     
     init(publicJwk: Jwk) throws {
-        guard case .octetKeyPair = publicJwk.keyType,
-            publicJwk.d == nil,
+        guard 
+            publicJwk.keyType == .octetKeyPair,
+            publicJwk.algorithm == .eddsa,
+            publicJwk.curve == .ed25519,
             publicJwk.y == nil,
-            let x = publicJwk.x else {
+            publicJwk.d == nil,
+            let x = publicJwk.x
+        else {
             throw EdDSA.Ed25519.Error.invalidPublicJwk
         }
 

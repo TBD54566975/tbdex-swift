@@ -25,7 +25,7 @@ public enum Algorithm: CaseIterable {
         }
     }
 
-    static func signer(for publicKey: Jwk, jwsAlgorithm: JWS.Algorithm? = nil) -> Signer.Type? {
+    static func forPublicKey(_ publicKey: Jwk, jwsAlgorithm: JWS.Algorithm? = nil) -> Verifier.Type? {
         // If a JWS Algorithm was provided, use that to determine the Algorithm
         if let jwsAlgorithm {
             switch jwsAlgorithm {
@@ -42,7 +42,7 @@ public enum Algorithm: CaseIterable {
             }
         }
 
-        // If a JWS algorithm wasn't provided, use the first Signer that recognizes
+        // If a JWS algorithm wasn't provided, use the first Signer that recognizes the
         // provided `publicKey` as valid
         return Algorithm
             .allCases

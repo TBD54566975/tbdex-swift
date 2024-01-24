@@ -48,9 +48,9 @@ extension ECDSA {
 extension secp256k1.Signing.PrivateKey {
 
     init(privateJwk: Jwk) throws {
-        guard case .elliptic = privateJwk.keyType,
-            privateJwk.x == nil,
-            privateJwk.y == nil,
+        guard 
+            privateJwk.keyType == .elliptic,
+            privateJwk.algorithm == .es256k || privateJwk.curve == .secp256k1,
             let d = privateJwk.d
         else {
             throw ECDSA.Es256k.Error.invalidPrivateJwk
@@ -82,7 +82,9 @@ extension secp256k1.Signing.PublicKey {
     }
 
     init(publicJwk: Jwk) throws {
-        guard case .elliptic = publicJwk.keyType,
+        guard
+            publicJwk.keyType == .elliptic,
+            publicJwk.algorithm == .es256k || publicJwk.curve == .secp256k1,
             publicJwk.d == nil,
             let x = publicJwk.x,
             let y = publicJwk.y
