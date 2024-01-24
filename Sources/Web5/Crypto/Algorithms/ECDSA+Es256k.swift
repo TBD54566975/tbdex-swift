@@ -1,52 +1,47 @@
 import Foundation
 import secp256k1
 
-enum Secp256k1Error: Error {
-    case invalidPrivateJwk
-    case invalidPublicJwk
+/// Elliptic Curve Digital Signature Algorithm (ECDSA)
+extension ECDSA {
+
+    /// Crypto operations using the Elliptic Curve Digital Signature Algorithm (ECDSA)
+    /// with the secp256k1 elliptic curve and SHA-256
+    enum Es256k: AsymmetricKeyGenerator, Signer {
+
+        enum Error: Swift.Error {
+            case invalidPrivateJwk
+            case invalidPublicJwk
+        }
+
+        public static func generatePrivateKey() throws -> Jwk {
+            return try secp256k1.Signing.PrivateKey().jwk()
+        }
+
+        public static func computePublicKey(privateKey: Jwk) throws -> Jwk {
+            let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateKey)
+            return try privateKey.publicKey.jwk()
+        }
+
+        public static func isValidPublicKey(_ publicKey: Jwk) -> Bool {
+            let publicKey = try? secp256k1.Signing.PublicKey(publicJwk: publicKey)
+            return publicKey != nil
+        }
+
+        public static func sign<D>(payload: D, privateKey: Jwk) throws -> Data where D: DataProtocol {
+            let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateKey)
+            return try privateKey.signature(for: payload).compactRepresentation
+        }
+
+        public static func verify<S, P>(signature: S, payload: P, publicKey: Jwk) throws -> Bool
+        where S: DataProtocol, P: DataProtocol {
+            let publicKey = try secp256k1.Signing.PublicKey(publicJwk: publicKey)
+            let ecdsaSignature = try secp256k1.Signing.ECDSASignature(compactRepresentation: signature)
+            let normalizedSignature = try ecdsaSignature.normalized()
+
+            return publicKey.isValidSignature(normalizedSignature, for: payload)
+        }
+    }
 }
-
-/// Cryptographic operations using the Elliptic Curve Digital Signature Algorithm (ECDSA)
-/// with the secp256k1 elliptic curve and SHA-256
-enum Secp256k1 {
-
-    public static func generateKey() throws -> Jwk {
-        return try secp256k1.Signing.PrivateKey().jwk()
-    }
-
-    public static func computePublicKey(privateKey: Jwk) throws -> Jwk {
-        let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateKey)
-        return try privateKey.publicKey.jwk()
-    }
-
-    public static func sign<D>(payload: D, privateKey: Jwk) throws -> Data where D: DataProtocol {
-        let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateKey)
-        return try privateKey.signature(for: payload).compactRepresentation
-    }
-
-    public static func verify<S, P>(signature: S, payload: P, publicKey: Jwk) throws -> Bool
-    where S: DataProtocol, P: DataProtocol {
-        let publicKey = try secp256k1.Signing.PublicKey(publicJwk: publicKey)
-        let ecdsaSignature = try secp256k1.Signing.ECDSASignature(compactRepresentation: signature)
-        let normalizedSignature = try ecdsaSignature.normalized()
-
-        return publicKey.isValidSignature(normalizedSignature, for: payload)
-    }
-}
-
-// MARK: - Constants
-
-private enum Constants {
-    /// Uncompressed key leading byte that indicates both the X and Y coordinates are available directly within the key.
-    static let uncompressedKeyID: UInt8 = 0x04
-
-    /// Size of an uncompressed public key, in bytes.
-    ///
-    /// An uncompressed key is represented with a leading 0x04 bytes,
-    /// followed by 32 bytes for the x-coordinate and 32 bytes for the y-coordinate.
-    static let uncompressedKeySize: Int = 65
-}
-
 
 // MARK: - secp256k1 Extensions
 
@@ -54,8 +49,11 @@ extension secp256k1.Signing.PrivateKey {
 
     init(privateJwk: Jwk) throws {
         guard case .elliptic = privateJwk.keyType,
-              let d = privateJwk.d else {
-            throw Secp256k1Error.invalidPrivateJwk
+            privateJwk.x == nil,
+            privateJwk.y == nil,
+            let d = privateJwk.d
+        else {
+            throw ECDSA.Es256k.Error.invalidPrivateJwk
         }
 
         // TODO: handle compressed?
@@ -72,13 +70,24 @@ extension secp256k1.Signing.PrivateKey {
 
 extension secp256k1.Signing.PublicKey {
 
+    private enum Constants {
+        /// Uncompressed key leading byte that indicates both the X and Y coordinates are available directly within the key.
+        static let uncompressedKeyID: UInt8 = 0x04
+
+        /// Size of an uncompressed public key, in bytes.
+        ///
+        /// An uncompressed key is represented with a leading 0x04 bytes,
+        /// followed by 32 bytes for the x-coordinate and 32 bytes for the y-coordinate.
+        static let uncompressedKeySize: Int = 65
+    }
+
     init(publicJwk: Jwk) throws {
         guard case .elliptic = publicJwk.keyType,
-              publicJwk.d == nil,
-              let x = publicJwk.x,
-              let y = publicJwk.y
+            publicJwk.d == nil,
+            let x = publicJwk.x,
+            let y = publicJwk.y
         else {
-            throw Secp256k1Error.invalidPublicJwk
+            throw ECDSA.Es256k.Error.invalidPublicJwk
         }
 
         var data = Data()
@@ -87,7 +96,7 @@ extension secp256k1.Signing.PublicKey {
         data.append(contentsOf: try y.decodeBase64Url())
 
         guard data.count == Constants.uncompressedKeySize else {
-            throw Secp256k1Error.invalidPublicJwk
+            throw ECDSA.Es256k.Error.invalidPublicJwk
         }
 
         try self.init(dataRepresentation: data, format: .uncompressed)
@@ -98,6 +107,7 @@ extension secp256k1.Signing.PublicKey {
 
         var jwk = Jwk(
             keyType: .elliptic,
+            algorithm: .es256k,
             curve: .secp256k1,
             x: x.base64UrlEncodedString(),
             y: y.base64UrlEncodedString()
@@ -156,4 +166,3 @@ extension secp256k1.Signing.ECDSASignature {
         return try Self(dataRepresentation: normalized.dataValue)
     }
 }
-

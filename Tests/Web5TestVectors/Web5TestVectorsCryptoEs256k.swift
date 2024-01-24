@@ -20,7 +20,7 @@ final class Web5TestVectorsCryptoEs256k: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let signature = try Secp256k1.sign(
+                let signature = try ECDSA.Es256k.sign(
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
                     privateKey: vector.input.key
                 )
@@ -50,7 +50,7 @@ final class Web5TestVectorsCryptoEs256k: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let result = try Secp256k1.verify(
+                let result = try ECDSA.Es256k.verify(
                     signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
                     publicKey: vector.input.key

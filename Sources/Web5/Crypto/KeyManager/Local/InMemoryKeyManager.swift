@@ -6,7 +6,7 @@ private class InMemoryKeyStore: LocalKeyStore {
     func getPrivateKey(keyAlias: String) throws -> Jwk? {
         keyStore[keyAlias]
     }
-    
+
     func setPrivateKey(_ privateKey: Jwk, keyAlias: String) throws {
         keyStore[keyAlias] = privateKey
     }

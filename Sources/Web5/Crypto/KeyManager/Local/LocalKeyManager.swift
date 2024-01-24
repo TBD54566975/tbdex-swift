@@ -2,6 +2,8 @@ import Foundation
 
 public enum LocalKeyManagerError: Error {
     case unknownCryptoAlgorithm
+    case asymmetricKeyGenerationNotSupported(algorithm: Algorithm)
+    case signingNotSupported(algorithm: Algorithm)
     case keyNotFound
 }
 
@@ -14,14 +16,6 @@ public protocol LocalKeyStore {
 /// A KeyManager that generates and stores cryptographic keys locally on the device
 public class LocalKeyManager: KeyManager {
 
-    /// Exhaustive enum of all crypto algorithms supported by a `LocalKeyManager`
-    public enum SupportedCryptoAlgorithm {
-        /// EdDSA using the Ed25519 curve
-        case ed25519
-        /// ECDSA using the secp256k1 curve and SHA-256
-        case es256k
-    }
-
     /// Backing store to store generated keys
     let keyStore: LocalKeyStore
 
@@ -32,19 +26,14 @@ public class LocalKeyManager: KeyManager {
 
     // MARK: - KeyManager
 
-    // TODO: switches in this class are all duplicated. Consolidate.
-
-    public func generatePrivateKey(algorithm: SupportedCryptoAlgorithm) throws -> String {
-        let privateKey: Jwk
-
-        switch algorithm {
-        case .ed25519:
-            privateKey = try EdDSA.generatePrivateKey(algorithm: .ed25519)
-        case .es256k:
-            privateKey = try ECDSA.generatePrivateKey(algorithm: .es256k)
+    public func generatePrivateKey(algorithm: Algorithm) throws -> String {
+        guard let asymmetricKeyGenerator = algorithm.asymmetricKeyGenerator else {
+            throw LocalKeyManagerError.asymmetricKeyGenerationNotSupported(algorithm: algorithm)
         }
 
+        let privateKey = try asymmetricKeyGenerator.generatePrivateKey()
         let keyAlias = try getDeterministicAlias(key: privateKey)
+
         try keyStore.setPrivateKey(privateKey, keyAlias: keyAlias)
 
         return keyAlias
@@ -54,24 +43,22 @@ public class LocalKeyManager: KeyManager {
         let privateKey = try getPrivateKey(keyAlias: keyAlias)
         let algorithm = try getSupportedCryptoAlgorithm(for: privateKey)
 
-        switch algorithm {
-        case .ed25519:
-            return try EdDSA.computePublicKey(privateKey: privateKey)
-        case .es256k:
-            return try ECDSA.computePublicKey(privateKey: privateKey)
+        guard let asymmetricKeyGenerator = algorithm.asymmetricKeyGenerator else {
+            throw LocalKeyManagerError.asymmetricKeyGenerationNotSupported(algorithm: algorithm)
         }
+
+        return try asymmetricKeyGenerator.computePublicKey(privateKey: privateKey)
     }
 
     public func sign<D>(keyAlias: String, payload: D) throws -> Data where D: DataProtocol {
         let privateKey = try getPrivateKey(keyAlias: keyAlias)
         let algorithm = try getSupportedCryptoAlgorithm(for: privateKey)
 
-        switch algorithm {
-        case .ed25519:
-            return try EdDSA.sign(payload: payload, privateKey: privateKey)
-        case .es256k:
-            return try ECDSA.sign(payload: payload, privateKey: privateKey)
+        guard let signer = algorithm.signer else {
+            throw LocalKeyManagerError.signingNotSupported(algorithm: algorithm)
         }
+
+        return try signer.sign(payload: payload, privateKey: privateKey)
     }
 
     public func getDeterministicAlias(key: Jwk) throws -> String {
@@ -96,22 +83,23 @@ public class LocalKeyManager: KeyManager {
         return privateKey
     }
 
-    private func getSupportedCryptoAlgorithm(for jwk: Jwk) throws -> SupportedCryptoAlgorithm {
-        let algorithm = jwk.algorithm
-        let curve = jwk.curve
-
-        switch (algorithm, curve) {
-        case (.eddsa, .ed25519),
-            (nil, .ed25519):
-            return .ed25519
-        case (.es256k, .secp256k1),
-            (nil, .secp256k1),
-            (.es256k, nil):
-            return .es256k
-        default:
-            // TODO: This error should be renamed. It's not unknown, just unsupported.
-            throw LocalKeyManagerError.unknownCryptoAlgorithm
-        }
+    private func getSupportedCryptoAlgorithm(for jwk: Jwk) throws -> Algorithm {
+        //        let algorithm = jwk.algorithm
+        //        let curve = jwk.curve
+        //
+        //        switch (algorithm, curve) {
+        //        case (.eddsa, .ed25519),
+        //            (nil, .ed25519):
+        //            return .ed25519
+        //        case (.es256k, .secp256k1),
+        //            (nil, .secp256k1),
+        //            (.es256k, nil):
+        //            return .es256k
+        //        default:
+        //            // TODO: This error should be renamed. It's not unknown, just unsupported.
+        //            throw LocalKeyManagerError.unknownCryptoAlgorithm
+        //        }
+        throw LocalKeyManagerError.unknownCryptoAlgorithm
     }
 
 }
