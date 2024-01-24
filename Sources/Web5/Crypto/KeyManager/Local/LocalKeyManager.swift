@@ -15,7 +15,7 @@ public protocol LocalKeyStore {
 public class LocalKeyManager: KeyManager {
 
     /// Exhaustive enum of all crypto algorithms supported by a `LocalKeyManager`
-    public enum CryptoAlgorithm {
+    public enum SupportedCryptoAlgorithm {
         /// EdDSA using the Ed25519 curve
         case ed25519
         /// ECDSA using the secp256k1 curve and SHA-256
@@ -32,42 +32,44 @@ public class LocalKeyManager: KeyManager {
 
     // MARK: - KeyManager
 
-    public func generatePrivateKey(algorithm: CryptoAlgorithm) throws -> String {
+    public func generatePrivateKey(algorithm: SupportedCryptoAlgorithm) throws -> String {
         let privateKey: Jwk
+
         switch algorithm {
         case .ed25519:
-            privateKey = try Ed25519.shared.generatePrivateKey()
+            privateKey = try EddsaAlgorithm.generateKey(.init(algorithm: .ed25519))
         case .es256k:
-            privateKey = try Secp256k1.shared.generatePrivateKey()
+            privateKey = try EcdsaAlgorithm.generateKey(.init(algorithm: .es256k))
         }
 
         let keyAlias = try getDeterministicAlias(key: privateKey)
-        try self.keyStore.setPrivateKey(privateKey, keyAlias: keyAlias)
+        try keyStore.setPrivateKey(privateKey, keyAlias: keyAlias)
 
         return keyAlias
     }
 
     public func getPublicKey(keyAlias: String) throws -> Jwk {
         let privateKey = try getPrivateKey(keyAlias: keyAlias)
-        let algorithm = try getCryptoAlgorithm(for: privateKey)
+        let algorithm = try getSupportedCryptoAlgorithm(for: privateKey)
 
         switch algorithm {
         case .ed25519:
-            return try Ed25519.shared.computePublicKey(privateKey: privateKey)
+            return try EddsaAlgorithm.computePublicKey(privateKey: privateKey)
         case .es256k:
-            return try Secp256k1.shared.computePublicKey(privateKey: privateKey)
+            return try EcdsaAlgorithm.computePublicKey(privateKey: privateKey)
         }
     }
 
     public func sign<D>(keyAlias: String, payload: D) throws -> Data where D: DataProtocol {
         let privateKey = try getPrivateKey(keyAlias: keyAlias)
-        let algorithm = try getCryptoAlgorithm(for: privateKey)
+        let algorithm = try getSupportedCryptoAlgorithm(for: privateKey)
 
+        // TODO: switches in this class are all duplicated. Consolidate.
         switch algorithm {
         case .ed25519:
-            return try Ed25519.shared.sign(privateKey: privateKey, payload: payload)
+            return try EddsaAlgorithm.sign(payload: payload, privateKey: privateKey)
         case .es256k:
-            return try Secp256k1.shared.sign(privateKey: privateKey, payload: payload)
+            return try EcdsaAlgorithm.sign(payload: payload, privateKey: privateKey)
         }
     }
 
@@ -93,7 +95,7 @@ public class LocalKeyManager: KeyManager {
         return privateKey
     }
 
-    private func getCryptoAlgorithm(for jwk: Jwk) throws -> CryptoAlgorithm {
+    private func getSupportedCryptoAlgorithm(for jwk: Jwk) throws -> SupportedCryptoAlgorithm {
         let algorithm = jwk.algorithm
         let curve = jwk.curve
 
@@ -106,6 +108,7 @@ public class LocalKeyManager: KeyManager {
             (.es256k, nil):
             return .es256k
         default:
+            // TODO: This error shoudl be renamed. It's not unknown, just unsupported.
             throw LocalKeyManagerError.unknownCryptoAlgorithm
         }
 

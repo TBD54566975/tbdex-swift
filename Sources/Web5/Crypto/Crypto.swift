@@ -20,9 +20,10 @@ public enum Crypto {
         signedPayload: D,
         algorithm: Jwk.Algorithm? = nil
     ) throws -> Bool where S: DataProtocol, D: DataProtocol {
-        let algorithm = publicKey.algorithm ?? algorithm
-        let verifier = try getVerifier(algorithm: algorithm, curve: publicKey.curve)
-        return try verifier.verify(publicKey: publicKey, signature: signature, signedPayload: signedPayload)
+//        let algorithm = publicKey.algorithm ?? algorithm
+//        let verifier = try getVerifier(algorithm: algorithm, curve: publicKey.curve)
+//        return try verifier.verify(publicKey: publicKey, signature: signature, signedPayload: signedPayload)
+        return false
     }
 
     // MARK: Private
@@ -32,20 +33,21 @@ public enum Crypto {
     ///   - algorithm: The cryptographic algorithm to find a key generator for.
     ///   - curve: The cryptographic curve to find a key generator for.
     /// - Returns: The corresponding `KeyGenerator`.
-    private static func getKeyGenerator(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws -> KeyGenerator {
-        switch (algorithm, curve) {
-        case (nil, .secp256k1),
-            (Secp256k1.shared.algorithm, nil),
-            (Secp256k1.shared.algorithm, .secp256k1):
-            return Secp256k1.shared
-        case (Ed25519.shared.algorithm, .ed25519),
-            (nil, .ed25519):
-            return Ed25519.shared
-        default:
-            throw CryptoError.illegalArgument(
-                description: "Algorithm \(algorithm?.rawValue ?? "nil") not supported"
-            )
-        }
+    private static func getKeyGenerator(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws -> any KeyGenerator {
+//        switch (algorithm, curve) {
+//        case (nil, .secp256k1),
+//            (Secp256k1.shared.algorithm, nil),
+//            (Secp256k1.shared.algorithm, .secp256k1):
+//            return Secp256k1.shared
+//        case (Ed25519.shared.algorithm, .ed25519),
+//            (nil, .ed25519):
+//            return Ed25519.shared
+//        default:
+//            throw CryptoError.illegalArgument(
+//                description: "Algorithm \(algorithm?.rawValue ?? "nil") not supported"
+//            )
+//        }
+        fatalError("Not implemented")
     }
 
     private static func getSigner(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws -> Signer {

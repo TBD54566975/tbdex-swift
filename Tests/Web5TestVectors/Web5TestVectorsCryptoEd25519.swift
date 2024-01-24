@@ -20,9 +20,9 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let signature = try Ed25519.shared.sign(
-                    privateKey: vector.input.key,
-                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data))
+                let signature = try Ed25519_v2.sign(
+                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    privateJwk: vector.input.key
                 )
 
                 // Apple's Ed25519 implementation employs randomization to generate different signatures
@@ -31,16 +31,16 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
                 //
                 // Because of this, the signature we just generated will NOT be the same as the vector's output,
                 // but both will be valid signatures.
-                let isVectorOutputSignatureValid = try Ed25519.shared.verify(
-                    publicKey: try Ed25519.shared.computePublicKey(privateKey: vector.input.key),
+                let isVectorOutputSignatureValid = try Ed25519_v2.verify(
                     signature: try XCTUnwrap(Data.fromHexString(try XCTUnwrap(vector.output))),
-                    signedPayload: try XCTUnwrap(Data.fromHexString(vector.input.data))
+                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    publicJwk: try Ed25519_v2.computePublicKey(privateJwk: vector.input.key)
                 )
 
-                let isGeneratedSignatureValid = try Ed25519.shared.verify(
-                    publicKey: try Ed25519.shared.computePublicKey(privateKey: vector.input.key),
+                let isGeneratedSignatureValid = try Ed25519_v2.verify(
                     signature: signature,
-                    signedPayload: try XCTUnwrap(Data.fromHexString(vector.input.data))
+                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    publicJwk: try Ed25519_v2.computePublicKey(privateJwk: vector.input.key)
                 )
 
                 XCTAssertTrue(isVectorOutputSignatureValid)
@@ -72,10 +72,10 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let isValid = try Ed25519.shared.verify(
-                    publicKey: vector.input.key,
+                let isValid = try Ed25519_v2.verify(
                     signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
-                    signedPayload: try XCTUnwrap(Data.fromHexString(vector.input.data))
+                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    publicJwk: vector.input.key
                 )
                 XCTAssertNoDifference(isValid, vector.output)
             }

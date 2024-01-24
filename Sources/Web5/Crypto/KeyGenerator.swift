@@ -2,27 +2,28 @@ import Foundation
 
 protocol KeyGenerator {
 
-    /// Indicates the algorithm intended to be used with the key.
-    var algorithm: Jwk.Algorithm { get }
+    associatedtype GenerateKeyParameters
 
-    /// Indicates the cryptographic algorithm family used with the key.
-    var keyType: Jwk.KeyType { get }
+    /// Generates a cryptographic key
+    static func generateKey(_ params: GenerateKeyParameters) throws -> Jwk
+}
 
-    /// Generates a private key.
-    func generatePrivateKey() throws -> Jwk
+protocol AsymmetricKeyGenerator: KeyGenerator {
 
-    /// Derives a public key from the private key provided.
-    func computePublicKey(privateKey: Jwk) throws -> Jwk
+    /// Computes the public key from a generated private key
+    static func computePublicKey(privateKey: Jwk) throws -> Jwk
+}
 
-    /// Converts a private key to bytes.
-    func privateKeyToBytes(_ privateKey: Jwk) throws -> Data
+// TODO: remove `v2` suffix
+protocol Signer_v2 {
 
-    /// Converts a public key to bytes.
-    func publicKeyToBytes(_ publicKey: Jwk) throws -> Data
+    /// Signs a payload with a private key
+    static func sign<D>(payload: D, privateKey: Jwk) throws -> Data where D: DataProtocol
+}
 
-    /// Converts a private key as bytes into a JWK.
-    func bytesToPrivateKey(_ bytes: Data) throws -> Jwk
+// TODO: remove `v2` suffix
+protocol Verifier_v2 {
 
-    /// Converts a public key as bytes into a JWK.
-    func bytesToPublicKey(_ bytes: Data) throws -> Jwk
+    /// Verifies a signature against a payload and public key
+    static func verify<S, D>(signature: S, payload: D, publicKey: Jwk) throws -> Bool where S: DataProtocol, D: DataProtocol
 }

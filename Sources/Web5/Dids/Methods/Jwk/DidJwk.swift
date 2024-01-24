@@ -15,7 +15,7 @@ public struct DidJwk: Did {
     public let uri: String
     public let keyManager: any KeyManager
 
-    public init<K: KeyManager>(keyManager: K, options: Options<K.CryptoAlgorithm>) throws {
+    public init<K: KeyManager>(keyManager: K, options: Options<K.SupportedCryptoAlgorithm>) throws {
         let keyAlias = try keyManager.generatePrivateKey(algorithm: options.algorithm)
         let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
         let publicKeyBase64Url = try JSONEncoder().encode(publicKey).base64UrlEncodedString()

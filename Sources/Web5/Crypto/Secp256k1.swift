@@ -115,7 +115,7 @@ enum Secpsecp256k1Error: Error {
 
 // MARK: - KeyGenerator
 
-extension Secp256k1: KeyGenerator {
+extension Secp256k1 {
 
     var algorithm: Jwk.Algorithm {
         .es256k
@@ -221,7 +221,6 @@ extension Secp256k1: KeyGenerator {
         )
 
         jwk.keyIdentifier = try jwk.thumbprint()
-
         return jwk
     }
 }
@@ -266,45 +265,21 @@ extension Data {
     }
 }
 
-extension secp256k1.Signing.PublicKey {
-
-    /// Get the uncompressed bytes for a given public key.
-    ///
-    /// With a compressed public key, there's no direct access to the y-coordinate for use within
-    /// a Jwk. To avoid doing manual computations along the curve to compute the y-coordinate, this
-    /// function offloads the work to the `secp256k1` library to compute it for us.
-    fileprivate func uncompressedBytes() -> Data {
-        switch self.format {
-        case .uncompressed:
-            return self.dataRepresentation
-        case .compressed:
-            let targetFormat = secp256k1.Format.uncompressed
-            var keyLength = targetFormat.length
-            var key = self.rawRepresentation
-
-            let context = secp256k1.Context.rawRepresentation
-            var bytes = [UInt8](repeating: 0, count: keyLength)
-            secp256k1_ec_pubkey_serialize(context, &bytes, &keyLength, &key, targetFormat.rawValue)
-            return Data(bytes)
-        }
-    }
-}
-
-extension secp256k1.Signing.ECDSASignature {
-
-    /// Normalizes target ECDSASignature to low-s value.
-    func normalized() throws -> secp256k1.Signing.ECDSASignature {
-        let context = secp256k1.Context.rawRepresentation
-        var signature = secp256k1_ecdsa_signature()
-        dataRepresentation.copyToUnsafeMutableBytes(of: &signature.data)
-
-        var normalized = secp256k1_ecdsa_signature()
-        secp256k1_ecdsa_signature_normalize(
-            context,
-            &normalized,
-            &signature
-        )
-
-        return try Self(dataRepresentation: normalized.dataValue)
-    }
-}
+//extension secp256k1.Signing.ECDSASignature {
+//
+//    /// Normalizes target ECDSASignature to low-s value.
+//    func normalized() throws -> secp256k1.Signing.ECDSASignature {
+//        let context = secp256k1.Context.rawRepresentation
+//        var signature = secp256k1_ecdsa_signature()
+//        dataRepresentation.copyToUnsafeMutableBytes(of: &signature.data)
+//
+//        var normalized = secp256k1_ecdsa_signature()
+//        secp256k1_ecdsa_signature_normalize(
+//            context,
+//            &normalized,
+//            &signature
+//        )
+//
+//        return try Self(dataRepresentation: normalized.dataValue)
+//    }
+//}

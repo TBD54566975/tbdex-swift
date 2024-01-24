@@ -49,53 +49,53 @@ public struct Jwk: Codable, Equatable {
     /// on any of these parameters.
 
     /// The `kty` (key type) parameter identifies the cyrptographic algorithm family used with the key.
-    public let keyType: KeyType
+    public internal(set) var keyType: KeyType
 
     /// The `use` (public key use) parameter identifies the intended use of the public key.
-    public let publicKeyUse: PublicKeyUse?
+    public internal(set) var publicKeyUse: PublicKeyUse?
 
     /// The "key_ops" (key operations) parameter identifies the operation(s) for which the key is intended to be used.
-    public let keyOperations: [KeyOperations]?
+    public internal(set) var keyOperations: [KeyOperations]?
 
     /// The `alg` (algorithm) parameter identifies the cryptographic algorithm intended for use with the key.
-    public let algorithm: Algorithm?
+    public internal(set) var  algorithm: Algorithm?
 
     /// The "alg" (algorithm) parameter identifies the algorithm intended for use with the key.
     public internal(set) var keyIdentifier: String?
 
     /// The `crv` (curve) parameter identifies the cryptographic curve intended for use with the key.
-    public let curve: Curve?
+    public internal(set) var curve: Curve?
 
     /// The "x5u" (X.509 URL) parameter is a URI [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986) that refers
     /// to a resource for an X.509 public key certificate or certificate chain
     /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280).
-    public let x509Url: String?
+    public internal(set) var x509Url: String?
 
     /// The "x5c" (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates
     /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)
-    public let x509CertificateChain: String?
+    public internal(set) var x509CertificateChain: String?
 
     /// The "x5t" (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest)
     /// of the DER encoding of an X.509 certificate [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280).
-    public let x509CertificateSha1Thumbprint: String?
+    public internal(set) var x509CertificateSha1Thumbprint: String?
 
     /// The "x5t#S256" (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint
     /// (a.k.a. digest) of the DER encoding of an X.509 certificate
     /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280).
-    public let x509CertificateSha256Thumbprint: String?
+    public internal(set) var x509CertificateSha256Thumbprint: String?
 
     // MARK: - KeyType Specific JWK Properties
 
     /// The below properties represent JWK parameters that are unique to specific JWK key types.
 
     /// `d` Private exponent.
-    let d: String?
+    public internal(set) var d: String?
 
     /// The x-coordinate for the Elliptic Curve point.
-    let x: String?
+    public internal(set) var x: String?
 
     /// Elliptic Curve y-coordinate.
-    let y: String?
+    public internal(set) var y: String?
 
     // MARK: - Lifecycle
 

@@ -5,7 +5,7 @@ import XCTest
 final class Ed25519Tests: XCTestCase {
 
     func test_generateKey() throws {
-        let privateKey = try Ed25519.shared.generatePrivateKey()
+        let privateKey = try Ed25519_v2.generateKey()
 
         XCTAssertEqual(privateKey.keyType, .octetKeyPair)
         XCTAssertEqual(privateKey.curve, .ed25519)
@@ -14,7 +14,7 @@ final class Ed25519Tests: XCTestCase {
         XCTAssertNotNil(privateKey.x)
 
         // Generated private key should always be 32 bytes in length
-        let privateKeyBytes = try Ed25519.shared.privateKeyToBytes(privateKey)
+        let privateKeyBytes = try XCTUnwrap(privateKey.d?.decodeBase64Url())
         XCTAssertEqual(privateKeyBytes.count, 32)
     }
 

@@ -10,7 +10,7 @@ import Foundation
 /// each adhering to the same consistent API for usage within applications.
 public protocol KeyManager {
 
-    associatedtype CryptoAlgorithm
+    associatedtype SupportedCryptoAlgorithm
 
     /// Generates and securely stores a private key based on the provided keyType,
     /// returning a unique alias that can be utilized to reference the generated key for future operations.
@@ -18,7 +18,7 @@ public protocol KeyManager {
     /// - Parameters:
     ///   - algorithm: The cryptographic algorithm to use for key generation.
     ///   - curve: The elliptic curve to use (relevant for EC algorithms).
-    func generatePrivateKey(algorithm: CryptoAlgorithm) throws -> String
+    func generatePrivateKey(algorithm: SupportedCryptoAlgorithm) throws -> String
 
     /// Retrieves the public key associated with a previously stored private key, identified by the provided alias.
     ///

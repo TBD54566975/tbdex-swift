@@ -20,9 +20,9 @@ final class Web5TestVectorsCryptoEs256k: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let signature = try Secp256k1.shared.sign(
-                    privateKey: vector.input.key,
-                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data))
+                let signature = try Secp256k1_v2.sign(
+                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    privateJwk: vector.input.key
                 )
                 XCTAssertNoDifference(signature.toHexString(), vector.output)
             }
@@ -50,10 +50,10 @@ final class Web5TestVectorsCryptoEs256k: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let result = try Secp256k1.shared.verify(
-                    publicKey: vector.input.key,
+                let result = try Secp256k1_v2.verify(
                     signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
-                    signedPayload: try XCTUnwrap(Data.fromHexString(vector.input.data))
+                    payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    publicJwk: vector.input.key
                 )
                 XCTAssertNoDifference(result, vector.output)
             }

@@ -25,7 +25,7 @@ final class OfferingTests: XCTestCase {
             XCTAssertNil(offering.signature)
             try await offering.sign(did: did)
             XCTAssertNotNil(offering.signature)
-            try await offering.verify()
+            try await offering.verify() // TODO: this should be failing, but it's not because we don't check the return bool value
         } catch {
             print("Something went wrong: \(error)")
             XCTFail()
