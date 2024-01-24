@@ -32,14 +32,16 @@ public class LocalKeyManager: KeyManager {
 
     // MARK: - KeyManager
 
+    // TODO: switches in this class are all duplicated. Consolidate.
+
     public func generatePrivateKey(algorithm: SupportedCryptoAlgorithm) throws -> String {
         let privateKey: Jwk
 
         switch algorithm {
         case .ed25519:
-            privateKey = try EddsaAlgorithm.generateKey(.init(algorithm: .ed25519))
+            privateKey = try EdDSA.generatePrivateKey(algorithm: .ed25519)
         case .es256k:
-            privateKey = try EcdsaAlgorithm.generateKey(.init(algorithm: .es256k))
+            privateKey = try ECDSA.generatePrivateKey(algorithm: .es256k)
         }
 
         let keyAlias = try getDeterministicAlias(key: privateKey)
@@ -54,9 +56,9 @@ public class LocalKeyManager: KeyManager {
 
         switch algorithm {
         case .ed25519:
-            return try EddsaAlgorithm.computePublicKey(privateKey: privateKey)
+            return try EdDSA.computePublicKey(privateKey: privateKey)
         case .es256k:
-            return try EcdsaAlgorithm.computePublicKey(privateKey: privateKey)
+            return try ECDSA.computePublicKey(privateKey: privateKey)
         }
     }
 
@@ -64,12 +66,11 @@ public class LocalKeyManager: KeyManager {
         let privateKey = try getPrivateKey(keyAlias: keyAlias)
         let algorithm = try getSupportedCryptoAlgorithm(for: privateKey)
 
-        // TODO: switches in this class are all duplicated. Consolidate.
         switch algorithm {
         case .ed25519:
-            return try EddsaAlgorithm.sign(payload: payload, privateKey: privateKey)
+            return try EdDSA.sign(payload: payload, privateKey: privateKey)
         case .es256k:
-            return try EcdsaAlgorithm.sign(payload: payload, privateKey: privateKey)
+            return try ECDSA.sign(payload: payload, privateKey: privateKey)
         }
     }
 
@@ -108,10 +109,9 @@ public class LocalKeyManager: KeyManager {
             (.es256k, nil):
             return .es256k
         default:
-            // TODO: This error shoudl be renamed. It's not unknown, just unsupported.
+            // TODO: This error should be renamed. It's not unknown, just unsupported.
             throw LocalKeyManagerError.unknownCryptoAlgorithm
         }
-
     }
 
 }

@@ -20,7 +20,7 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let signature = try Ed25519_v2.sign(
+                let signature = try Ed25519.sign(
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
                     privateJwk: vector.input.key
                 )
@@ -31,16 +31,16 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
                 //
                 // Because of this, the signature we just generated will NOT be the same as the vector's output,
                 // but both will be valid signatures.
-                let isVectorOutputSignatureValid = try Ed25519_v2.verify(
+                let isVectorOutputSignatureValid = try Ed25519.verify(
                     signature: try XCTUnwrap(Data.fromHexString(try XCTUnwrap(vector.output))),
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
-                    publicJwk: try Ed25519_v2.computePublicKey(privateJwk: vector.input.key)
+                    publicJwk: try Ed25519.computePublicKey(privateJwk: vector.input.key)
                 )
 
-                let isGeneratedSignatureValid = try Ed25519_v2.verify(
+                let isGeneratedSignatureValid = try Ed25519.verify(
                     signature: signature,
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
-                    publicJwk: try Ed25519_v2.computePublicKey(privateJwk: vector.input.key)
+                    publicJwk: try Ed25519.computePublicKey(privateJwk: vector.input.key)
                 )
 
                 XCTAssertTrue(isVectorOutputSignatureValid)
@@ -72,7 +72,7 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
 
         testVector.run { vector in
             let vectorBlock = {
-                let isValid = try Ed25519_v2.verify(
+                let isValid = try Ed25519.verify(
                     signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
                     publicJwk: vector.input.key

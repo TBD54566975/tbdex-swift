@@ -5,7 +5,7 @@ import XCTest
 final class Ed25519Tests: XCTestCase {
 
     func test_generateKey() throws {
-        let privateKey = try Ed25519_v2.generateKey()
+        let privateKey = try Ed25519.generateKey()
 
         XCTAssertEqual(privateKey.keyType, .octetKeyPair)
         XCTAssertEqual(privateKey.curve, .ed25519)

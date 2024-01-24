@@ -58,7 +58,7 @@ public struct Jwk: Codable, Equatable {
     public internal(set) var keyOperations: [KeyOperations]?
 
     /// The `alg` (algorithm) parameter identifies the cryptographic algorithm intended for use with the key.
-    public internal(set) var  algorithm: Algorithm?
+    public internal(set) var algorithm: Algorithm?
 
     /// The "alg" (algorithm) parameter identifies the algorithm intended for use with the key.
     public internal(set) var keyIdentifier: String?

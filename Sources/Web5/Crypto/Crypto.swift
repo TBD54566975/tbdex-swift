@@ -33,7 +33,7 @@ public enum Crypto {
     ///   - algorithm: The cryptographic algorithm to find a key generator for.
     ///   - curve: The cryptographic curve to find a key generator for.
     /// - Returns: The corresponding `KeyGenerator`.
-    private static func getKeyGenerator(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws -> any KeyGenerator {
+    private static func getKeyGenerator(algorithm: Jwk.Algorithm?, curve: Jwk.Curve? = nil) throws {
 //        switch (algorithm, curve) {
 //        case (nil, .secp256k1),
 //            (Secp256k1.shared.algorithm, nil),

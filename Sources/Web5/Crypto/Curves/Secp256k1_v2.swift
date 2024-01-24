@@ -1,42 +1,32 @@
 import Foundation
 import secp256k1
 
-// TODO: Remove `v2` suffix
-enum Secp256k1_v2Error: Error {
+enum Secp256k1Error: Error {
     case invalidPrivateJwk
     case invalidPublicJwk
 }
 
-// TODO: Remove `v2` suffix
-enum Secp256k1_v2 {
-
-    // MARK: - Public Functions
-
-    // MARK: KeyGenerator Functions
+/// Cryptographic operations using the Elliptic Curve Digital Signature Algorithm (ECDSA)
+/// with the secp256k1 elliptic curve and SHA-256
+enum Secp256k1 {
 
     public static func generateKey() throws -> Jwk {
         return try secp256k1.Signing.PrivateKey().jwk()
     }
 
-    // MARK: AsymmetricKeyGenerator Functions
-
-    public static func computePublicKey(privateJwk: Jwk) throws -> Jwk {
-        let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateJwk)
+    public static func computePublicKey(privateKey: Jwk) throws -> Jwk {
+        let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateKey)
         return try privateKey.publicKey.jwk()
     }
 
-    // MARK: Signer Functions
-
-    public static func sign<D>(payload: D, privateJwk: Jwk) throws -> Data where D: DataProtocol {
-        let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateJwk)
+    public static func sign<D>(payload: D, privateKey: Jwk) throws -> Data where D: DataProtocol {
+        let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateKey)
         return try privateKey.signature(for: payload).compactRepresentation
     }
 
-    // MARK: - Verifier Functions
-
-    public static func verify<S, P>(signature: S, payload: P, publicJwk: Jwk) throws -> Bool
+    public static func verify<S, P>(signature: S, payload: P, publicKey: Jwk) throws -> Bool
     where S: DataProtocol, P: DataProtocol {
-        let publicKey = try secp256k1.Signing.PublicKey(publicJwk: publicJwk)
+        let publicKey = try secp256k1.Signing.PublicKey(publicJwk: publicKey)
         let ecdsaSignature = try secp256k1.Signing.ECDSASignature(compactRepresentation: signature)
         let normalizedSignature = try ecdsaSignature.normalized()
 
@@ -65,7 +55,7 @@ extension secp256k1.Signing.PrivateKey {
     init(privateJwk: Jwk) throws {
         guard case .elliptic = privateJwk.keyType,
               let d = privateJwk.d else {
-            throw Secp256k1_v2Error.invalidPrivateJwk
+            throw Secp256k1Error.invalidPrivateJwk
         }
 
         // TODO: handle compressed?
@@ -88,7 +78,7 @@ extension secp256k1.Signing.PublicKey {
               let x = publicJwk.x,
               let y = publicJwk.y
         else {
-            throw Secp256k1_v2Error.invalidPublicJwk
+            throw Secp256k1Error.invalidPublicJwk
         }
 
         var data = Data()
@@ -97,7 +87,7 @@ extension secp256k1.Signing.PublicKey {
         data.append(contentsOf: try y.decodeBase64Url())
 
         guard data.count == Constants.uncompressedKeySize else {
-            throw Secp256k1_v2Error.invalidPublicJwk
+            throw Secp256k1Error.invalidPublicJwk
         }
 
         try self.init(dataRepresentation: data, format: .uncompressed)
