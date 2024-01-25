@@ -15,56 +15,56 @@ public struct JWS {
     public struct Header: Codable {
 
         /// The "alg" (algorithm) Header Parameter identifies the cryptographic algorithm used to secure the JWS.
-        public let algorithm: Algorithm
+        public internal(set) var algorithm: Algorithm
 
         /// The "jku" (JWK Set URL) Header Parameter is a URI [[RFC3986](https://datatracker.ietf.org/doc/html/rfc3986)]
         /// that refers to a resource for a set of JSON-encoded public keys, one of which corresponds to the key used
         /// to digitally sign the JWS.
-        public let jwkSetURL: String?
+        public internal(set) var jwkSetURL: String?
 
         /// The "jwk" (JSON Web Key) Header Parameter is the public key that corresponds to the key used to digitally
         /// sign the JWS.
-        public let jwk: Jwk?
+        public internal(set) var jwk: Jwk?
 
         /// The "kid" (key ID) Header Parameter is a hint indicating which key was used to secure the JWS.
-        public let keyID: String?
+        public internal(set) var keyID: String?
 
         /// The "x5u" (X.509 URL) Header Parameter is a URI [[RFC3986](https://datatracker.ietf.org/doc/html/rfc3986)]
         /// that refers to a resource for the X.509 public key certificate or certificate chain
         /// [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280) corresponding to the key used to digitally sign
         /// the JWS.
-        public let x509URL: String?
+        public internal(set) var x509URL: String?
 
         /// The "x5c" (X.509 certificate chain) Header Parameter contains the X.509 public key certificate or
         /// certificate chain [[RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)] corresponding to the key used
         /// to digitally sign the JWS.
-        public let x509CertificateChain: String?
+        public internal(set) var x509CertificateChain: String?
 
         /// The "x5t" (X.509 certificate SHA-1 thumbprint) Header Parameter is a base64url-encoded SHA-1 thumbprint
         /// (a.k.a. digest) of the DER encoding of the X.509 certificate
         /// [[RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)] corresponding to the key used to digitally sign
         /// the JWS.
-        public let x509CertificateSHA1Thumbprint: String?
+        public internal(set) var x509CertificateSHA1Thumbprint: String?
 
         /// The "x5t#S256" (X.509 certificate SHA-256 thumbprint) Header Parameter is a base64url-encoded SHA-256
         /// thumbprint (a.k.a. digest) of the DER encoding of the X.509 certificate
         /// [[RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)] corresponding to the key used to digitally sign
         /// the JWS.
-        public let x509CertificateSHA256Thumbprint: String?
+        public internal(set) var x509CertificateSHA256Thumbprint: String?
 
         /// The "typ" (type) Header Parameter is used by JWS applications to declare the media type
         /// [[IANA.MediaTypes](https://datatracker.ietf.org/doc/html/rfc7515#ref-IANA.MediaTypes)] of this complete JWS.
-        public let type: String?
+        public internal(set) var type: String?
 
         /// The "cty" (content type) Header Parameter is used by JWS applications to declare the media type
         /// [[IANA.MediaTypes](https://datatracker.ietf.org/doc/html/rfc7515#ref-IANA.MediaTypes)] of the secured
         /// content (the payload).
-        public let contentType: String?
+        public internal(set) var contentType: String?
 
         /// The "crit" (critical) Header Parameter indicates that extensions to this specification
         /// and/or [[JWA](https://datatracker.ietf.org/doc/html/rfc7515#ref-JWA)] are being used that
         /// MUST be understood and processed.
-        public let critical: [String]?
+        public internal(set) var critical: [String]?
 
         public init(
             algorithm: JWS.Algorithm,
