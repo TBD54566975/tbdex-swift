@@ -53,7 +53,7 @@ extension ECDSA {
 extension secp256k1.Signing.PrivateKey {
 
     init(privateJwk: Jwk) throws {
-        guard 
+        guard
             privateJwk.keyType == .elliptic,
             privateJwk.algorithm == .es256k || privateJwk.curve == .secp256k1,
             let d = privateJwk.d

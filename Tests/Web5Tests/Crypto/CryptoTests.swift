@@ -72,6 +72,4 @@ final class CryptoTests: XCTestCase {
             }
         }
     }
-
-
 }

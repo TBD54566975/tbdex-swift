@@ -2,7 +2,7 @@ import Foundation
 
 /// Protocol defining the behaviors required sign data
 public protocol Signer: Verifier {
-    
+
     /// Sign a payload using the provided private key
     /// - Parameters:
     ///   - payload: The data to be signed

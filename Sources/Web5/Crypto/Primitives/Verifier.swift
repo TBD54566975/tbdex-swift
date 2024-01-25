@@ -2,7 +2,7 @@ import Foundation
 
 /// Protocol defining the behaviors required to verify signatures
 public protocol Verifier {
-    
+
     /// Verify a payload
     /// - Parameters:
     ///   - payload: The data to be verified

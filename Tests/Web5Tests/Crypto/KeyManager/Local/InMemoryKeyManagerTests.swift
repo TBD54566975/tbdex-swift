@@ -32,7 +32,7 @@ final class InMemoryKeyManagerTests: XCTestCase {
         // When a private key is not in the store for the provided alias, an error should be thrown
         XCTAssertThrowsError(try keyManager.getPublicKey(keyAlias: "keyAliasNotInStore")) { error in
             guard let error = error as? LocalKeyManager.Error,
-                case .keyNotFound = error 
+                case .keyNotFound = error
             else {
                 return XCTFail("Expected LocalKeyManager.Error.keyNotFound, but got \(error)")
             }

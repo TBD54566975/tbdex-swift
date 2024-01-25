@@ -29,7 +29,7 @@ public enum Crypto {
 
         return try asymmetricKeyGenerator.computePublicKey(privateKey: privateKey)
     }
-    
+
     /// Signs a payload using a private key.
     /// - Parameters:
     ///   - payload: The data to be signed
@@ -102,13 +102,13 @@ extension Crypto {
 
 // MARK: - Private CryptoAlgorithm static functions
 
-private extension CryptoAlgorithm {
+extension CryptoAlgorithm {
 
     /// Compute the `CryptoAlgorithm` that can be used with a given private key
     /// - Parameters
     ///   - privateKey: Private key in JWK format
     /// - Returns: The `CryptoAlgorithm` that can be used with provided the `privateKey` (if available)
-    static func forPrivateKey(_ privateKey: Jwk) -> CryptoAlgorithm? {
+    fileprivate static func forPrivateKey(_ privateKey: Jwk) -> CryptoAlgorithm? {
         return CryptoAlgorithm
             .allCases
             .first { algorithm in
@@ -124,7 +124,7 @@ private extension CryptoAlgorithm {
     /// Compute the `CryptoAlgorithm` that can be used with a given public key
     /// - Parameter publicKey: Public key in JWK format
     /// - Returns: The `CryptoAlgorithm` that can be used with provided the `publicKey` (if available)
-    static func forPublicKey(_ publicKey: Jwk, jwsAlgorithm: JWS.Algorithm? = nil) -> CryptoAlgorithm? {
+    fileprivate static func forPublicKey(_ publicKey: Jwk, jwsAlgorithm: JWS.Algorithm? = nil) -> CryptoAlgorithm? {
         var algorithm: CryptoAlgorithm? = nil
 
         if let jwsAlgorithm {
@@ -142,7 +142,8 @@ private extension CryptoAlgorithm {
             }
         } else {
             // If no JWS algorithm was provided, use the public key alone to determine the `CryptoAlgorithm`
-            algorithm = CryptoAlgorithm
+            algorithm =
+                CryptoAlgorithm
                 .allCases
                 .first { algorithm in
                     if let asymmetricKeyGenerator = algorithm.asymmetricKeyGenerator {
@@ -160,10 +161,10 @@ private extension CryptoAlgorithm {
 
 // MARK: - Private CryptoAlgorithm computed properties
 
-private extension CryptoAlgorithm {
+extension CryptoAlgorithm {
 
     /// `Signer` associated with the `CryptoAlgorithm`
-    var signer: Signer.Type? {
+    fileprivate var signer: Signer.Type? {
         switch self {
         case .es256k:
             return ECDSA.Es256k.self
@@ -173,12 +174,12 @@ private extension CryptoAlgorithm {
     }
 
     /// `Verifier` associated with the `CryptoAlgorithm`
-    var verifier: Verifier.Type? {
+    fileprivate var verifier: Verifier.Type? {
         return signer
     }
 
     /// `AsymmetricKeyGenerator` associated with the `CryptoAlgorithm`
-    var asymmetricKeyGenerator: AsymmetricKeyGenerator.Type? {
+    fileprivate var asymmetricKeyGenerator: AsymmetricKeyGenerator.Type? {
         switch self {
         case .es256k:
             return ECDSA.Es256k.self

@@ -70,9 +70,9 @@ extension Curve25519.Signing.PrivateKey {
 }
 
 extension Curve25519.Signing.PublicKey {
-    
+
     init(publicJwk: Jwk) throws {
-        guard 
+        guard
             publicJwk.keyType == .octetKeyPair,
             publicJwk.algorithm == .eddsa || publicJwk.curve == .ed25519,
             publicJwk.y == nil,
