@@ -21,11 +21,6 @@ extension EdDSA {
             return try privateKey.publicKey.jwk()
         }
 
-        public static func isValidPublicKey(_ publicKey: Jwk) -> Bool {
-            let publicKey = try? Curve25519.Signing.PublicKey(publicJwk: publicKey)
-            return publicKey != nil
-        }
-
         public static func sign<D>(payload: D, privateKey: Jwk) throws -> Data where D: DataProtocol {
             let privateKey = try Curve25519.Signing.PrivateKey(privateJwk: privateKey)
             return try privateKey.signature(for: payload)
@@ -35,6 +30,16 @@ extension EdDSA {
         where S: DataProtocol, D: DataProtocol {
             let publicKey = try Curve25519.Signing.PublicKey(publicJwk: publicKey)
             return publicKey.isValidSignature(signature, for: payload)
+        }
+
+        public static func isValidPrivateKey(_ privateKey: Jwk) -> Bool {
+            let privateKey = try? Curve25519.Signing.PrivateKey(privateJwk: privateKey)
+            return privateKey != nil
+        }
+
+        public static func isValidPublicKey(_ publicKey: Jwk) -> Bool {
+            let publicKey = try? Curve25519.Signing.PublicKey(publicJwk: publicKey)
+            return publicKey != nil
         }
     }
 }
@@ -46,8 +51,7 @@ extension Curve25519.Signing.PrivateKey {
     init(privateJwk: Jwk) throws {
         guard
             privateJwk.keyType == .octetKeyPair,
-            privateJwk.algorithm == .eddsa,
-            privateJwk.curve == .ed25519,
+            privateJwk.algorithm == .eddsa || privateJwk.curve == .ed25519,
             privateJwk.y == nil,
             let d = privateJwk.d
         else {
@@ -70,8 +74,7 @@ extension Curve25519.Signing.PublicKey {
     init(publicJwk: Jwk) throws {
         guard 
             publicJwk.keyType == .octetKeyPair,
-            publicJwk.algorithm == .eddsa,
-            publicJwk.curve == .ed25519,
+            publicJwk.algorithm == .eddsa || publicJwk.curve == .ed25519,
             publicJwk.y == nil,
             publicJwk.d == nil,
             let x = publicJwk.x

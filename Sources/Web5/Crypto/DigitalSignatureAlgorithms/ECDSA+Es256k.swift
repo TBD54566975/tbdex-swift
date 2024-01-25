@@ -1,7 +1,6 @@
 import Foundation
 import secp256k1
 
-/// Elliptic Curve Digital Signature Algorithm (ECDSA)
 extension ECDSA {
 
     /// Crypto operations using the Elliptic Curve Digital Signature Algorithm (ECDSA)
@@ -22,11 +21,6 @@ extension ECDSA {
             return try privateKey.publicKey.jwk()
         }
 
-        public static func isValidPublicKey(_ publicKey: Jwk) -> Bool {
-            let publicKey = try? secp256k1.Signing.PublicKey(publicJwk: publicKey)
-            return publicKey != nil
-        }
-
         public static func sign<D>(payload: D, privateKey: Jwk) throws -> Data where D: DataProtocol {
             let privateKey = try secp256k1.Signing.PrivateKey(privateJwk: privateKey)
             return try privateKey.signature(for: payload).compactRepresentation
@@ -39,6 +33,16 @@ extension ECDSA {
             let normalizedSignature = try ecdsaSignature.normalized()
 
             return publicKey.isValidSignature(normalizedSignature, for: payload)
+        }
+
+        public static func isValidPrivateKey(_ privateKey: Jwk) -> Bool {
+            let privateKey = try? secp256k1.Signing.PrivateKey(privateJwk: privateKey)
+            return privateKey != nil
+        }
+
+        public static func isValidPublicKey(_ publicKey: Jwk) -> Bool {
+            let publicKey = try? secp256k1.Signing.PublicKey(publicJwk: publicKey)
+            return publicKey != nil
         }
     }
 }

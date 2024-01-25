@@ -161,10 +161,10 @@ extension CryptoUtils {
         let publicKeyJwk = assertionMethod.publicKeyJwk!
 
         return try Crypto.verify(
-            publicKey: publicKeyJwk,
             signature: try jwsSignature.decodeBase64Url(),
-            signedPayload: try jwsPayload.decodeBase64Url(),
-            algorithm: jwsHeader.algorithm.jwkAlgorithm
+            payload: try jwsPayload.decodeBase64Url(),
+            publicKey: publicKeyJwk,
+            jwsAlgorithm: jwsHeader.algorithm
         )
     }
 

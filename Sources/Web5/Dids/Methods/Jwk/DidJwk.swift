@@ -3,10 +3,10 @@ import Foundation
 public struct DidJwk: Did {
 
     public struct Options {
-        public let algorithm: Algorithm
+        public let algorithm: CryptoAlgorithm
 
         public init(
-            algorithm: Algorithm
+            algorithm: CryptoAlgorithm
         ) {
             self.algorithm = algorithm
         }

@@ -120,16 +120,3 @@ extension Jwk.Algorithm {
         }
     }
 }
-
-extension JWS.Algorithm {
-
-    /// Converts a JWS algorithm to a JWK algorithm.
-    public var jwkAlgorithm: Jwk.Algorithm {
-        switch self {
-        case .eddsa:
-            return .eddsa
-        case .es256k:
-            return .es256k
-        }
-    }
-}
