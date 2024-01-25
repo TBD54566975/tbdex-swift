@@ -12,7 +12,7 @@ public enum DidResolver {
 
     /// Resolves a DID URI to its DID Document
     public static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? ParsedDid(didUri: didUri) else {
+        guard let parsedDid = try? DID(didUri: didUri) else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
 

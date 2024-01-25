@@ -6,7 +6,7 @@ struct DidIon {
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? ParsedDid(didUri: didUri) else {
+        guard let parsedDid = try? DID(didUri: didUri) else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
 

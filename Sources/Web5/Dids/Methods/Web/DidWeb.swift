@@ -8,7 +8,7 @@ struct DidWeb {
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? ParsedDid(didUri: didUri),
+        guard let parsedDid = try? DID(didUri: didUri),
             let url = getDidDocumentUrl(methodSpecificId: parsedDid.methodSpecificId)
         else {
             return DidResolution.Result.resolutionError(.invalidDid)

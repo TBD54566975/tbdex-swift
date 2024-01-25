@@ -43,7 +43,7 @@ extension CryptoUtils {
     ///   - payload: The data to be signed
     ///   - assertionMethodId: The alias of the key to be used for signing.
     /// - Returns: The signed payload as a detached payload JWT (JSON Web Token).
-    static func sign<D>(did: Did, payload: D, assertionMethodId: String? = nil) async throws -> String
+    static func sign<D>(did: ManagedDID, payload: D, assertionMethodId: String? = nil) async throws -> String
     where D: DataProtocol {
         let assertionMethod = try await getAssertionMethod(did: did, assertionMethodId: assertionMethodId)
         guard let publicKeyJwk = assertionMethod.publicKeyJwk else {
@@ -71,7 +71,7 @@ extension CryptoUtils {
         return "\(base64UrlEncodedHeader)..\(base64UrlEncodedSignature)"
     }
 
-    private static func getAssertionMethod(did: Did, assertionMethodId: String?) async throws -> VerificationMethod {
+    private static func getAssertionMethod(did: ManagedDID, assertionMethodId: String?) async throws -> VerificationMethod {
         let resolutionResult = await DidResolver.resolve(didUri: did.uri)
         let assertionMethods = resolutionResult.didDocument?.assertionMethodDereferenced
 
@@ -137,7 +137,7 @@ extension CryptoUtils {
             throw VerifyError(reason: "")
         }
 
-        let parsedDid = try ParsedDid(didUri: verificationMethodID)
+        let parsedDid = try DID(didUri: verificationMethodID)
         let signingDidUri = parsedDid.uriWithoutFragment
 
         guard signingDidUri == didUri else {

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct DidJwk: Did {
+public struct DidJwk: ManagedDID {
 
     public struct Options {
         public let algorithm: CryptoAlgorithm
@@ -28,7 +28,7 @@ public struct DidJwk: Did {
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? ParsedDid(didUri: didUri),
+        guard let parsedDid = try? DID(didUri: didUri),
             let jwk = try? JSONDecoder().decode(Jwk.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
         else {
             return DidResolution.Result.resolutionError(.invalidDid)
