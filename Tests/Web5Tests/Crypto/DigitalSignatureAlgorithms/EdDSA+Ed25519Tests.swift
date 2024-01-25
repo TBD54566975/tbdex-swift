@@ -47,6 +47,11 @@ final class EdDSA_Ed25519Tests: XCTestCase {
         XCTAssertEqual(signature.count, 64)
     }
 
+    func test_sign_errorsWhenPrivateKeyFromAnotherAlgorithm() throws {
+        let es256kPrivateKey = try ECDSA.Es256k.generatePrivateKey()
+        XCTAssertThrowsError(try EdDSA.Ed25519.sign(payload: payload, privateKey: es256kPrivateKey))
+    }
+
     func test_verify() throws {
         let privateKey = try EdDSA.Ed25519.generatePrivateKey()
         let publickey = try EdDSA.Ed25519.computePublicKey(privateKey: privateKey)
