@@ -7,11 +7,6 @@ extension ECDSA {
     /// with the secp256k1 elliptic curve and SHA-256
     enum Es256k: AsymmetricKeyGenerator, Signer {
 
-        enum Error: Swift.Error {
-            case invalidPrivateJwk
-            case invalidPublicJwk
-        }
-
         public static func generatePrivateKey() throws -> Jwk {
             return try secp256k1.Signing.PrivateKey().jwk()
         }
@@ -26,8 +21,8 @@ extension ECDSA {
             return try privateKey.signature(for: payload).compactRepresentation
         }
 
-        public static func verify<S, P>(signature: S, payload: P, publicKey: Jwk) throws -> Bool
-        where S: DataProtocol, P: DataProtocol {
+        public static func verify<P, S>(payload: P, signature: S, publicKey: Jwk) throws -> Bool
+        where P: DataProtocol, S: DataProtocol {
             let publicKey = try secp256k1.Signing.PublicKey(publicJwk: publicKey)
             let ecdsaSignature = try secp256k1.Signing.ECDSASignature(compactRepresentation: signature)
             let normalizedSignature = try ecdsaSignature.normalized()
@@ -43,6 +38,12 @@ extension ECDSA {
         public static func isValidPublicKey(_ publicKey: Jwk) -> Bool {
             let publicKey = try? secp256k1.Signing.PublicKey(publicJwk: publicKey)
             return publicKey != nil
+        }
+
+        /// Errors thrown by `ECDSA.Es256k`
+        enum Error: Swift.Error {
+            case invalidPrivateJwk
+            case invalidPublicJwk
         }
     }
 }
@@ -60,7 +61,6 @@ extension secp256k1.Signing.PrivateKey {
             throw ECDSA.Es256k.Error.invalidPrivateJwk
         }
 
-        // TODO: handle compressed?
         try self.init(dataRepresentation: d.decodeBase64Url())
     }
 

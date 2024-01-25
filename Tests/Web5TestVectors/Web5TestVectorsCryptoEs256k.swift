@@ -51,8 +51,8 @@ final class Web5TestVectorsCryptoEs256k: XCTestCase {
         testVector.run { vector in
             let vectorBlock = {
                 let result = try ECDSA.Es256k.verify(
-                    signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
                     publicKey: vector.input.key
                 )
                 XCTAssertNoDifference(result, vector.output)

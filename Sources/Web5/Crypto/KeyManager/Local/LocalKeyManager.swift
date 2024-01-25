@@ -1,7 +1,7 @@
 import Foundation
 
 /// A KeyManager that generates and stores cryptographic keys locally on device
-public class LocalKeyManager {
+public class LocalKeyManager: KeyManager {
     /// Backing store to store generated keys
     let keyStore: LocalKeyStore
 
@@ -9,10 +9,7 @@ public class LocalKeyManager {
     init(keyStore: LocalKeyStore) {
         self.keyStore = keyStore
     }
-}
 
-extension LocalKeyManager: KeyManager {
-    
     /// Generate a private key and store it locally on device
     /// - Parameters
     ///   - algorithm: `CryptoAlgorithm` to use for key generation
@@ -21,11 +18,10 @@ extension LocalKeyManager: KeyManager {
         let privateKey = try Crypto.generatePrivateKey(algorithm: algorithm)
         let keyAlias = try getDeterministicAlias(key: privateKey)
 
-        try keyStore.setPrivateKey(privateKey, keyAlias: keyAlias)
+        try keyStore.setKey(privateKey, keyAlias: keyAlias)
 
         return keyAlias
     }
-
 
     public func getPublicKey(keyAlias: String) throws -> Jwk {
         let privateKey = try getPrivateKey(keyAlias: keyAlias)
@@ -56,22 +52,27 @@ extension LocalKeyManager: KeyManager {
     // MARK: - Private
 
     private func getPrivateKey(keyAlias: String) throws -> Jwk {
-        guard let privateKey = try keyStore.getPrivateKey(keyAlias: keyAlias) else {
-            throw LocalKeyManagerError.keyNotFound(keyAlias)
+        guard let privateKey = try keyStore.getKey(keyAlias: keyAlias) else {
+            throw LocalKeyManager.Error.keyNotFound(keyAlias)
         }
 
         return privateKey
     }
 }
 
-/// Errors thrown by `LocalKeyManager`
-public enum LocalKeyManagerError: LocalizedError {
-    case keyNotFound(String)
+// MARK: - Errors
 
-    public var errorDescription: String? {
-        switch self {
-        case let .keyNotFound(keyAlias):
-            return "Key not found for alias: \(keyAlias)"
+extension LocalKeyManager {
+
+    /// Errors thrown by `LocalKeyManager`
+    public enum Error: LocalizedError {
+        case keyNotFound(String)
+
+        public var errorDescription: String? {
+            switch self {
+            case let .keyNotFound(keyAlias):
+                return "Key not found for alias: \(keyAlias)"
+            }
         }
     }
 }

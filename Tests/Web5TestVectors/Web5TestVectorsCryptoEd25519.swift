@@ -32,14 +32,14 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
                 // Because of this, the signature we just generated will NOT be the same as the vector's output,
                 // but both will be valid signatures.
                 let isVectorOutputSignatureValid = try EdDSA.Ed25519.verify(
-                    signature: try XCTUnwrap(Data.fromHexString(try XCTUnwrap(vector.output))),
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    signature: try XCTUnwrap(Data.fromHexString(try XCTUnwrap(vector.output))),
                     publicKey: try EdDSA.Ed25519.computePublicKey(privateKey: vector.input.key)
                 )
 
                 let isGeneratedSignatureValid = try EdDSA.Ed25519.verify(
-                    signature: signature,
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    signature: signature,
                     publicKey: try EdDSA.Ed25519.computePublicKey(privateKey: vector.input.key)
                 )
 
@@ -73,8 +73,8 @@ final class Web5TestVectorsCryptoEd25519: XCTestCase {
         testVector.run { vector in
             let vectorBlock = {
                 let isValid = try EdDSA.Ed25519.verify(
-                    signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
                     payload: try XCTUnwrap(Data.fromHexString(vector.input.data)),
+                    signature: try XCTUnwrap(Data.fromHexString(vector.input.signature)),
                     publicKey: vector.input.key
                 )
                 XCTAssertNoDifference(isValid, vector.output)

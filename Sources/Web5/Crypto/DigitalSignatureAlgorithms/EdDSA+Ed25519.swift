@@ -26,8 +26,8 @@ extension EdDSA {
             return try privateKey.signature(for: payload)
         }
 
-        public static func verify<S, D>(signature: S, payload: D, publicKey: Jwk) throws -> Bool
-        where S: DataProtocol, D: DataProtocol {
+        public static func verify<P, S>(payload: P, signature: S, publicKey: Jwk) throws -> Bool
+        where P: DataProtocol, S: DataProtocol {
             let publicKey = try Curve25519.Signing.PublicKey(publicJwk: publicKey)
             return publicKey.isValidSignature(signature, for: payload)
         }

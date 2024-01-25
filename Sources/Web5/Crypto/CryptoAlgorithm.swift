@@ -1,5 +1,6 @@
 import Foundation
 
+/// Cryptographic algorithms supported by the Web5
 public enum CryptoAlgorithm: CaseIterable {
 
     /// EdDSA using the Ed25519 curve
