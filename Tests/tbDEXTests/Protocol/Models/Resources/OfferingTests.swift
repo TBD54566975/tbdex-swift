@@ -1,5 +1,5 @@
-import Web5TestUtilities
 import Web5
+import Web5TestUtilities
 import XCTest
 
 @testable import tbDEX

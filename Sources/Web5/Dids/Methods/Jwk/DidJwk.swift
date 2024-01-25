@@ -2,7 +2,7 @@ import Foundation
 
 public struct DidJwk: Did {
 
-    public struct Options<CryptoAlgorithm> {
+    public struct Options {
         public let algorithm: CryptoAlgorithm
 
         public init(
@@ -15,7 +15,7 @@ public struct DidJwk: Did {
     public let uri: String
     public let keyManager: any KeyManager
 
-    public init<K: KeyManager>(keyManager: K, options: Options<K.CryptoAlgorithm>) throws {
+    public init(keyManager: KeyManager, options: Options) throws {
         let keyAlias = try keyManager.generatePrivateKey(algorithm: options.algorithm)
         let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
         let publicKeyBase64Url = try JSONEncoder().encode(publicKey).base64UrlEncodedString()

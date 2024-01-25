@@ -34,7 +34,7 @@ let package = Package(
         .target(
             name: "Web5TestUtilities",
             dependencies: [
-                .product(name: "CustomDump", package: "swift-custom-dump"),
+                .product(name: "CustomDump", package: "swift-custom-dump")
             ]
         ),
         // Web5 unit test target
