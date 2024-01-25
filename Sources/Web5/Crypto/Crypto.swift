@@ -1,7 +1,7 @@
 import Foundation
 
-// TODO: this class needs another pass at documentation
-
+/// Cryptographic utility functions providing key generation, signature creation and verification,
+/// and other crypto-related functionality.
 public enum Crypto {
 
     /// Generate a private key for the specified cryptographic algorithm.
@@ -15,7 +15,7 @@ public enum Crypto {
         return try asymmetricKeyGenerator.generatePrivateKey()
     }
 
-    /// Computes the public key for the specified private key.
+    /// Compute the public key for the specified private key.
     /// - Parameter privateKey: JWK representation of the private key to compute the public key for.
     /// - Returns: JWK representation of the computed public key.
     public static func computePublicKey(privateKey: Jwk) throws -> Jwk {
@@ -29,7 +29,12 @@ public enum Crypto {
 
         return try asymmetricKeyGenerator.computePublicKey(privateKey: privateKey)
     }
-
+    
+    /// Signs a payload using a private key.
+    /// - Parameters:
+    ///   - payload: The data to be signed
+    ///   - privateKey: Private key in JWK format
+    /// - Returns: Data representing the signature
     public static func sign<D>(payload: D, privateKey: Jwk) throws -> Data
     where D: DataProtocol {
         guard let algorithm = CryptoAlgorithm.forPrivateKey(privateKey) else {
@@ -43,14 +48,13 @@ public enum Crypto {
         return try signer.sign(payload: payload, privateKey: privateKey)
     }
 
-    /// Verifies a signature against a signed payload using a public key.
-    ///
+    /// Verifies a signature against a signed payload using a public key
     /// - Parameters:
-    ///   - payload: The data that was signed.
-    ///   - signature: The signature that will be verified.
-    ///   - publicKey: The JWK public key to be used for verifying the signature.
-    ///   - algorithm: The algorithm used for signing/verification, only used if not provided in the JWK.
-    /// - Returns:  Boolean indicating if the publicKey and signature are valid for the given payload.
+    ///   - payload: The data that was signed
+    ///   - signature: The signature that will be verified
+    ///   - publicKey: Public key in JWK format, to be used for verifying the signature
+    ///   - algorithm: JWS algorithm used for signing/verification
+    /// - Returns:  Boolean indicating if the publicKey and signature are valid for the given payload
     public static func verify<P, S>(
         payload: P,
         signature: S,

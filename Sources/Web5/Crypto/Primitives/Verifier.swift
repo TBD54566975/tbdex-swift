@@ -5,7 +5,7 @@ public protocol Verifier {
     
     /// Verify a payload
     /// - Parameters:
-    ///   - payload: The data to verify
+    ///   - payload: The data to be verified
     ///   - signature: The signature of the payload
     ///   - publicKey: Public key in JWK format
     /// - Returns: Boolean indicating if the signature is valid for the payload

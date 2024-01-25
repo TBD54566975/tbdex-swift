@@ -39,8 +39,8 @@ extension CryptoUtils {
 
     /// Signs the provided payload using the specified DID and key.
     /// - Parameters:
-    ///   - did: DID to use for signing.
-    ///   - payload: The payload to sign.
+    ///   - did: DID to use for signing
+    ///   - payload: The data to be signed
     ///   - assertionMethodId: The alias of the key to be used for signing.
     /// - Returns: The signed payload as a detached payload JWT (JSON Web Token).
     static func sign<D>(did: Did, payload: D, assertionMethodId: String? = nil) async throws -> String
