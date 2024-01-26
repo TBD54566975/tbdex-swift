@@ -1,20 +1,36 @@
 import Foundation
 
-public struct DIDJWK {
+/// Collection of functions that implement the `did:jwk` method
+public enum DIDJWK {
 
     public static let methodName = "jwk"
-
+    
+    /// Options that can be provided to customize how a DIDJWK is created
     public struct CreateOptions {
-        public let algorithm: CryptoAlgorithm
 
+        /// The algorithm to use when creating the backing key for the DID
+        public let algorithm: CryptoAlgorithm
+        
+        /// Default Initializer
+        /// - Parameters
+        ///   - algorithm: The algorithm to use when creating the backing key for the DID. 
+        ///   Defaults to `.ed25519` if not specified.
         public init(
-            algorithm: CryptoAlgorithm
+            algorithm: CryptoAlgorithm = .ed25519
         ) {
             self.algorithm = algorithm
         }
     }
 
-    public func create(keyManager: KeyManager, _ options: CreateOptions) throws -> BearerDID {
+    /// Create a new DIDJWK
+    /// - Parameters:
+    ///   - keyManager: `KeyManager` used to generate and store the keys associated to the DID
+    ///   - options: Options configuring how the DIDJWK is created. Uses default if not specified.
+    /// - Returns: `BearerDID` that represents the created DIDJWK
+    public static func create(
+        keyManager: KeyManager,
+        options: CreateOptions = .init()
+    ) throws -> BearerDID {
         let keyAlias = try keyManager.generatePrivateKey(algorithm: options.algorithm)
         let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
         let publicKeyBase64Url = try JSONEncoder().encode(publicKey).base64UrlEncodedString()

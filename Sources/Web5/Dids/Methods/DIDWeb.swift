@@ -1,6 +1,6 @@
 import Foundation
 
-struct DIDWeb {
+enum DIDWeb {
 
     public static let methodName = "web"
 

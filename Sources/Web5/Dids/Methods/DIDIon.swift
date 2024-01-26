@@ -1,6 +1,6 @@
 import Foundation
 
-struct DIDIon {
+enum DIDIon {
 
     public static let methodName = "ion"
 

@@ -26,5 +26,5 @@ public struct BearerDID {
     }
 
     // TODO: add a constructor that takes in a `PortableDID`
-    // TODO: add a `portableDID` computed property that returns a representation of the `BearerDID` to a `PortableDID`
+    // TODO: add a `portableDID` computed property that converts the `BearerDID` to a `PortableDID`
 }
