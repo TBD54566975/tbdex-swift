@@ -5,14 +5,14 @@ typealias DidMethodResolver = (String) async -> DidResolution.Result
 public enum DidResolver {
 
     private static var methodResolvers: [String: DidMethodResolver] = [
-        "jwk": DidJwk.resolve,
-        "web": DidWeb.resolve,
-        "ion": DidIon.resolve,
+        DIDJWK.methodName: DIDJWK.resolve,
+        DIDWeb.methodName: DIDWeb.resolve,
+        DIDIon.methodName: DIDIon.resolve,
     ]
 
     /// Resolves a DID URI to its DID Document
-    public static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? DID(didUri: didUri) else {
+    public static func resolve(didURI: String) async -> DidResolution.Result {
+        guard let parsedDid = try? DID(didURI: didURI) else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
 
@@ -20,7 +20,7 @@ public enum DidResolver {
             return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
-        return await methodResolver(didUri)
+        return await methodResolver(didURI)
     }
 
 }

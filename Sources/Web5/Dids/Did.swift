@@ -1,88 +1,120 @@
 import Foundation
+import RegexBuilder
 
-enum ParsedDidError: Error {
-    case invalidUri
-    case invalidMethodName
-    case invalidMethodSpecificId
+enum DIDError: Error {
+    case invalidURI
 }
 
-/// Parsed Decentralized Identifier (DID), according to the specifications
-/// defined by the [W3C DID Core specification](https://www.w3.org/TR/did-core).
+/// Decentralized Identifier (DID), according to the  [W3C DID Core specification](https://www.w3.org/TR/did-core).
 public struct DID {
 
-    /// The complete DID URI.
+    /// Represents the complete Decentralized Identifier (DID) URI
+    ///
+    /// See [spec](https://www.w3.org/TR/did-core/#did-syntax) for more information
     public let uri: String
 
-    /// The DID URI without the fragment part.
+    /// DID method in the URI, which indicates the underlying method-specific
+    /// identifier scheme (e.g.: `jwk`, `dht`, `web`, etc.)
     ///
-    /// Example: if the `uri` is `did:example:1234#keys-1`, `did:example:1234` would be the `uriWithoutFragment`
-    public var uriWithoutFragment: String {
-        uri.components(separatedBy: "#")[0]
-    }
-
-    /// The method name specified in the DID URI.
-    ///
-    /// Example: if the `uri` is `did:example:123456`, "example" would be the method name
+    /// See [spec](https://www.w3.org/TR/did-core/#method-schemes) for more information
     public let methodName: String
 
-    /// The method specific identifier part of the DID URI.
+    /// Method-specific identifier part of the DID URI
     ///
-    /// Example: if the `uri` is `did:example:123456`, "123456" would be the identifier
-    public let methodSpecificId: String
+    /// See [spec](https://www.w3.org/TR/did-core/#method-specific-id) for more information
+    public let identifier: String
 
-    /// The fragment part of the DID URI.
+    /// Optional map containing parameters present in the DID URI. These parameters
+    /// are method-specific
     ///
-    /// Example: if the `uri` is `did:example:123456#keys-1`, "keys-1" would be the fragment
-    public var fragment: String? {
-        let components = uri.components(separatedBy: "#")
-        if components.count == 2 {
-            return components[1]
-        } else {
-            return nil
-        }
-    }
+    /// See [spec](https://www.w3.org/TR/did-core/#did-parameters) for more information
+    public let params: [String: String]?
+
+    /// Optional path component in the DID URI
+    ///
+    /// See [spec](https://www.w3.org/TR/did-core/#path) for more information
+    public let path: String?
+
+    /// Optional query component in the DID URI, used to express a request for a specific
+    /// representation or resource related to a DID
+    ///
+    /// See [spec](https://www.w3.org/TR/did-core/#query) for more information
+    public let query: String?
+
+    /// Optional fragment component in the DID URI, used to reference a specific part
+    /// of a DID Document
+    ///
+    /// See [spec](https://www.w3.org/TR/did-core/#fragment) for more information
+    public let fragment: String?
 
     /// Parses a DID URI in accordance to the ABNF rules specified in the specification
     /// [here](https://www.w3.org/TR/did-core/#did-syntax).
     /// - Parameter didUri: URI of DID to parse
-    /// - Returns: `ParsedDid` instance if parsing was successful. Throws error otherwise.
-    public init(didUri: String) throws {
-        let components =
-            didUri
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .components(separatedBy: "#")
-            .first!
-            .components(separatedBy: ":")
-
-        guard components.count >= 3 else {
-            throw ParsedDidError.invalidUri
+    /// - Returns: `DID` instance if parsing was successful. Throws error otherwise.
+    public init(didURI: String) throws {
+        guard let match = didURI.firstMatch(of: Self.didRegex) else {
+            throw DIDError.invalidURI
         }
 
-        let methodName = components[1]
-        guard Self.isValidMethodName(methodName) else {
-            throw ParsedDidError.invalidMethodName
+        let methodName = String(match.1)
+        let identifier = String(match.2)
+
+        var params: [String: String]? = nil
+        if !match.output.4.isEmpty {
+            let paramsString = String(match.output.4.dropFirst()) // Remove leading ';'
+            params = paramsString
+                .split(separator: ";")
+                .map(String.init)
+                .reduce(into: [String: String]()) { dict, param in
+                    let parts = param.split(separator: "=", maxSplits: 1).map(String.init)
+                    if parts.count == 2 {
+                        dict[parts[0]] = parts[1]
+                    }
+                }
         }
 
-        let methodSpecificId = components.dropFirst(2).joined(separator: ":")
-        guard Self.isValidMethodSpecificId(methodSpecificId) else {
-            throw ParsedDidError.invalidMethodSpecificId
+        var path: String? = nil
+        if let pathSubstring = match.output.5 {
+            path = String(pathSubstring)
         }
 
-        self.uri = didUri
+        var query: String? = nil
+        if let querySubstring = match.output.6 {
+            query = String(querySubstring.dropFirst()) // Remove leading '?'
+        }
+
+        var fragment: String? = nil
+        if let fragmentSubstring = match.output.7 {
+            fragment = String(fragmentSubstring.dropFirst()) // Remove leading '#'
+        }
+
+        self.uri = didURI
         self.methodName = methodName
-        self.methodSpecificId = methodSpecificId
+        self.identifier = identifier
+        self.params = params
+        self.path = path
+        self.query = query
+        self.fragment = fragment
     }
 
-    // MARK: - Private Static
+    // MARK: - Private
 
-    private static let methodNameRegex = "^[a-z0-9]+$"
-    private static let methodSpecificIdRegex = "^(([a-zA-Z0-9._-]*:)*[a-zA-Z0-9._-]+|%[0-9a-fA-F]{2})+$"
+    private static let methodNameRegex = #/([a-z0-9]+)/#
+    private static let identifierRegex =
+        #/((?:(?:[a-zA-Z0-9._-]|(?:%[0-9a-fA-F]{2}))*:)*((?:[a-zA-Z0-9._-]|(?:%[0-9a-fA-F]{2}))+))/#
+    private static let paramsRegex = #/((?:;[a-zA-Z0-9_.:%\-]+=[a-zA-Z0-9_.:%\-]*)*)/#
+    private static let pathRegex = #/(/[^#?]*)?/#
+    private static let queryRegex = #/(\?[^#]*)?/#
+    private static let fragmentRegex = #/(\#.*)?/#
 
-    private static func isValidMethodName(_ methodName: String) -> Bool {
-        return methodName.range(of: methodNameRegex, options: .regularExpression) != nil
-    }
-
-    private static func isValidMethodSpecificId(_ id: String) -> Bool {
-        return id.range(of: methodSpecificIdRegex, options: .regularExpression) != nil
+    private static let didRegex = Regex {
+        "did:"
+        methodNameRegex
+        ":"
+        identifierRegex
+        paramsRegex
+        pathRegex
+        queryRegex
+        fragmentRegex
     }
 }

@@ -1,6 +1,8 @@
 import Foundation
 
-struct DidWeb {
+struct DIDWeb {
+
+    public static let methodName = "web"
 
     // MARK: - Public Static
 
@@ -8,13 +10,13 @@ struct DidWeb {
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? DID(didUri: didUri),
-            let url = getDidDocumentUrl(methodSpecificId: parsedDid.methodSpecificId)
+        guard let did = try? DID(didURI: didUri),
+              let url = getDidDocumentUrl(did: did)
         else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
 
-        guard parsedDid.methodName == "web" else {
+        guard did.methodName == Self.methodName else {
             return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
@@ -32,8 +34,8 @@ struct DidWeb {
     private static let wellKnownPath = "/.well-known"
     private static let didDocumentFilename = "/did.json"
 
-    private static func getDidDocumentUrl(methodSpecificId: String) -> URL? {
-        let domainNameWithPath = methodSpecificId.replacingOccurrences(of: ":", with: "/")
+    private static func getDidDocumentUrl(did: DID) -> URL? {
+        let domainNameWithPath = did.identifier.replacingOccurrences(of: ":", with: "/")
         guard let decodedDomain = domainNameWithPath.removingPercentEncoding,
             var url = URL(string: "https://\(decodedDomain)")
         else {

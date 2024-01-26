@@ -41,7 +41,7 @@ final class Web5TestVectorsDidWeb: XCTestCase {
                 try vector.input.mocks().forEach { $0.register() }
 
                 /// Resolve each input didUri, make sure it matches output
-                let result = await DidWeb.resolve(didUri: vector.input.didUri)
+                let result = await DIDWeb.resolve(didUri: vector.input.didUri)
                 XCTAssertNoDifference(result, vector.output)
                 expectation.fulfill()
             }

@@ -5,7 +5,7 @@ let package = Package(
     name: "tbDEX",
     platforms: [
         .iOS(.v13),
-        .macOS(.v10_15),
+        .macOS(.v13),
     ],
     products: [
         .library(
@@ -58,6 +58,7 @@ let package = Package(
                 .copy("Resources/crypto_es256k"),
                 .copy("Resources/did_jwk"),
                 .copy("Resources/did_web"),
+                .copy("Resources/did"),
             ]
         ),
         // tbDEX library target

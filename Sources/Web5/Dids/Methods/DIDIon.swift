@@ -1,21 +1,23 @@
 import Foundation
 
-struct DidIon {
+struct DIDIon {
+
+    public static let methodName = "ion"
 
     /// Resolves a `did:ion` URI into a `DidResolution.Result`
-    /// - Parameter didUri: The DID URI to resolve
+    /// - Parameter didURI: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
-    static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? DID(didUri: didUri) else {
+    static func resolve(didURI: String) async -> DidResolution.Result {
+        guard let did = try? DID(didURI: didURI) else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
 
-        guard parsedDid.methodName == "ion" else {
+        guard did.methodName == Self.methodName else {
             return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
         let identifiersEndpoint = "https://ion.tbddev.org/identifiers"
-        guard let url = URL(string: "\(identifiersEndpoint)/\(parsedDid.uri)") else {
+        guard let url = URL(string: "\(identifiersEndpoint)/\(did.uri)") else {
             return DidResolution.Result.resolutionError(.notFound)
         }
 

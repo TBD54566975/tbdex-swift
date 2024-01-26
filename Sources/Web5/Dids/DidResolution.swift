@@ -1,5 +1,7 @@
 import Foundation
 
+// TODO: re-think structure here. It's kinda weird `DidResolution.Result` is a return type. Could it just be `DidResolution`?
+
 public enum DidResolution {
 
     /// Errors that can occur during DID resolution process

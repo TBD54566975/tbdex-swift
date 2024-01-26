@@ -45,7 +45,7 @@ public struct Message<D: MessageData>: Codable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
-    mutating func sign(did: ManagedDID, keyAlias: String? = nil) async throws {
+    mutating func sign(did: BearerDID, keyAlias: String? = nil) async throws {
         signature = try await CryptoUtils.sign(did: did, payload: try digest(), assertionMethodId: keyAlias)
     }
 

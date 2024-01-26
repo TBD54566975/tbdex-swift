@@ -1,8 +1,10 @@
 import Foundation
 
-public struct DidJwk: ManagedDID {
+public struct DIDJWK {
 
-    public struct Options {
+    public static let methodName = "jwk"
+
+    public struct CreateOptions {
         public let algorithm: CryptoAlgorithm
 
         public init(
@@ -12,36 +14,34 @@ public struct DidJwk: ManagedDID {
         }
     }
 
-    public let uri: String
-    public let keyManager: any KeyManager
-
-    public init(keyManager: KeyManager, options: Options) throws {
+    public func create(keyManager: KeyManager, _ options: CreateOptions) throws -> BearerDID {
         let keyAlias = try keyManager.generatePrivateKey(algorithm: options.algorithm)
         let publicKey = try keyManager.getPublicKey(keyAlias: keyAlias)
         let publicKeyBase64Url = try JSONEncoder().encode(publicKey).base64UrlEncodedString()
+        let didURI = "did:jwk:\(publicKeyBase64Url)"
 
-        self.uri = "did:jwk:\(publicKeyBase64Url)"
-        self.keyManager = keyManager
+        return try BearerDID(didURI: didURI, keyManager: keyManager)
     }
 
     /// Resolves a `did:jwk` URI into a `DidResolution.Result`
     /// - Parameter didUri: The DID URI to resolve
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
-    static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let parsedDid = try? DID(didUri: didUri),
-            let jwk = try? JSONDecoder().decode(Jwk.self, from: try parsedDid.methodSpecificId.decodeBase64Url())
+    public static func resolve(didURI: String) async -> DidResolution.Result {
+        // TODO: should check method name before trying to decode
+        guard let did = try? DID(didURI: didURI),
+            let jwk = try? JSONDecoder().decode(Jwk.self, from: try did.identifier.decodeBase64Url())
         else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
 
-        guard parsedDid.methodName == "jwk" else {
+        guard did.methodName == self.methodName else {
             return DidResolution.Result.resolutionError(.methodNotSupported)
         }
 
         let verifiationMethod = VerificationMethod(
-            id: "\(didUri)#0",
+            id: "\(did.uri)#0",
             type: "JsonWebKey2020",
-            controller: didUri,
+            controller: did.uri,
             publicKeyJwk: jwk
         )
 
@@ -50,7 +50,7 @@ public struct DidJwk: ManagedDID {
                 .string("https://www.w3.org/ns/did/v1"),
                 .string("https://w3id.org/security/suites/jws-2020/v1"),
             ]),
-            id: didUri,
+            id: did.uri,
             verificationMethod: [verifiationMethod],
             assertionMethod: [.referenced(verifiationMethod.id)],
             authentication: [.referenced(verifiationMethod.id)],

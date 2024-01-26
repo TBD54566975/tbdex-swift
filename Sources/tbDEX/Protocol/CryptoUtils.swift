@@ -43,7 +43,7 @@ extension CryptoUtils {
     ///   - payload: The data to be signed
     ///   - assertionMethodId: The alias of the key to be used for signing.
     /// - Returns: The signed payload as a detached payload JWT (JSON Web Token).
-    static func sign<D>(did: ManagedDID, payload: D, assertionMethodId: String? = nil) async throws -> String
+    static func sign<D>(did: BearerDID, payload: D, assertionMethodId: String? = nil) async throws -> String
     where D: DataProtocol {
         let assertionMethod = try await getAssertionMethod(did: did, assertionMethodId: assertionMethodId)
         guard let publicKeyJwk = assertionMethod.publicKeyJwk else {
@@ -71,8 +71,8 @@ extension CryptoUtils {
         return "\(base64UrlEncodedHeader)..\(base64UrlEncodedSignature)"
     }
 
-    private static func getAssertionMethod(did: ManagedDID, assertionMethodId: String?) async throws -> VerificationMethod {
-        let resolutionResult = await DidResolver.resolve(didUri: did.uri)
+    private static func getAssertionMethod(did: BearerDID, assertionMethodId: String?) async throws -> VerificationMethod {
+        let resolutionResult = await DidResolver.resolve(didURI: did.uri)
         let assertionMethods = resolutionResult.didDocument?.assertionMethodDereferenced
 
         guard
@@ -137,14 +137,15 @@ extension CryptoUtils {
             throw VerifyError(reason: "")
         }
 
-        let parsedDid = try DID(didUri: verificationMethodID)
-        let signingDidUri = parsedDid.uriWithoutFragment
+        let parsedDid = try DID(didURI: verificationMethodID)
+        // TODO: fix this
+        let signingDidUri = ""//parsedDid.uriWithoutFragment
 
         guard signingDidUri == didUri else {
             throw VerifyError(reason: "Was not signed by the expected DID - Expected:\(didUri) Actual:\(signingDidUri)")
         }
 
-        let resolutionResult = await DidResolver.resolve(didUri: signingDidUri)
+        let resolutionResult = await DidResolver.resolve(didURI: signingDidUri)
         if let error = resolutionResult.didResolutionMetadata.error {
             throw VerifyError(reason: "Failed to resolve DID \(signingDidUri): \(error)")
         }

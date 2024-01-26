@@ -38,7 +38,7 @@ public struct Resource<D: ResourceData>: Codable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
-    mutating func sign(did: ManagedDID, keyAlias: String? = nil) async throws {
+    mutating func sign(did: BearerDID, keyAlias: String? = nil) async throws {
         self.signature = try await CryptoUtils.sign(did: did, payload: digest(), assertionMethodId: keyAlias)
     }
 
