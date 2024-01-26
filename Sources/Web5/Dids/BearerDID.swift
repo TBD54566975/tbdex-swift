@@ -21,13 +21,13 @@ public struct BearerDID {
         self.keyManager = keyManager
     }
 
-    /// Construct a `BearerDID` from a `DIDKeySet`, storing the keys in a
+    /// Construct a `BearerDID` from a `PortableDID`, storing the keys in a
     /// bespoke `InMemoryKeyManager` instance
-    init(keys: DIDKeySet) throws {
-        let did = try DID(didURI: keys.uri)
+    init(portableDID: PortableDID) throws {
+        let did = try DID(didURI: portableDID.uri)
 
         let keyManager = InMemoryKeyManager()
-        for verificationMethodPair in keys.verificationMethods {
+        for verificationMethodPair in portableDID.verificationMethods {
             _ = try keyManager.import(key: verificationMethodPair.privateKey)
         }
 
@@ -44,7 +44,7 @@ public struct BearerDID {
 
     /// Exports the `BearerDID` into a portable format that contains the DID's URI in addition
     /// to every private key associated with a verifification method.
-    public func toKeys() async throws -> DIDKeySet {
+    public func toPortableDID() async throws -> PortableDID {
         guard let exporter = keyManager as? KeyExporter else {
             throw BearerDID.Error.keyManagerNotExporter(keyManager)
         }
@@ -54,7 +54,7 @@ public struct BearerDID {
             throw BearerDID.Error.didResolutionError(error)
         }
 
-        let verificationMethods: [DIDKeySet.VerificationMethodKeyPair] =
+        let verificationMethods: [PortableDID.VerificationMethodKeyPair] =
         resolutionResult
             .didDocument?
             .verificationMethod?
@@ -66,13 +66,13 @@ public struct BearerDID {
                     return nil
                 }
 
-                return DIDKeySet.VerificationMethodKeyPair(
+                return PortableDID.VerificationMethodKeyPair(
                     publicKey: publicKey,
                     privateKey: privateKey
                 )
             } ?? []
 
-        return DIDKeySet(
+        return PortableDID(
             uri: did.uri,
             verificationMethods: verificationMethods
         )

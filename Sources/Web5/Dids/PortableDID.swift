@@ -1,6 +1,6 @@
 import Foundation
 
-public struct DIDKeySet: Codable {
+public struct PortableDID: Codable {
     let uri: String
     let verificationMethods: [VerificationMethodKeyPair]
 
