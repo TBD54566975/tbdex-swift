@@ -27,19 +27,19 @@ public enum DidResolution {
         ///
         /// This is the document that represents the resolved state of the DID. It may be `null`
         /// if the DID could not be resolved or if the document is not available.
-        public let didDocument: DidDocument?
+        public let didDocument: DIDDocument?
 
         /// The metadata associated with the DID document.
         ///
         /// This includes information about the document such as when it was created and
         /// any other relevant metadata. If not provided in the constructor, it defaults to an
         /// empty `DidDocument.Metadata`.
-        public let didDocumentMetadata: DidDocument.Metadata
+        public let didDocumentMetadata: DIDDocument.Metadata
 
         init(
             didResolutionMetadata: DidResolution.Metadata = DidResolution.Metadata(),
-            didDocument: DidDocument? = nil,
-            didDocumentMetadata: DidDocument.Metadata = DidDocument.Metadata()
+            didDocument: DIDDocument? = nil,
+            didDocumentMetadata: DIDDocument.Metadata = DIDDocument.Metadata()
         ) {
             self.didResolutionMetadata = didResolutionMetadata
             self.didDocument = didDocument
@@ -53,7 +53,7 @@ public enum DidResolution {
             Result(
                 didResolutionMetadata: Metadata(error: error.rawValue),
                 didDocument: nil,
-                didDocumentMetadata: DidDocument.Metadata()
+                didDocumentMetadata: DIDDocument.Metadata()
             )
         }
 
@@ -68,10 +68,10 @@ public enum DidResolution {
                     forKey: DidResolution.Result.CodingKeys.didResolutionMetadata
                 ) ?? DidResolution.Metadata()
             self.didDocument = try container.decodeIfPresent(
-                DidDocument.self, forKey: DidResolution.Result.CodingKeys.didDocument
+                DIDDocument.self, forKey: DidResolution.Result.CodingKeys.didDocument
             )
             self.didDocumentMetadata = try container.decode(
-                DidDocument.Metadata.self, forKey: DidResolution.Result.CodingKeys.didDocumentMetadata
+                DIDDocument.Metadata.self, forKey: DidResolution.Result.CodingKeys.didDocumentMetadata
             )
         }
     }

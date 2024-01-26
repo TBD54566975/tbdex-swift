@@ -71,8 +71,10 @@ extension CryptoUtils {
         return "\(base64UrlEncodedHeader)..\(base64UrlEncodedSignature)"
     }
 
-    private static func getAssertionMethod(did: BearerDID, assertionMethodId: String?) async throws -> VerificationMethod {
-        let resolutionResult = await DidResolver.resolve(didURI: did.uri)
+    private static func getAssertionMethod(did: BearerDID, assertionMethodId: String?) async throws
+        -> VerificationMethod
+    {
+        let resolutionResult = await DIDResolver.resolve(didURI: did.uri)
         let assertionMethods = resolutionResult.didDocument?.assertionMethodDereferenced
 
         guard
@@ -139,13 +141,13 @@ extension CryptoUtils {
 
         let parsedDid = try DID(didURI: verificationMethodID)
         // TODO: fix this
-        let signingDidUri = ""//parsedDid.uriWithoutFragment
+        let signingDidUri = ""  //parsedDid.uriWithoutFragment
 
         guard signingDidUri == didUri else {
             throw VerifyError(reason: "Was not signed by the expected DID - Expected:\(didUri) Actual:\(signingDidUri)")
         }
 
-        let resolutionResult = await DidResolver.resolve(didURI: signingDidUri)
+        let resolutionResult = await DIDResolver.resolve(didURI: signingDidUri)
         if let error = resolutionResult.didResolutionMetadata.error {
             throw VerifyError(reason: "Failed to resolve DID \(signingDidUri): \(error)")
         }

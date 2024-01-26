@@ -29,7 +29,7 @@ private enum TestData {
         controller: "did:example:123456789abcdefghi"
     )
 
-    static let didDocument = DidDocument(
+    static let didDocument = DIDDocument(
         id: "did:example:123456789abcdefghi",
         verificationMethod: [Self.verificationMethod]
     )

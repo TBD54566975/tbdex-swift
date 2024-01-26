@@ -24,4 +24,7 @@ public struct BearerDID {
     public subscript<T>(dynamicMember member: KeyPath<DID, T>) -> T {
         return did[keyPath: member]
     }
+
+    // TODO: add a constructor that takes in a `PortableDID`
+    // TODO: add a `portableDID` computed property that returns a representation of the `BearerDID` to a `PortableDID`
 }

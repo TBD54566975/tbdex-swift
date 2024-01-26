@@ -1,10 +1,10 @@
 import Foundation
 
-typealias DidMethodResolver = (String) async -> DidResolution.Result
+typealias DIDMethodResolver = (String) async -> DidResolution.Result
 
-public enum DidResolver {
+public enum DIDResolver {
 
-    private static var methodResolvers: [String: DidMethodResolver] = [
+    private static var methodResolvers: [String: DIDMethodResolver] = [
         DIDJWK.methodName: DIDJWK.resolve,
         DIDWeb.methodName: DIDWeb.resolve,
         DIDIon.methodName: DIDIon.resolve,

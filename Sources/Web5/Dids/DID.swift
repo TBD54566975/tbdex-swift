@@ -47,7 +47,7 @@ public struct DID {
     /// See [spec](https://www.w3.org/TR/did-core/#fragment) for more information
     public let fragment: String?
 
-    /// Parses a DID URI in accordance to the ABNF rules specified in the specification
+    /// Construct a DID from a URI in accordance to the ABNF rules specified in the specification
     /// [here](https://www.w3.org/TR/did-core/#did-syntax).
     /// - Parameter didUri: URI of DID to parse
     /// - Returns: `DID` instance if parsing was successful. Throws error otherwise.
@@ -61,8 +61,10 @@ public struct DID {
 
         var params: [String: String]? = nil
         if !match.output.4.isEmpty {
-            let paramsString = String(match.output.4.dropFirst()) // Remove leading ';'
-            params = paramsString
+            // Remove leading ';' from regex match
+            let paramsString = String(match.output.4.dropFirst())
+            params =
+                paramsString
                 .split(separator: ";")
                 .map(String.init)
                 .reduce(into: [String: String]()) { dict, param in
@@ -80,12 +82,14 @@ public struct DID {
 
         var query: String? = nil
         if let querySubstring = match.output.6 {
-            query = String(querySubstring.dropFirst()) // Remove leading '?'
+            // Remove leading '?' from regex match
+            query = String(querySubstring.dropFirst())
         }
 
         var fragment: String? = nil
         if let fragmentSubstring = match.output.7 {
-            fragment = String(fragmentSubstring.dropFirst()) // Remove leading '#'
+            // Remove leading '#' from regex match
+            fragment = String(fragmentSubstring.dropFirst())
         }
 
         self.uri = didURI

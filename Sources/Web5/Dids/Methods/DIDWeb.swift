@@ -11,7 +11,7 @@ struct DIDWeb {
     /// - Returns: `DidResolution.Result` containing the resolved DID Document.
     static func resolve(didUri: String) async -> DidResolution.Result {
         guard let did = try? DID(didURI: didUri),
-              let url = getDidDocumentUrl(did: did)
+            let url = getDidDocumentUrl(did: did)
         else {
             return DidResolution.Result.resolutionError(.invalidDid)
         }
@@ -22,7 +22,7 @@ struct DIDWeb {
 
         do {
             let response = try await URLSession.shared.data(from: url)
-            let didDocument = try JSONDecoder().decode(DidDocument.self, from: response.0)
+            let didDocument = try JSONDecoder().decode(DIDDocument.self, from: response.0)
             return DidResolution.Result(didDocument: didDocument)
         } catch {
             return DidResolution.Result.resolutionError(.notFound)
