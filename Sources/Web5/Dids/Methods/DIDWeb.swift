@@ -6,26 +6,26 @@ struct DIDWeb {
 
     // MARK: - Public Static
 
-    /// Resolves a `did:jwk` URI into a `DidResolution.Result`
-    /// - Parameter didUri: The DID URI to resolve
-    /// - Returns: `DidResolution.Result` containing the resolved DID Document.
-    static func resolve(didUri: String) async -> DidResolution.Result {
-        guard let did = try? DID(didURI: didUri),
-            let url = getDidDocumentUrl(did: did)
+    /// Resolves a `did:jwk` URI into a `DIDResolutionResult`
+    /// - Parameter didURI: The DID URI to resolve
+    /// - Returns: `DIDResolution.Result` containing the resolved DID Document.
+    static func resolve(didURI: String) async -> DIDResolutionResult {
+        guard let did = try? DID(didURI: didURI),
+            let url = getDIDDocumentUrl(did: did)
         else {
-            return DidResolution.Result.resolutionError(.invalidDid)
+            return DIDResolutionResult(error: .invalidDID)
         }
 
         guard did.methodName == Self.methodName else {
-            return DidResolution.Result.resolutionError(.methodNotSupported)
+            return DIDResolutionResult(error: .methodNotSupported)
         }
 
         do {
             let response = try await URLSession.shared.data(from: url)
             let didDocument = try JSONDecoder().decode(DIDDocument.self, from: response.0)
-            return DidResolution.Result(didDocument: didDocument)
+            return DIDResolutionResult(didDocument: didDocument)
         } catch {
-            return DidResolution.Result.resolutionError(.notFound)
+            return DIDResolutionResult(error: .notFound)
         }
     }
 
@@ -34,7 +34,7 @@ struct DIDWeb {
     private static let wellKnownPath = "/.well-known"
     private static let didDocumentFilename = "/did.json"
 
-    private static func getDidDocumentUrl(did: DID) -> URL? {
+    private static func getDIDDocumentUrl(did: DID) -> URL? {
         let domainNameWithPath = did.identifier.replacingOccurrences(of: ":", with: "/")
         guard let decodedDomain = domainNameWithPath.removingPercentEncoding,
             var url = URL(string: "https://\(decodedDomain)")

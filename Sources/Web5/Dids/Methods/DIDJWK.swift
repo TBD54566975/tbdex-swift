@@ -23,19 +23,19 @@ public struct DIDJWK {
         return try BearerDID(didURI: didURI, keyManager: keyManager)
     }
 
-    /// Resolves a `did:jwk` URI into a `DidResolution.Result`
-    /// - Parameter didUri: The DID URI to resolve
-    /// - Returns: `DidResolution.Result` containing the resolved DID Document.
-    public static func resolve(didURI: String) async -> DidResolution.Result {
+    /// Resolves a `did:jwk` URI into a `DIDResolutionResult`
+    /// - Parameter didURI: The DID URI to resolve
+    /// - Returns: `DIDResolution.Result` containing the resolved DID Document.
+    public static func resolve(didURI: String) async -> DIDResolutionResult {
         // TODO: should check method name before trying to decode
         guard let did = try? DID(didURI: didURI),
             let jwk = try? JSONDecoder().decode(Jwk.self, from: try did.identifier.decodeBase64Url())
         else {
-            return DidResolution.Result.resolutionError(.invalidDid)
+            return DIDResolutionResult(error: .invalidDID)
         }
 
         guard did.methodName == self.methodName else {
-            return DidResolution.Result.resolutionError(.methodNotSupported)
+            return DIDResolutionResult(error: .methodNotSupported)
         }
 
         let verifiationMethod = VerificationMethod(
@@ -58,6 +58,6 @@ public struct DIDJWK {
             capabilityInvocation: [.referenced(verifiationMethod.id)]
         )
 
-        return DidResolution.Result(didDocument: didDocument)
+        return DIDResolutionResult(didDocument: didDocument)
     }
 }

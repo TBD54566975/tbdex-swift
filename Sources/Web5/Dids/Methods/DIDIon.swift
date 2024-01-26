@@ -4,29 +4,29 @@ struct DIDIon {
 
     public static let methodName = "ion"
 
-    /// Resolves a `did:ion` URI into a `DidResolution.Result`
+    /// Resolves a `did:ion` URI into a `DIDResolutionResult`
     /// - Parameter didURI: The DID URI to resolve
-    /// - Returns: `DidResolution.Result` containing the resolved DID Document.
-    static func resolve(didURI: String) async -> DidResolution.Result {
+    /// - Returns: `DIDResolutionResult` containing the resolved DID Document.
+    static func resolve(didURI: String) async -> DIDResolutionResult {
         guard let did = try? DID(didURI: didURI) else {
-            return DidResolution.Result.resolutionError(.invalidDid)
+            return DIDResolutionResult(error: .invalidDID)
         }
 
         guard did.methodName == Self.methodName else {
-            return DidResolution.Result.resolutionError(.methodNotSupported)
+            return DIDResolutionResult(error: .methodNotSupported)
         }
 
         let identifiersEndpoint = "https://ion.tbddev.org/identifiers"
         guard let url = URL(string: "\(identifiersEndpoint)/\(did.uri)") else {
-            return DidResolution.Result.resolutionError(.notFound)
+            return DIDResolutionResult(error: .notFound)
         }
 
         do {
             let response = try await URLSession.shared.data(from: url)
-            let resolutionResult = try JSONDecoder().decode(DidResolution.Result.self, from: response.0)
+            let resolutionResult = try JSONDecoder().decode(DIDResolutionResult.self, from: response.0)
             return resolutionResult
         } catch {
-            return DidResolution.Result.resolutionError(.notFound)
+            return DIDResolutionResult(error: .notFound)
         }
 
     }

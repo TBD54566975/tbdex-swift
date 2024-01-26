@@ -50,7 +50,7 @@ public struct Message<D: MessageData>: Codable {
     }
 
     func verify() async throws {
-        _ = try await CryptoUtils.verify(didUri: metadata.from, signature: signature, detachedPayload: try digest())
+        _ = try await CryptoUtils.verify(didURI: metadata.from, signature: signature, detachedPayload: try digest())
     }
 
 }

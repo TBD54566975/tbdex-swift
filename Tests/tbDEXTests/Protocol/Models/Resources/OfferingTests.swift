@@ -19,7 +19,7 @@
 //
 //    func test_signAndVerifySuccess() async throws {
 //        do {
-//            let did = try DidJwk(keyManager: InMemoryKeyManager(), options: .init(algorithm: .ed25519))
+//            let did = try DIDJWK(keyManager: InMemoryKeyManager(), options: .init(algorithm: .ed25519))
 //            var offering = createOffering(from: did.uri)
 //
 //            XCTAssertNil(offering.signature)
@@ -33,7 +33,7 @@
 //    }
 //
 //    func test_verifyWithoutSigningFailure() async throws {
-//        let did = try DidJwk(keyManager: InMemoryKeyManager(), options: .init(algorithm: .ed25519))
+//        let did = try DIDJWK(keyManager: InMemoryKeyManager(), options: .init(algorithm: .ed25519))
 //        let offering = createOffering(from: did.uri)
 //
 //        await XCTAssertThrowsErrorAsync(try await offering.verify())

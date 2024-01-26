@@ -15,10 +15,10 @@ public enum HttpClient {
 
     /// Get `Offering`s from a PFI.
     public static func getOfferings(
-        pfiDidUri: String,
+        pfiDIDURI: String,
         filter: GetOfferingFilter? = nil
     ) async -> Result<GetOfferingsResponse, HttpClientError> {
-        guard let pfiServiceEndpoint = await getPFIServiceEndpoint(pfiDidUri: pfiDidUri) else {
+        guard let pfiServiceEndpoint = await getPFIServiceEndpoint(pfiDIDURI: pfiDIDURI) else {
             return .failure(.init(reason: "DID does not have service of type PFI"))
         }
 
@@ -62,8 +62,8 @@ public enum HttpClient {
         }
     }
 
-    private static func getPFIServiceEndpoint(pfiDidUri: String) async -> String? {
-        let resolutionResult = await DIDResolver.resolve(didURI: pfiDidUri)
+    private static func getPFIServiceEndpoint(pfiDIDURI: String) async -> String? {
+        let resolutionResult = await DIDResolver.resolve(didURI: pfiDIDURI)
         if let service = resolutionResult.didDocument?.service?.first(where: { $0.type == "PFI" }) {
             return service.serviceEndpoint
         } else {

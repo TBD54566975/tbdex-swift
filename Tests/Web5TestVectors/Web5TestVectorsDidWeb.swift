@@ -29,7 +29,7 @@ final class Web5TestVectorsDidWeb: XCTestCase {
             }
         }
 
-        let testVector = try TestVector<Input, DidResolution.Result>(
+        let testVector = try TestVector<Input, DIDResolutionResult>(
             fileName: "resolve",
             subdirectory: "did_web"
         )
@@ -40,8 +40,8 @@ final class Web5TestVectorsDidWeb: XCTestCase {
                 /// Register each of the mock network responses
                 try vector.input.mocks().forEach { $0.register() }
 
-                /// Resolve each input didUri, make sure it matches output
-                let result = await DIDWeb.resolve(didUri: vector.input.didUri)
+                /// Resolve each input didURI, make sure it matches output
+                let result = await DIDWeb.resolve(didURI: vector.input.didUri)
                 XCTAssertNoDifference(result, vector.output)
                 expectation.fulfill()
             }

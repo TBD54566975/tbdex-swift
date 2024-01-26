@@ -49,7 +49,7 @@ public struct DID {
 
     /// Construct a DID from a URI in accordance to the ABNF rules specified in the specification
     /// [here](https://www.w3.org/TR/did-core/#did-syntax).
-    /// - Parameter didUri: URI of DID to parse
+    /// - Parameter didURI: URI of DID to parse
     /// - Returns: `DID` instance if parsing was successful. Throws error otherwise.
     public init(didURI: String) throws {
         guard let match = didURI.firstMatch(of: Self.didRegex) else {

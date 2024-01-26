@@ -43,7 +43,7 @@ public struct Resource<D: ResourceData>: Codable {
     }
 
     func verify() async throws {
-        _ = try await CryptoUtils.verify(didUri: metadata.from, signature: signature, detachedPayload: digest())
+        _ = try await CryptoUtils.verify(didURI: metadata.from, signature: signature, detachedPayload: digest())
     }
 
 }

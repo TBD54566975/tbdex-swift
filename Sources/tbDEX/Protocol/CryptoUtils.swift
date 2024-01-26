@@ -103,7 +103,7 @@ extension CryptoUtils {
 
     // Verifies the integrity of a message or resource's signature.
     static func verify<D: DataProtocol>(
-        didUri: String,
+        didURI: String,
         signature: String?,
         detachedPayload: D? = nil
     ) async throws -> Bool {
@@ -139,17 +139,17 @@ extension CryptoUtils {
             throw VerifyError(reason: "")
         }
 
-        let parsedDid = try DID(didURI: verificationMethodID)
+        let did = try DID(didURI: verificationMethodID)
         // TODO: fix this
-        let signingDidUri = ""  //parsedDid.uriWithoutFragment
+        let signingDIDURI = ""  //did.uriWithoutFragment
 
-        guard signingDidUri == didUri else {
-            throw VerifyError(reason: "Was not signed by the expected DID - Expected:\(didUri) Actual:\(signingDidUri)")
+        guard signingDIDURI == didURI else {
+            throw VerifyError(reason: "Was not signed by the expected DID - Expected:\(didURI) Actual:\(signingDIDURI)")
         }
 
-        let resolutionResult = await DIDResolver.resolve(didURI: signingDidUri)
+        let resolutionResult = await DIDResolver.resolve(didURI: signingDIDURI)
         if let error = resolutionResult.didResolutionMetadata.error {
-            throw VerifyError(reason: "Failed to resolve DID \(signingDidUri): \(error)")
+            throw VerifyError(reason: "Failed to resolve DID \(signingDIDURI): \(error)")
         }
 
         guard
