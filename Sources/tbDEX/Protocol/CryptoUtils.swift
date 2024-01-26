@@ -139,9 +139,8 @@ extension CryptoUtils {
             throw VerifyError(reason: "")
         }
 
-        let did = try DID(didURI: verificationMethodID)
-        // TODO: fix this
-        let signingDIDURI = ""  //did.uriWithoutFragment
+        let signingDID = try DID(didURI: verificationMethodID)
+        let signingDIDURI = signingDID.uriWithoutFragment
 
         guard signingDIDURI == didURI else {
             throw VerifyError(reason: "Was not signed by the expected DID - Expected:\(didURI) Actual:\(signingDIDURI)")

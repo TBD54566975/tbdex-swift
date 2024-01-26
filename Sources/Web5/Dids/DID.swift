@@ -13,6 +13,11 @@ public struct DID {
     /// See [spec](https://www.w3.org/TR/did-core/#did-syntax) for more information
     public let uri: String
 
+    /// DID URI without the fragment component
+    public var uriWithoutFragment: String {
+        return uri.components(separatedBy: "#").first ?? uri
+    }
+
     /// DID method in the URI, which indicates the underlying method-specific
     /// identifier scheme (e.g.: `jwk`, `dht`, `web`, etc.)
     ///
@@ -52,7 +57,7 @@ public struct DID {
     /// - Parameter didURI: URI of DID to parse
     /// - Returns: `DID` instance if parsing was successful. Throws error otherwise.
     public init(didURI: String) throws {
-        guard let match = didURI.firstMatch(of: Self.didRegex) else {
+        guard let match = didURI.wholeMatch(of: Self.didRegex) else {
             throw DIDError.invalidURI
         }
 

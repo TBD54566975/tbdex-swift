@@ -27,7 +27,6 @@ public struct DIDJWK {
     /// - Parameter didURI: The DID URI to resolve
     /// - Returns: `DIDResolution.Result` containing the resolved DID Document.
     public static func resolve(didURI: String) async -> DIDResolutionResult {
-        // TODO: should check method name before trying to decode
         guard let did = try? DID(didURI: didURI),
             let jwk = try? JSONDecoder().decode(Jwk.self, from: try did.identifier.decodeBase64Url())
         else {
