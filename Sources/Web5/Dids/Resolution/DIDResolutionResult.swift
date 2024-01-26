@@ -25,7 +25,6 @@ public struct DIDResolutionResult: Codable, Equatable {
     /// empty `DIDDocument.Metadata`.
     public let didDocumentMetadata: DIDDocument.Metadata
 
-
     /// Default initializer
     init(
         didResolutionMetadata: Metadata = Metadata(),
@@ -55,7 +54,6 @@ public struct DIDResolutionResult: Codable, Equatable {
         )
     }
 }
-
 
 // MARK: - Errors
 

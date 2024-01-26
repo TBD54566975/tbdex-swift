@@ -55,13 +55,13 @@ public struct BearerDID {
         }
 
         let verificationMethods: [PortableDID.VerificationMethodKeyPair] =
-        resolutionResult
+            resolutionResult
             .didDocument?
             .verificationMethod?
             .compactMap { verificationMethod in
                 guard let publicKey = verificationMethod.publicKeyJwk,
-                      let keyAlias = try? keyManager.getDeterministicAlias(key: publicKey),
-                      let privateKey = try? exporter.exportKey(keyAlias: keyAlias)
+                    let keyAlias = try? keyManager.getDeterministicAlias(key: publicKey),
+                    let privateKey = try? exporter.exportKey(keyAlias: keyAlias)
                 else {
                     return nil
                 }

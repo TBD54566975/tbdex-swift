@@ -4,16 +4,16 @@ import Foundation
 public enum DIDJWK {
 
     public static let methodName = "jwk"
-    
+
     /// Options that can be provided to customize how a DIDJWK is created
     public struct CreateOptions {
 
         /// The algorithm to use when creating the backing key for the DID
         public let algorithm: CryptoAlgorithm
-        
+
         /// Default Initializer
         /// - Parameters
-        ///   - algorithm: The algorithm to use when creating the backing key for the DID. 
+        ///   - algorithm: The algorithm to use when creating the backing key for the DID.
         ///   Defaults to `.ed25519` if not specified.
         public init(
             algorithm: CryptoAlgorithm = .ed25519

@@ -39,7 +39,8 @@ final class DIDJWKTests: XCTestCase {
         )
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DIDResolutionResult.Error.methodNotSupported.rawValue)
+        XCTAssertEqual(
+            resolutionResult.didResolutionMetadata.error, DIDResolutionResult.Error.methodNotSupported.rawValue)
     }
 
     func test_resolveNewlyCreatedDIDJWK() async throws {
