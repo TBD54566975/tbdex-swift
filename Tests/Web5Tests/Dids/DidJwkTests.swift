@@ -2,79 +2,74 @@ import XCTest
 
 @testable import Web5
 
-final class DidJwkTests: XCTestCase {
+final class DIDJWKTests: XCTestCase {
 
-    func test_initializer() throws {
+    func test_create() throws {
         let keyManager = InMemoryKeyManager()
-        let didJwk = try DidJwk(
-            keyManager: keyManager,
-            options: .init(algorithm: .ed25519)
-        )
+        let didJwk = try DIDJWK.create(keyManager: keyManager)
 
         XCTAssert(didJwk.uri.starts(with: "did:jwk:"))
     }
 
-    func test_resolveWithError_onInvalidDidUri() async throws {
-        let resolutionResult = await DidJwk.resolve(didUri: "hi")
+    func test_resolveWithError_onInvalidDIDURI() async throws {
+        let resolutionResult = await DIDJWK.resolve(didURI: "hi")
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.invalidDid.rawValue)
+        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DIDResolutionResult.Error.invalidDID.rawValue)
     }
 
-    func test_resolveWithError_ifDidUriNotJwk() async {
-        let resolutionResult = await DidJwk.resolve(didUri: "did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH")
+    func test_resolveWithError_ifDIDURINotJwk() async {
+        let resolutionResult = await DIDJWK.resolve(didURI: "did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH")
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.invalidDid.rawValue)
+        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DIDResolutionResult.Error.invalidDID.rawValue)
     }
 
-    func test_resolveWithError_ifDidUriIsNotValidBase64Url() async {
-        let resolutionResult = await DidJwk.resolve(didUri: "did:jwk:!!!")
+    func test_resolveWithError_ifDIDURIIsNotValidBase64Url() async {
+        let resolutionResult = await DIDJWK.resolve(didURI: "did:jwk:!!!")
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.invalidDid.rawValue)
+        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DIDResolutionResult.Error.invalidDID.rawValue)
     }
 
     func test_resolveWithError_ifMethodNotJwk() async {
-        let resolutionResult = await DidJwk.resolve(
-            didUri:
+        let resolutionResult = await DIDJWK.resolve(
+            didURI:
                 "did:web:eyJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpGZk1iek9qTW1RNGVmVDZrdndUSUpqZWxUcWpsMHhqRUlXUTJxb2JzUk1NIiwia3R5IjoiT0tQIiwiY3J2IjoiRWQyNTUxOSIsImFsZyI6IkVkRFNBIiwieCI6IkFOUmpIX3p4Y0tCeHNqUlBVdHpSYnA3RlNWTEtKWFE5QVBYOU1QMWo3azQifQ"
         )
 
         XCTAssertNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didResolutionMetadata.error, DidResolution.Error.methodNotSupported.rawValue)
+        XCTAssertEqual(
+            resolutionResult.didResolutionMetadata.error, DIDResolutionResult.Error.methodNotSupported.rawValue)
     }
 
-    func test_resolveNewlyCratedDidJwk() async throws {
+    func test_resolveNewlyCreatedDIDJWK() async throws {
         let keyManager = InMemoryKeyManager()
-        let didJwk = try DidJwk(
-            keyManager: keyManager,
-            options: .init(algorithm: .es256k)
-        )
+        let didJWK = try DIDJWK.create(keyManager: keyManager)
 
-        let resolutionResult = await DidJwk.resolve(didUri: didJwk.uri)
+        let resolutionResult = await DIDJWK.resolve(didURI: didJWK.uri)
         XCTAssertNotNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didDocument?.id, didJwk.uri)
-        XCTAssertEqual(resolutionResult.didDocument?.verificationMethod?.first?.id, "\(didJwk.uri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, .referenced("\(didJwk.uri)#0"))
-        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, .referenced("\(didJwk.uri)#0"))
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, .referenced("\(didJwk.uri)#0"))
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, .referenced("\(didJwk.uri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.id, didJWK.uri)
+        XCTAssertEqual(resolutionResult.didDocument?.verificationMethod?.first?.id, "\(didJWK.uri)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, .referenced("\(didJWK.uri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, .referenced("\(didJWK.uri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, .referenced("\(didJWK.uri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, .referenced("\(didJWK.uri)#0"))
         XCTAssertNil(resolutionResult.didResolutionMetadata.error)
     }
 
-    func test_resolveWithKnownDidUri() async {
-        let didUri =
+    func test_resolveWithKnownDIDURI() async {
+        let didURI =
             "did:jwk:eyJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpGZk1iek9qTW1RNGVmVDZrdndUSUpqZWxUcWpsMHhqRUlXUTJxb2JzUk1NIiwia3R5IjoiT0tQIiwiY3J2IjoiRWQyNTUxOSIsImFsZyI6IkVkRFNBIiwieCI6IkFOUmpIX3p4Y0tCeHNqUlBVdHpSYnA3RlNWTEtKWFE5QVBYOU1QMWo3azQifQ"
-        let resolutionResult = await DidJwk.resolve(didUri: didUri)
+        let resolutionResult = await DIDJWK.resolve(didURI: didURI)
 
         XCTAssertNotNil(resolutionResult.didDocument)
-        XCTAssertEqual(resolutionResult.didDocument?.id, didUri)
-        XCTAssertEqual(resolutionResult.didDocument?.verificationMethod?.first?.id, "\(didUri)#0")
-        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, .referenced("\(didUri)#0"))
-        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, .referenced("\(didUri)#0"))
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, .referenced("\(didUri)#0"))
-        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, .referenced("\(didUri)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.id, didURI)
+        XCTAssertEqual(resolutionResult.didDocument?.verificationMethod?.first?.id, "\(didURI)#0")
+        XCTAssertEqual(resolutionResult.didDocument?.authentication?.first, .referenced("\(didURI)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.assertionMethod?.first, .referenced("\(didURI)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityDelegation?.first, .referenced("\(didURI)#0"))
+        XCTAssertEqual(resolutionResult.didDocument?.capabilityInvocation?.first, .referenced("\(didURI)#0"))
         XCTAssertNil(resolutionResult.didResolutionMetadata.error)
     }
 

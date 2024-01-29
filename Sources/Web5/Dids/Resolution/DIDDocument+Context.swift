@@ -1,4 +1,4 @@
-extension DidDocument {
+extension DIDDocument {
 
     /// [Specification Reference](https://www.w3.org/TR/did-core/#dfn-context)
     public enum Context: Codable, Equatable {

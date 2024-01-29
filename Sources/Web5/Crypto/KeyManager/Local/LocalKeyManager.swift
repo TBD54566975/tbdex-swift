@@ -60,6 +60,27 @@ public class LocalKeyManager: KeyManager {
     }
 }
 
+// MARK: - KeyExporter
+
+extension LocalKeyManager: KeyExporter {
+
+    public func exportKey(keyAlias: String) throws -> Jwk {
+        try getPrivateKey(keyAlias: keyAlias)
+    }
+}
+
+// MARK: - KeyImporter
+
+extension LocalKeyManager: KeyImporter {
+
+    public func `import`(key: Jwk) throws -> String {
+        let keyAlias = try getDeterministicAlias(key: key)
+        try keyStore.setKey(key, keyAlias: keyAlias)
+
+        return keyAlias
+    }
+}
+
 // MARK: - Errors
 
 extension LocalKeyManager {

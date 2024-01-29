@@ -38,12 +38,12 @@ public struct Resource<D: ResourceData>: Codable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
-    mutating func sign(did: Did, keyAlias: String? = nil) async throws {
+    mutating func sign(did: BearerDID, keyAlias: String? = nil) async throws {
         self.signature = try await CryptoUtils.sign(did: did, payload: digest(), assertionMethodId: keyAlias)
     }
 
     func verify() async throws {
-        _ = try await CryptoUtils.verify(didUri: metadata.from, signature: signature, detachedPayload: digest())
+        _ = try await CryptoUtils.verify(didURI: metadata.from, signature: signature, detachedPayload: digest())
     }
 
 }

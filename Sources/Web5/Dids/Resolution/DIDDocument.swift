@@ -11,7 +11,7 @@ import Foundation
 ///   repository services.
 ///
 /// A DID Document can be retrieved by _resolving_ a DID URI
-public struct DidDocument: Codable, Equatable {
+public struct DIDDocument: Codable, Equatable {
 
     public let context: Context?
 
@@ -276,7 +276,7 @@ public enum EmbeddedOrReferencedVerificationMethod: Codable, Equatable {
     case embedded(VerificationMethod)
     case referenced(String)
 
-    func dereferenced(with didDocument: DidDocument) -> VerificationMethod? {
+    func dereferenced(with didDocument: DIDDocument) -> VerificationMethod? {
         switch self {
         case let .embedded(verificationMethod):
             return verificationMethod

@@ -2,14 +2,14 @@ import XCTest
 
 @testable import Web5
 
-final class DidDocumentTests: XCTestCase {
+final class DIDDocumentTests: XCTestCase {
 
     func test_embeddedVerifiationMethod() {
         let value = EmbeddedOrReferencedVerificationMethod.embedded(TestData.verificationMethod)
         XCTAssertEqual(value.dereferenced(with: TestData.didDocument), TestData.verificationMethod)
     }
 
-    func test_referencedVerificationMethod_absoluteUriString() {
+    func test_referencedVerificationMethod_absoluteURIString() {
         let value = EmbeddedOrReferencedVerificationMethod.referenced("did:example:123456789abcdefghi#key-1")
         XCTAssertEqual(value.dereferenced(with: TestData.didDocument), TestData.verificationMethod)
     }
@@ -29,7 +29,7 @@ private enum TestData {
         controller: "did:example:123456789abcdefghi"
     )
 
-    static let didDocument = DidDocument(
+    static let didDocument = DIDDocument(
         id: "did:example:123456789abcdefghi",
         verificationMethod: [Self.verificationMethod]
     )
