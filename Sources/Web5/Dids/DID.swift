@@ -1,9 +1,4 @@
 import Foundation
-import RegexBuilder
-
-enum DIDError: Error {
-    case invalidURI
-}
 
 /// Decentralized Identifier (DID), according to the  [W3C DID Core specification](https://www.w3.org/TR/did-core).
 public struct DID {
@@ -57,19 +52,20 @@ public struct DID {
     /// - Parameter didURI: URI of DID to parse
     /// - Returns: `DID` instance if parsing was successful. Throws error otherwise.
     public init(didURI: String) throws {
-        guard let match = didURI.wholeMatch(of: Self.didRegex) else {
-            throw DIDError.invalidURI
+        guard let matches = try? Regex.matches(for: Self.didRegexPattern, in: didURI),
+            matches.count == Self.didRegexPatternExpectedMatchCount
+        else {
+            throw DID.Error.invalidURI
         }
 
-        let methodName = String(match.1)
-        let identifier = String(match.2)
+        let methodName = matches[1]
+        let identifier = matches[2]
 
         var params: [String: String]? = nil
-        if !match.output.4.isEmpty {
-            // Remove leading ';' from regex match
-            let paramsString = String(match.output.4.dropFirst())
+        let paramsMatch = matches[3]
+        if paramsMatch.count > 0 {
             params =
-                paramsString
+                paramsMatch
                 .split(separator: ";")
                 .map(String.init)
                 .reduce(into: [String: String]()) { dict, param in
@@ -80,22 +76,34 @@ public struct DID {
                 }
         }
 
-        var path: String? = nil
-        if let pathSubstring = match.output.5 {
-            path = String(pathSubstring)
-        }
+        let path: String? = {
+            let pathMatch = matches[4]
+            if pathMatch.count > 0 {
+                return pathMatch
+            } else {
+                return nil
+            }
+        }()
 
-        var query: String? = nil
-        if let querySubstring = match.output.6 {
-            // Remove leading '?' from regex match
-            query = String(querySubstring.dropFirst())
-        }
+        let query: String? = {
+            let queryMatch = matches[5]
+            if queryMatch.count > 0 {
+                // Drop the leading `?` character from the match
+                return String(queryMatch.dropFirst())
+            } else {
+                return nil
+            }
+        }()
 
-        var fragment: String? = nil
-        if let fragmentSubstring = match.output.7 {
-            // Remove leading '#' from regex match
-            fragment = String(fragmentSubstring.dropFirst())
-        }
+        let fragment: String? = {
+            let fragmentMatch = matches[6]
+            if fragmentMatch.count > 0 {
+                // Drop the leading `#` character from the match
+                return String(fragmentMatch.dropFirst())
+            } else {
+                return nil
+            }
+        }()
 
         self.uri = didURI
         self.methodName = methodName
@@ -108,22 +116,26 @@ public struct DID {
 
     // MARK: - Private
 
-    private static let methodNameRegex = #/([a-z0-9]+)/#
-    private static let identifierRegex =
-        #/((?:(?:[a-zA-Z0-9._-]|(?:%[0-9a-fA-F]{2}))*:)*((?:[a-zA-Z0-9._-]|(?:%[0-9a-fA-F]{2}))+))/#
-    private static let paramsRegex = #/((?:;[a-zA-Z0-9_.:%\-]+=[a-zA-Z0-9_.:%\-]*)*)/#
-    private static let pathRegex = #/(/[^#?]*)?/#
-    private static let queryRegex = #/(\?[^#]*)?/#
-    private static let fragmentRegex = #/(\#.*)?/#
+    private static let methodNamePattern = "([a-z0-9]+)"
+    private static let idCharPattern = "(?:[a-zA-Z0-9._-]|(?:%[0-9a-fA-F]{2}))"
+    private static let identifierPattern = "((?:\(idCharPattern)*:)*(?:\(idCharPattern)+))"
+    private static let paramCharPattern = "[a-zA-Z0-9_.:%\\-]"
+    private static let paramsPattern = "((?:;\(paramCharPattern)+=\(paramCharPattern)*)*)"
+    private static let pathPattern = "(/[^#?]*)?"
+    private static let queryPattern = "(\\?[^#]*)?"
+    private static let fragmentPattern = "(#.*)?"
 
-    private static let didRegex = Regex {
-        "did:"
-        methodNameRegex
-        ":"
-        identifierRegex
-        paramsRegex
-        pathRegex
-        queryRegex
-        fragmentRegex
+    /// Number of captured matches expected from the DID regex pattern
+    private static let didRegexPatternExpectedMatchCount = 7
+    private static let didRegexPattern =
+        "did:\(methodNamePattern):\(identifierPattern)\(paramsPattern)\(pathPattern)\(queryPattern)\(fragmentPattern)$"
+}
+
+// MARK: - Errors
+
+extension DID {
+
+    public enum Error: Swift.Error {
+        case invalidURI
     }
 }
