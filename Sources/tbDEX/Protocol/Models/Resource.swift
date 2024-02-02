@@ -6,10 +6,10 @@ import Web5
 /// They are not part of the message exchange, i.e Alice cannot reply to a Resource.
 ///
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#resources)
-public struct Resource<D: ResourceData>: Codable {
+public struct Resource<D: ResourceData>: Codable, Equatable {
 
     /// An object containing fields about the Resource.
-    public let metadata: Metadata
+    public let metadata: ResourceMetadata
 
     /// The actual Resource content.
     public let data: D
@@ -23,9 +23,9 @@ public struct Resource<D: ResourceData>: Codable {
         data: D
     ) {
         let now = Date()
-        self.metadata = Metadata(
-            id: TypeID(prefix: data.kind.rawValue)!,
-            kind: data.kind,
+        self.metadata = ResourceMetadata(
+            id: TypeID(prefix: data.kind().rawValue)!,
+            kind: data.kind(),
             from: from,
             createdAt: now,
             updatedAt: now
@@ -48,60 +48,52 @@ public struct Resource<D: ResourceData>: Codable {
 
 }
 
-// MARK: - ResourceData
-
-/// The actual content of a `Resource`.
-public protocol ResourceData: Codable {
-
-    /// The kind of Resource the data represents
-    var kind: Resource<Self>.Kind { get }
-
+/// Enum containing the different types of Resources
+///
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#resource-kinds)
+public enum ResourceKind: String, Codable {
+    case offering
 }
 
-// MARK: - Nested Types
+/// The actual content of a `Resource`.
+public protocol ResourceData: Codable, Equatable {
 
-extension Resource {
+    /// The kind of Resource the data represents
+    func kind() -> ResourceKind
+}
 
-    /// Enum containing the different types of Resources
-    ///
-    /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#resource-kinds)
-    public enum Kind: String, Codable {
-        case offering
-    }
+/// Structure containining fields about the Resource and is present in every tbDEX Resource.
+///
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#metadata)
+public struct ResourceMetadata: Codable, Equatable {
 
-    /// Structure containining fields about the Resource and is present in every tbDEX Resource.
-    ///
-    /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#metadata)
-    public struct Metadata: Codable {
+    /// The resource's unique identifier
+    public let id: TypeID
 
-        /// The resource's unique identifier
-        public let id: TypeID
+    /// The data property's type. e.g. `offering`
+    public let kind: ResourceKind
 
-        /// The data property's type. e.g. `offering`
-        public let kind: Kind
+    /// The authors's DID URI
+    public let from: String
 
-        /// The authors's DID URI
-        public let from: String
+    /// The time at which the resource was created
+    public let createdAt: Date
 
-        /// The time at which the resource was created
-        public let createdAt: Date
+    /// The time at which the resource was last updated
+    public let updatedAt: Date?
 
-        /// The time at which the resource was last updated
-        public let updatedAt: Date?
-
-        /// Default Initializer
-        init(
-            id: TypeID,
-            kind: Kind,
-            from: String,
-            createdAt: Date,
-            updatedAt: Date? = nil
-        ) {
-            self.id = id
-            self.kind = kind
-            self.from = from
-            self.createdAt = createdAt
-            self.updatedAt = updatedAt
-        }
+    /// Default Initializer
+    init(
+        id: TypeID,
+        kind: ResourceKind,
+        from: String,
+        createdAt: Date,
+        updatedAt: Date? = nil
+    ) {
+        self.id = id
+        self.kind = kind
+        self.from = from
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }

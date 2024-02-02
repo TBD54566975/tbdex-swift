@@ -1,0 +1,3 @@
+[submodule "Tests/tbDEXTestVectors/tbdex-spec"]
+	path = Tests/tbDEXTestVectors/tbdex-spec
+	url = https://github.com/TBD54566975/tbdex

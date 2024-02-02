@@ -7,10 +7,6 @@ public typealias Quote = Message<QuoteData>
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#quote)
 public struct QuoteData: MessageData {
 
-    public var kind: Message<QuoteData>.Kind {
-        .quote
-    }
-
     /// When this quote expires.
     public let expiresAt: Date
 
@@ -23,12 +19,15 @@ public struct QuoteData: MessageData {
     /// Object that describes how to pay the PFI, and how to get paid by the PFI (e.g. BTC address, payment link)
     public let paymentInstructions: PaymentInstructions?
 
+    public func kind() -> MessageKind {
+        return .quote
+    }
 }
 
 /// Details about a quoted amount
 ///
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#quotedetails)
-public struct QuoteDetails: Codable {
+public struct QuoteDetails: Codable, Equatable {
 
     /// ISO 3166 currency code string
     public let currencyCode: String
@@ -44,7 +43,7 @@ public struct QuoteDetails: Codable {
 /// Instructions about how one can pay or be paid by the PFI
 ///
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#paymentinstructions)
-public struct PaymentInstructions: Codable {
+public struct PaymentInstructions: Codable, Equatable {
 
     /// Link or Instruction describing how to pay the PFI.
     public let payin: PaymentInstruction?
@@ -57,7 +56,7 @@ public struct PaymentInstructions: Codable {
 /// Instruction about how to pay or be paid by the PFI
 ///
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#paymentinstruction)
-public struct PaymentInstruction: Codable {
+public struct PaymentInstruction: Codable, Equatable {
 
     /// Link to allow Alice to pay PFI, or be paid by the PFI
     public let link: String?

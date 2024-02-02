@@ -9,10 +9,6 @@ public typealias Offering = Resource<OfferingData>
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#offering)
 public struct OfferingData: ResourceData {
 
-    public var kind: Resource<OfferingData>.Kind {
-        .offering
-    }
-
     /// Brief description of what is being offered.
     public let description: String
 
@@ -33,12 +29,15 @@ public struct OfferingData: ResourceData {
     /// Articulates the claim(s) required when submitting an RFQ for this offering.
     public let requiredClaims: AnyCodable
 
+    public func kind() -> ResourceKind {
+        return .offering
+    }
 }
 
 /// Details about currency within an Offering
 ///
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#currencydetails)
-public struct CurrencyDetails: Codable {
+public struct CurrencyDetails: Codable, Equatable {
 
     /// ISO 3166 currency code string
     public let currencyCode: String
@@ -65,7 +64,7 @@ public struct CurrencyDetails: Codable {
 /// Details about payment methods within an Offering
 ///
 /// [Specficication Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#paymentmethod)
-public struct PaymentMethod: Codable {
+public struct PaymentMethod: Codable, Equatable {
 
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String

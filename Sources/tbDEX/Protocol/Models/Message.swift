@@ -6,10 +6,10 @@ import Web5
 /// Messages form exchanges between Alice and a PFI.
 ///
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#messages)
-public struct Message<D: MessageData>: Codable {
+public struct Message<D: MessageData>: Codable, Equatable {
 
     /// An object containing fields about the Message.
-    public let metadata: Metadata
+    public let metadata: MessageMetadata
 
     /// The actual Message content.
     public let data: D
@@ -28,9 +28,9 @@ public struct Message<D: MessageData>: Codable {
         data: D
     ) {
         let now = Date()
-        self.metadata = Metadata(
-            id: TypeID(prefix: data.kind.rawValue)!,
-            kind: data.kind,
+        self.metadata = MessageMetadata(
+            id: TypeID(prefix: data.kind().rawValue)!,
+            kind: data.kind(),
             from: from,
             to: to,
             exchangeID: exchangeID,
@@ -52,56 +52,55 @@ public struct Message<D: MessageData>: Codable {
     func verify() async throws {
         _ = try await CryptoUtils.verify(didURI: metadata.from, signature: signature, detachedPayload: try digest())
     }
-
 }
 
-// MARK: - MessageData
+/// Enum containing the different types of Messages
+///
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#message-kinds)
+public enum MessageKind: String, Codable {
+    case rfq
+    case close
+    case quote
+    case order
+    case orderStatus = "orderstatus"
+}
 
 /// The actual content for a `Message`.
-public protocol MessageData: Codable {
+public protocol MessageData: Codable, Equatable {
 
-    /// The kind of Message the data represents.
-    var kind: Message<Self>.Kind { get }
-
+    /// The `MessageKind` the data represents.
+    func kind() -> MessageKind
 }
 
-// MARK: - Nested Types
+/// Structure containing fields about the Message and is present in every tbDEX Message.
+///
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#metadata-1)
+public struct MessageMetadata: Codable, Equatable {
 
-extension Message {
+    /// The message's unique identifier
+    public let id: TypeID
 
-    /// Enum containing the different types of Messages
-    ///
-    /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#message-kinds)
-    public enum Kind: String, Codable {
-        case rfq
-        case close
-        case quote
-        case order
-        case orderStatus = "orderstatus"
-    }
+    /// The data property's type. e.g. `rfq`
+    public let kind: MessageKind
 
-    /// Structure containing fields about the Message and is present in every tbDEX Message.
-    ///
-    /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#metadata-1)
-    public struct Metadata: Codable {
+    /// The sender's DID URI
+    public let from: String
 
-        /// The message's unique identifier
-        public let id: TypeID
+    /// The recipient's DID URI
+    public let to: String
 
-        /// The data property's type. e.g. `rfq`
-        public let kind: Kind
+    /// ID for a "exchange" of messages between Alice <-> PFI. Set by the first message in an exchange.
+    public let exchangeID: String
 
-        /// The sender's DID URI
-        public let from: String
+    /// The time at which the message was created
+    public let createdAt: Date
 
-        /// The recipient's DID URI
-        public let to: String
-
-        /// ID for a "exchange" of messages between Alice <-> PFI. Set by the first message in an exchange.
-        public let exchangeID: String
-
-        /// The time at which the message was created
-        public let createdAt: Date
-
+    enum CodingKeys: String, CodingKey {
+        case id
+        case kind
+        case from
+        case to
+        case exchangeID = "exchangeId"
+        case createdAt
     }
 }
