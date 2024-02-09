@@ -45,12 +45,21 @@ public struct Message<D: MessageData>: Codable, Equatable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
-    mutating func sign(did: BearerDID, keyAlias: String? = nil) async throws {
-        signature = try await CryptoUtils.sign(did: did, payload: try digest(), assertionMethodId: keyAlias)
+    mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
+        signature = try JWS.sign(
+            did: did,
+            payload: try digest(),
+            detached: true,
+            verificationMethodID: keyAlias
+        )
     }
 
-    func verify() async throws {
-        _ = try await CryptoUtils.verify(didURI: metadata.from, signature: signature, detachedPayload: try digest())
+    func verify() async throws -> Bool {
+        return try await JWS.verify(
+            compactJWS: signature,
+            detachedPayload: try digest(),
+            expectedSigningDIDURI: metadata.from
+        )
     }
 }
 

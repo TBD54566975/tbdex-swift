@@ -17,18 +17,14 @@ final class OfferingTests: XCTestCase {
     }
 
     func test_signAndVerifySuccess() async throws {
-        do {
-            let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
-            var offering = createOffering(from: did.uri)
+        let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
+        var offering = createOffering(from: did.uri)
 
-            XCTAssertNil(offering.signature)
-            try await offering.sign(did: did)
-            XCTAssertNotNil(offering.signature)
-            try await offering.verify()
-        } catch {
-            print("Something went wrong: \(error)")
-            XCTFail()
-        }
+        XCTAssertNil(offering.signature)
+        try await offering.sign(did: did)
+        XCTAssertNotNil(offering.signature)
+        let isValid = try await offering.verify()
+        XCTAssertTrue(isValid)
     }
 
     func test_verifyWithoutSigningFailure() async throws {

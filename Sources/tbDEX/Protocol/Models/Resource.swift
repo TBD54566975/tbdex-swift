@@ -39,13 +39,21 @@ public struct Resource<D: ResourceData>: Codable, Equatable {
     }
 
     mutating func sign(did: BearerDID, keyAlias: String? = nil) async throws {
-        self.signature = try await CryptoUtils.sign(did: did, payload: digest(), assertionMethodId: keyAlias)
+        self.signature = try JWS.sign(
+            did: did,
+            payload: try digest(),
+            detached: true,
+            verificationMethodID: keyAlias
+        )
     }
 
-    func verify() async throws {
-        _ = try await CryptoUtils.verify(didURI: metadata.from, signature: signature, detachedPayload: digest())
+    func verify() async throws -> Bool {
+        return try await JWS.verify(
+            compactJWS: signature,
+            detachedPayload: try digest(),
+            expectedSigningDIDURI: metadata.from
+        )
     }
-
 }
 
 /// Enum containing the different types of Resources
