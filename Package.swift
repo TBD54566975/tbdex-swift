@@ -16,9 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Frizlab/swift-typeid.git", from: "0.3.0"),
         .package(url: "https://github.com/flight-school/anycodable.git", from: "0.6.7"),
-        // TODO: Revert this before PR
-//        .package(url: "https://github.com/TBD54566975/web5-swift", exact: "0.0.2"),
-        .package(path: "../web5-swift"),
+        .package(url: "https://github.com/TBD54566975/web5-swift", exact: "0.0.3"),
         .package(url: "https://github.com/allegro/swift-junit.git", from: "2.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.1.2"),
     ],
