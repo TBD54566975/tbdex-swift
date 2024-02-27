@@ -13,4 +13,11 @@ public struct CloseData: MessageData {
     public func kind() -> MessageKind {
         return .close
     }
+
+    /// Default Initializer
+    public init(
+        reason: String? = nil
+    ) {
+        self.reason = reason
+    }
 }

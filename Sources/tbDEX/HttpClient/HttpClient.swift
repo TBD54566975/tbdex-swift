@@ -65,7 +65,12 @@ public enum HttpClient {
     private static func getPFIServiceEndpoint(pfiDIDURI: String) async -> String? {
         let resolutionResult = await DIDResolver.resolve(didURI: pfiDIDURI)
         if let service = resolutionResult.didDocument?.service?.first(where: { $0.type == "PFI" }) {
-            return service.serviceEndpoint
+            switch service.serviceEndpoint {
+            case let .one(uri):
+                return uri
+            case let .many(uris):
+                return uris.first
+            }
         } else {
             return nil
         }

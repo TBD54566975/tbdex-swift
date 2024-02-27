@@ -21,7 +21,7 @@ final class OfferingTests: XCTestCase {
         var offering = createOffering(from: did.uri)
 
         XCTAssertNil(offering.signature)
-        try await offering.sign(did: did)
+        try offering.sign(did: did)
         XCTAssertNotNil(offering.signature)
         let isValid = try await offering.verify()
         XCTAssertTrue(isValid)
@@ -42,6 +42,7 @@ final class OfferingTests: XCTestCase {
                 payoutUnitsPerPayinUnit: "1",
                 payinCurrency: .init(currencyCode: "AUD"),
                 payoutCurrency: .init(currencyCode: "BTC"),
+                payinMethods: [],
                 payoutMethods: [],
                 requiredClaims: [:]
             )
