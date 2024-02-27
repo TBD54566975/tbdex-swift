@@ -16,11 +16,19 @@ public struct QuoteData: MessageData {
     /// The amount of payout currency that Alice will receive
     public let payout: QuoteDetails
 
-    /// Object that describes how to pay the PFI, and how to get paid by the PFI (e.g. BTC address, payment link)
-    public let paymentInstructions: PaymentInstructions?
-
     public func kind() -> MessageKind {
         return .quote
+    }
+
+    /// Default Initializer
+    public init(
+        expiresAt: Date,
+        payin: QuoteDetails,
+        payout: QuoteDetails
+    ) {
+        self.expiresAt = expiresAt
+        self.payin = payin
+        self.payout = payout
     }
 }
 
@@ -38,19 +46,21 @@ public struct QuoteDetails: Codable, Equatable {
     /// The amount paid in fees
     public let fee: String?
 
-}
+    /// Object that describes how to pay the PFI, and how to get paid by the PFI (e.g. BTC address, payment link)
+    public let paymentInstruction: PaymentInstruction?
 
-/// Instructions about how one can pay or be paid by the PFI
-///
-/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#paymentinstructions)
-public struct PaymentInstructions: Codable, Equatable {
-
-    /// Link or Instruction describing how to pay the PFI.
-    public let payin: PaymentInstruction?
-
-    /// Link or Instruction describing how to get paid by the PFI
-    public let payout: PaymentInstruction?
-
+    /// Default Initializer
+    public init(
+        currencyCode: String, 
+        amount: String,
+        fee: String? = nil,
+        paymentInstruction: PaymentInstruction? = nil
+    ) {
+        self.currencyCode = currencyCode
+        self.amount = amount
+        self.fee = fee
+        self.paymentInstruction = paymentInstruction
+    }
 }
 
 /// Instruction about how to pay or be paid by the PFI
@@ -64,4 +74,12 @@ public struct PaymentInstruction: Codable, Equatable {
     /// Instruction on how Alice can pay PFI, or how Alice can be paid by the PFI
     public let instruction: String?
 
+    /// Default Initializer
+    public init(
+        link: String? = nil,
+        instruction: String? = nil
+    ) {
+        self.link = link
+        self.instruction = instruction
+    }
 }

@@ -45,16 +45,18 @@ public struct Message<D: MessageData>: Codable, Equatable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
-    mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
+    public mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
         signature = try JWS.sign(
             did: did,
             payload: try digest(),
-            detached: true,
-            verificationMethodID: keyAlias
+            options: .init(
+                detached: true,
+                verificationMethodID: keyAlias
+            )
         )
     }
 
-    func verify() async throws -> Bool {
+    public func verify() async throws -> Bool {
         return try await JWS.verify(
             compactJWS: signature,
             detachedPayload: try digest(),
@@ -73,6 +75,8 @@ public enum MessageKind: String, Codable {
     case order
     case orderStatus = "orderstatus"
 }
+
+// MARK: - MessageData
 
 /// The actual content for a `Message`.
 public protocol MessageData: Codable, Equatable {

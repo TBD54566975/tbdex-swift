@@ -21,8 +21,12 @@ public struct OfferingData: ResourceData {
     /// Details about the currency that the PFI is selling.
     public let payoutCurrency: CurrencyDetails
 
-    /// A list of payment methods the counterparty (Alice) can choose to send payment to the PFI from in order to
-    /// qualify for this offering.
+    /// A list of payment methods the counterparty (Alice) can choose to send payment
+    /// to the PFI from in order to qualify for this offering.
+    public let payinMethods: [PaymentMethod]
+
+    /// A list of payment methods the counterparty (Alice) can choose to receive payment
+    /// from the PFI in order to qualify for this offering.
     public let payoutMethods: [PaymentMethod]
 
     // TODO: amika - Update to PresentationDefinitionV2, requires third-party or custom implementation

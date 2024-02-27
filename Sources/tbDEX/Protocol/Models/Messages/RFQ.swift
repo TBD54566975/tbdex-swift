@@ -1,7 +1,30 @@
 import AnyCodable
 import Foundation
+import TypeID
 
 public typealias RFQ = Message<RFQData>
+
+extension RFQ {
+
+    public init(
+        to: String,
+        from: String,
+        data: RFQData
+    ) {
+        let id = TypeID(prefix: data.kind().rawValue)!
+        self.metadata = MessageMetadata(
+            id: id,
+            kind: data.kind(),
+            from: from,
+            to: to,
+            exchangeID: id.rawValue,
+            createdAt: Date()
+        )
+        self.data = data
+        self.private = nil
+    }
+
+}
 
 /// Data that makes up a RFQ Message.
 ///
@@ -27,6 +50,19 @@ public struct RFQData: MessageData {
         return .rfq
     }
 
+    public init(
+        offeringId: String,
+        payinAmount: String,
+        claims: [String],
+        payinMethod: SelectedPaymentMethod,
+        payoutMethod: SelectedPaymentMethod
+    ) {
+        self.offeringId = offeringId
+        self.payinAmount = payinAmount
+        self.claims = claims
+        self.payinMethod = payinMethod
+        self.payoutMethod = payoutMethod
+    }
 }
 
 /// Details about a selected payment method
@@ -39,4 +75,12 @@ public struct SelectedPaymentMethod: Codable, Equatable {
 
     /// An object containing the properties defined in an Offering's `requiredPaymentDetails` json schema
     public let paymentDetails: AnyCodable?
+
+    public init(
+        kind: String,
+        paymentDetails: AnyCodable? = nil
+    ) {
+        self.kind = kind
+        self.paymentDetails = paymentDetails
+    }
 }

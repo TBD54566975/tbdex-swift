@@ -11,4 +11,7 @@ public struct OrderData: MessageData {
         return .order
     }
 
+    /// Default Initializer
+    public init() {}
+
 }
