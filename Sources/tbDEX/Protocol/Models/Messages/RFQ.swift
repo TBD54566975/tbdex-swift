@@ -51,13 +51,13 @@ public struct RFQData: MessageData {
     }
 
     public init(
-        offeringId: String,
+        offeringId: TypeID,
         payinAmount: String,
         payinMethod: SelectedPaymentMethod,
         payoutMethod: SelectedPaymentMethod,
         claims: [String]
     ) {
-        self.offeringId = offeringId
+        self.offeringId = offeringId.rawValue
         self.payinAmount = payinAmount
         self.payinMethod = payinMethod
         self.payoutMethod = payoutMethod
