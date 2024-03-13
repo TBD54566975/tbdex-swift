@@ -127,6 +127,44 @@ public enum tbDEXHttpClient {
             throw buildErrorResponse(data: data, response: httpResponse)
         }
     }
+    
+    public static func getExchange(
+        pfiDIDURI: String,
+        requesterDID: BearerDID,
+        exchangeId: String
+    ) async throws -> [AnyMessage] {
+        guard let pfiServiceEndpoint = await getPFIServiceEndpoint(pfiDIDURI: pfiDIDURI) else {
+            throw Error(reason: "DID does not have service of type PFI")
+        }
+
+        guard let url = URL(string: "\(pfiServiceEndpoint)/exchanges/\(exchangeId)") else {
+            throw Error(reason: "Could not create URL from PFI service endpoint")
+        }
+        
+        let requestToken = try await RequestToken.generate(did: requesterDID, pfiDIDURI: pfiDIDURI)
+
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(requestToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw Error(reason: "Invalid response")
+        }
+
+        switch httpResponse.statusCode {
+        case 200...299:
+            do {
+                let exchangesResponse = try tbDEXJSONDecoder().decode(GetExchangeResponse.self, from: data)
+                return exchangesResponse.data
+            } catch {
+                throw Error(reason: "Error while decoding exchanges: \(error)")
+            }
+        default:
+            throw buildErrorResponse(data: data, response: httpResponse)
+        }
+    }
 
     // MARK: - Decodable Response Types
 
@@ -136,6 +174,10 @@ public enum tbDEXHttpClient {
 
     struct GetExchangesResponse: Decodable {
         public let data: [[AnyMessage]]
+    }
+    
+    struct GetExchangeResponse: Decodable {
+        public let data: [AnyMessage]
     }
 
     // MARK: - Private
