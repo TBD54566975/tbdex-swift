@@ -48,13 +48,13 @@ final class RFQTests: XCTestCase {
             data: .init(
                 offeringId: "offering_123",
                 payinAmount: "1.00",
-                claims: [],
                 payinMethod: .init(
                     kind: "DEBIT_CARD"
                 ),
                 payoutMethod: .init(
                     kind: "BITCOIN_ADDRESS"
-                )
+                ),
+                claims: []
             )
         )
     }
