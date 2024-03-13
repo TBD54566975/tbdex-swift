@@ -37,14 +37,14 @@ public struct RFQData: MessageData {
     /// Amount of payin currency you want in exchange for payout currency.
     public let payinAmount: String
 
-    /// An array of claims that fulfill the requirements declared in an Offering.
-    public let claims: [String]
-
     /// Specify which payment method to send payin currency.
     public let payinMethod: SelectedPaymentMethod
 
     /// Specify which payment method to receive payout currency.
     public let payoutMethod: SelectedPaymentMethod
+    
+    /// An array of claims that fulfill the requirements declared in an Offering.
+    public let claims: [String]
 
     public func kind() -> MessageKind {
         return .rfq
@@ -53,15 +53,15 @@ public struct RFQData: MessageData {
     public init(
         offeringId: String,
         payinAmount: String,
-        claims: [String],
         payinMethod: SelectedPaymentMethod,
-        payoutMethod: SelectedPaymentMethod
+        payoutMethod: SelectedPaymentMethod,
+        claims: [String]
     ) {
         self.offeringId = offeringId
         self.payinAmount = payinAmount
-        self.claims = claims
         self.payinMethod = payinMethod
         self.payoutMethod = payoutMethod
+        self.claims = claims
     }
 }
 
