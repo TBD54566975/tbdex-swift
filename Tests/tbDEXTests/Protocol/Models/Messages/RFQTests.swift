@@ -1,5 +1,6 @@
 import Web5
 import XCTest
+import TypeID
 
 @testable import tbDEX
 
@@ -46,7 +47,7 @@ final class RFQTests: XCTestCase {
             to: to,
             from: from,
             data: .init(
-                offeringId: "offering_123",
+                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
                 payinAmount: "1.00",
                 payinMethod: .init(
                     kind: "DEBIT_CARD"
