@@ -56,7 +56,9 @@ final class RFQTests: XCTestCase {
                     kind: "BITCOIN_ADDRESS"
                 ),
                 claims: []
-            )
+            ),
+            externalID: nil,
+            protocol: nil
         )
     }
 }

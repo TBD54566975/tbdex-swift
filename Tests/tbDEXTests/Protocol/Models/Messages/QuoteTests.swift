@@ -70,7 +70,9 @@ final class QuoteTests: XCTestCase {
                     amount: "2.00",
                     fee: "0.50"
                 )
-            )
+            ),
+            externalID: nil,
+            protocol: nil
         )
     }
 }

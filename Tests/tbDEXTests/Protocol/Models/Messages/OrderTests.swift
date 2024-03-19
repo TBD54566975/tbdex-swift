@@ -43,7 +43,9 @@ final class OrderTests: XCTestCase {
             from: from,
             to: to,
             exchangeID: "exchange_123",
-            data: .init()
+            data: .init(),
+            externalID: nil,
+            protocol: nil
         )
     }
 }
