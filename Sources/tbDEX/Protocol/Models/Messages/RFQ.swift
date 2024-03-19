@@ -46,6 +46,7 @@ public struct RFQData: MessageData {
     /// An array of claims that fulfill the requirements declared in an Offering.
     public let claims: [String]
 
+    /// Returns the MessageKind of rfq
     public func kind() -> MessageKind {
         return .rfq
     }

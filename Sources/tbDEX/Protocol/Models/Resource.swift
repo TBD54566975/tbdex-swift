@@ -21,6 +21,7 @@ public struct Resource<D: ResourceData>: Codable, Equatable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
+    /// Validates the resource structure and verifies the cryptographic signature
     public func verify() async throws -> Bool {
         return try await JWS.verify(
             compactJWS: signature,
@@ -58,10 +59,10 @@ public struct ResourceMetadata: Codable, Equatable {
     /// The authors's DID URI
     public let from: String
 
-    /// The time at which the resource was created
+    /// The time at which the resource was created. Can be serialized to or from JSON with `tbDEXDateFormatter`. Use `tbDEXJSONDecoder` or `tbDEXJSONEncoder`.
     public let createdAt: Date
 
-    /// The time at which the resource was last updated
+    /// The time at which the resource was last updated. Can be serialized to or from JSON with `tbDEXDateFormatter`. Use `tbDEXJSONDecoder` or `tbDEXJSONEncoder`.
     public let updatedAt: Date?
     
     /// Version of the protocol in use (x.x format). Must be consistent with all other messages in a given exchange

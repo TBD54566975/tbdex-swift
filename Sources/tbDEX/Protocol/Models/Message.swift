@@ -45,6 +45,10 @@ public struct Message<D: MessageData>: Codable, Equatable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
+    /// Signs the message as a JWS with detached content with an optional key alias
+    /// - Parameters:
+    ///   - did: The Bearer DID with which to sign the message
+    ///   - keyAlias: An optional key alias to use instead of the default provided by the Bearer DID
     public mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
         signature = try JWS.sign(
             did: did,
@@ -56,6 +60,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
         )
     }
 
+    /// Validates the message structure and verifies the cryptographic signature
     public func verify() async throws -> Bool {
         return try await JWS.verify(
             compactJWS: signature,
@@ -105,7 +110,7 @@ public struct MessageMetadata: Codable, Equatable {
     /// ID for a "exchange" of messages between Alice <-> PFI. Set by the first message in an exchange.
     public let exchangeID: String
 
-    /// The time at which the message was created
+    /// The time at which the message was created. Can be serialized to or from JSON with `tbDEXDateFormatter`. Use `tbDEXJSONDecoder` or `tbDEXJSONEncoder`.
     public let createdAt: Date
 
     enum CodingKeys: String, CodingKey {

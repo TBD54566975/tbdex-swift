@@ -11,6 +11,10 @@ import Foundation
 public enum AnyResource {
     case offering(Offering)
 
+    
+    /// This function takes a JSON string as input and attempts to decode it into an `AnyResource` instance.
+    /// - Parameter jsonString: The `Resource` JSON string to be parsed.
+    /// - Returns: An `AnyResource` instance representing the decoded `Resource` data.
     public static func parse(_ jsonString: String) throws -> AnyResource {
         guard let data = jsonString.data(using: .utf8) else {
             throw Error.invalidJSONString

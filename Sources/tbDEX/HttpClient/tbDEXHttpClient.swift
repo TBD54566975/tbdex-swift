@@ -128,6 +128,12 @@ public enum tbDEXHttpClient {
         }
     }
     
+    /// Fetches a specific exchange between the requester and the PFI
+    /// - Parameters:
+    ///   - pfiDIDURI: The DID URI of the PFI
+    ///   - requesterDID: The DID of the requester
+    ///   - exchangeId: The ID of the exchange to fetch
+    /// - Returns: 2D array of `AnyMessage` objects, each representing an Exchange between the requester and the PFI
     public static func getExchange(
         pfiDIDURI: String,
         requesterDID: BearerDID,
