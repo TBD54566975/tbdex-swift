@@ -33,6 +33,7 @@ public struct OfferingData: ResourceData {
     /// Articulates the claim(s) required when submitting an RFQ for this offering.
     public let requiredClaims: AnyCodable
 
+    /// Returns the MessageKind of offering
     public func kind() -> ResourceKind {
         return .offering
     }

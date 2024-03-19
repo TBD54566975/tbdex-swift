@@ -21,6 +21,7 @@ public struct Resource<D: ResourceData>: Codable, Equatable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
+    /// Validates the resource structure and verifies the cryptographic signature
     public func verify() async throws -> Bool {
         return try await JWS.verify(
             compactJWS: signature,

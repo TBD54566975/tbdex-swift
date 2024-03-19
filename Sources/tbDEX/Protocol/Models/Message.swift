@@ -45,6 +45,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
+    /// Signs the message as a jws with detached content with an optional key alias
     public mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
         signature = try JWS.sign(
             did: did,
@@ -56,6 +57,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
         )
     }
 
+    /// Validates the message structure and verifies the cryptographic signature
     public func verify() async throws -> Bool {
         return try await JWS.verify(
             compactJWS: signature,

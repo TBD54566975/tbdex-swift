@@ -10,6 +10,7 @@ public struct OrderStatusData: MessageData {
     /// Current status of Order that's being executed
     public let orderStatus: String
 
+    /// Returns the MessageKind of kind
     public func kind() -> MessageKind {
         return .orderStatus
     }

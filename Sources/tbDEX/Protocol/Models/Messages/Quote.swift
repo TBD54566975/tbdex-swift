@@ -16,6 +16,7 @@ public struct QuoteData: MessageData {
     /// The amount of payout currency that Alice will receive
     public let payout: QuoteDetails
 
+    /// Returns the MessageKind of quote
     public func kind() -> MessageKind {
         return .quote
     }
