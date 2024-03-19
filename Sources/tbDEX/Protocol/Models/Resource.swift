@@ -15,38 +15,10 @@ public struct Resource<D: ResourceData>: Codable, Equatable {
     public let data: D
 
     /// Signature that verifies the authenticity and integrity of the Resource
-    public private(set) var signature: String?
-
-    /// Default Initializer
-    init(
-        from: String,
-        data: D
-    ) {
-        let now = Date()
-        self.metadata = ResourceMetadata(
-            id: TypeID(prefix: data.kind().rawValue)!,
-            kind: data.kind(),
-            from: from,
-            createdAt: now,
-            updatedAt: now
-        )
-        self.data = data
-        self.signature = nil
-    }
+    public let signature: String?
 
     private func digest() throws -> Data {
         try CryptoUtils.digest(data: data, metadata: metadata)
-    }
-
-    public mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
-        self.signature = try JWS.sign(
-            did: did,
-            payload: try digest(),
-            options: .init(
-                detached: true,
-                verificationMethodID: keyAlias
-            )
-        )
     }
 
     public func verify() async throws -> Bool {
@@ -91,19 +63,8 @@ public struct ResourceMetadata: Codable, Equatable {
 
     /// The time at which the resource was last updated
     public let updatedAt: Date?
-
-    /// Default Initializer
-    init(
-        id: TypeID,
-        kind: ResourceKind,
-        from: String,
-        createdAt: Date,
-        updatedAt: Date? = nil
-    ) {
-        self.id = id
-        self.kind = kind
-        self.from = from
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-    }
+    
+    /// Version of the protocol in use (x.x format). Must be consistent with all other messages in a given exchange
+    public let `protocol`: String
+    
 }

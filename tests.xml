@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="3" failures="0" disabled="0" errors="0" skipped="0" time="0.003320932388305664" name="CloseTests">
+		<testcase classname="-[CloseTests test_signAndVerify]" name="-[CloseTests test_signAndVerify]" time="0.0027539730072021484"></testcase>
+		<testcase classname="-[CloseTests test_verifyWithoutSigningFailure]" name="-[CloseTests test_verifyWithoutSigningFailure]" time="0.00026595592498779297"></testcase>
+		<testcase classname="-[CloseTests test_init]" name="-[CloseTests test_init]" time="0.00030100345611572266"></testcase>
+	</testsuite>
+	<testsuite tests="2" failures="1" disabled="0" errors="0" skipped="0" time="7.045737981796265" name="OfferingTests">
+		<testcase classname="-[OfferingTests test_signAndVerifySuccess]" name="-[OfferingTests test_signAndVerifySuccess]" time="7.04272198677063">
+			<failure message="XCTAssertTrue failed"></failure>
+		</testcase>
+		<testcase classname="-[OfferingTests test_printOffering]" name="-[OfferingTests test_printOffering]" time="0.0030159950256347656"></testcase>
+	</testsuite>
+	<testsuite tests="3" failures="0" disabled="0" errors="0" skipped="0" time="0.0025140047073364258" name="OrderStatusTests">
+		<testcase classname="-[OrderStatusTests test_verifyWithoutSigningFailure]" name="-[OrderStatusTests test_verifyWithoutSigningFailure]" time="0.0002789497375488281"></testcase>
+		<testcase classname="-[OrderStatusTests test_signAndVerify]" name="-[OrderStatusTests test_signAndVerify]" time="0.0019899606704711914"></testcase>
+		<testcase classname="-[OrderStatusTests test_init]" name="-[OrderStatusTests test_init]" time="0.00024509429931640625"></testcase>
+	</testsuite>
+	<testsuite tests="3" failures="0" disabled="0" errors="0" skipped="0" time="0.0020771026611328125" name="OrderTests">
+		<testcase classname="-[OrderTests test_signAndVerify]" name="-[OrderTests test_signAndVerify]" time="0.0016750097274780273"></testcase>
+		<testcase classname="-[OrderTests test_verifyWithoutSigningFailure]" name="-[OrderTests test_verifyWithoutSigningFailure]" time="0.00023102760314941406"></testcase>
+		<testcase classname="-[OrderTests test_init]" name="-[OrderTests test_init]" time="0.0001710653305053711"></testcase>
+	</testsuite>
+	<testsuite tests="3" failures="0" disabled="0" errors="0" skipped="0" time="0.001528024673461914" name="QuoteTests">
+		<testcase classname="-[QuoteTests test_init]" name="-[QuoteTests test_init]" time="0.0001800060272216797"></testcase>
+		<testcase classname="-[QuoteTests test_verifyWithoutSigningFailure]" name="-[QuoteTests test_verifyWithoutSigningFailure]" time="0.0002599954605102539"></testcase>
+		<testcase classname="-[QuoteTests test_signAndVerify]" name="-[QuoteTests test_signAndVerify]" time="0.0010880231857299805"></testcase>
+	</testsuite>
+	<testsuite tests="3" failures="0" disabled="0" errors="0" skipped="0" time="0.0019059181213378906" name="RFQTests">
+		<testcase classname="-[RFQTests test_verifyWithoutSigningFailure]" name="-[RFQTests test_verifyWithoutSigningFailure]" time="0.0002859830856323242"></testcase>
+		<testcase classname="-[RFQTests test_init]" name="-[RFQTests test_init]" time="0.0003509521484375"></testcase>
+		<testcase classname="-[RFQTests test_signAndVerify]" name="-[RFQTests test_signAndVerify]" time="0.0012689828872680664"></testcase>
+	</testsuite>
+	<testsuite tests="6" failures="0" disabled="0" errors="0" skipped="0" time="0.00991213321685791" name="tbDEXTestVectorsProtocol">
+		<testcase classname="-[tbDEXTestVectorsProtocol test_parseQuote]" name="-[tbDEXTestVectorsProtocol test_parseQuote]" time="0.0011610984802246094"></testcase>
+		<testcase classname="-[tbDEXTestVectorsProtocol test_parseClose]" name="-[tbDEXTestVectorsProtocol test_parseClose]" time="0.0016109943389892578"></testcase>
+		<testcase classname="-[tbDEXTestVectorsProtocol test_parseOffering]" name="-[tbDEXTestVectorsProtocol test_parseOffering]" time="0.0038280487060546875"></testcase>
+		<testcase classname="-[tbDEXTestVectorsProtocol test_parseOrder]" name="-[tbDEXTestVectorsProtocol test_parseOrder]" time="0.0008969306945800781"></testcase>
+		<testcase classname="-[tbDEXTestVectorsProtocol test_parseRfq]" name="-[tbDEXTestVectorsProtocol test_parseRfq]" time="0.0013990402221679688"></testcase>
+		<testcase classname="-[tbDEXTestVectorsProtocol test_parseOrderStatus]" name="-[tbDEXTestVectorsProtocol test_parseOrderStatus]" time="0.0010160207748413086"></testcase>
+	</testsuite>
+</testsuites>

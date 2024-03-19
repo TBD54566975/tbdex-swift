@@ -52,17 +52,6 @@ public struct CurrencyDetails: Codable, Equatable {
     /// Maximum amount of currency that the offer is valid for
     public let maxAmount: String?
 
-    /// Default initializer
-    init(
-        currencyCode: String,
-        minAmount: String? = nil,
-        maxAmount: String? = nil
-    ) {
-        self.currencyCode = currencyCode
-        self.minAmount = minAmount
-        self.maxAmount = maxAmount
-    }
-
 }
 
 /// Details about payment methods within an Offering
@@ -76,19 +65,5 @@ public struct PaymentMethod: Codable, Equatable {
     // TODO: amika - Update to JSONSchema, requires third-party or custom implementation
     /// A JSON Schema containing the fields that need to be collected in order to use this payment method
     public let requiredPaymentDetails: AnyCodable?
-
-    /// The fee expressed in the currency's sub units to make use of this payment method
-    public let fee: String?
-
-    /// Default initializer
-    init(
-        kind: String,
-        requiredPaymentDetails: AnyCodable? = nil,
-        fee: String? = nil
-    ) {
-        self.kind = kind
-        self.requiredPaymentDetails = requiredPaymentDetails
-        self.fee = fee
-    }
 
 }
