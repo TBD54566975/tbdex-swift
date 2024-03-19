@@ -107,7 +107,7 @@ public struct MessageMetadata: Codable, Equatable {
     /// ID for a "exchange" of messages between Alice <-> PFI. Set by the first message in an exchange.
     public let exchangeID: String
 
-    /// The time at which the message was created. Can be coded to or from JSON string with `tbDEXDateFormatter`. Use `tbDEXJSONDecoder` or `tbDEXJSONEncoder`.
+    /// The time at which the message was created. Can be serialized to or from JSON with `tbDEXDateFormatter`. Use `tbDEXJSONDecoder` or `tbDEXJSONEncoder`.
     public let createdAt: Date
 
     enum CodingKeys: String, CodingKey {
