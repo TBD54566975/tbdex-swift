@@ -45,7 +45,10 @@ public struct Message<D: MessageData>: Codable, Equatable {
         try CryptoUtils.digest(data: data, metadata: metadata)
     }
 
-    /// Signs the message as a jws with detached content with an optional key alias
+    /// Signs the message as a JWS with detached content with an optional key alias
+    /// - Parameters:
+    ///   - did: The Bearer DID with which to sign the message
+    ///   - keyAlias: An optional key alias to use instead of the default provided by the Bearer DID
     public mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
         signature = try JWS.sign(
             did: did,
