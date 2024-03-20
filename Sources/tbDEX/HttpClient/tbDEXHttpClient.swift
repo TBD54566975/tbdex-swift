@@ -47,7 +47,7 @@ public enum tbDEXHttpClient {
     /// - Throws: if recipient DID resolution fails
     /// - Throws: if recipient DID does not have a PFI service entry
     public static func createExchange(rfq: RFQ) async throws {
-        try await sendMessage(message: rfq)
+        try await sendMessage(message: rfq, messageEndpoint: "/exchanges")
     }
     
     /// Sends the Order message to the PFI
@@ -57,7 +57,8 @@ public enum tbDEXHttpClient {
     /// - Throws: if recipient DID resolution fails
     /// - Throws: if recipient DID does not have a PFI service entry
     public static func submitOrder(order: Order) async throws {
-        try await sendMessage(message: order)
+        let exchangeID = order.metadata.exchangeID
+        try await sendMessage(message: order, messageEndpoint: "/exchanges/\(exchangeID)")
     }
     
     /// Sends the Close message to the PFI
@@ -67,26 +68,29 @@ public enum tbDEXHttpClient {
     /// - Throws: if recipient DID resolution fails
     /// - Throws: if recipient DID does not have a PFI service entry
     public static func submitClose(close: Close) async throws {
-        try await sendMessage(message: close)
+        let exchangeID = close.metadata.exchangeID
+        try await sendMessage(message: close, messageEndpoint: "/exchanges/\(exchangeID)")
     }
 
     /// Sends a message to a PFI
-    /// - Parameter message: The message to send
+    /// - Parameters:
+    ///   - message: The message to send
+    ///   - messageEndpoint: The endpoint for the message with a leading slash. eg. "/exchanges"
     private static func sendMessage<D: MessageData>(
-        message: Message<D>
+        message: Message<D>,
+        messageEndpoint: String
     ) async throws {
         guard try await message.verify() else {
             throw Error(reason: "Message signature is invalid")
         }
 
         let pfiDidUri = message.metadata.to
-        let exchangeID = message.metadata.exchangeID
         let kind = message.metadata.kind
 
         guard let pfiServiceEndpoint = await getPFIServiceEndpoint(pfiDIDURI: pfiDidUri) else {
             throw Error(reason: "DID does not have service of type PFI")
         }
-        guard let url = URL(string: "\(pfiServiceEndpoint)/exchanges/\(exchangeID)/\(kind.rawValue)") else {
+        guard let url = URL(string: "\(pfiServiceEndpoint)\(messageEndpoint)") else {
             throw Error(reason: "Could not create URL from PFI service endpoint")
         }
 
