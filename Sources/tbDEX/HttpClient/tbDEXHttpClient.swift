@@ -39,10 +39,40 @@ public enum tbDEXHttpClient {
             throw Error(reason: "Error while fetching offerings: \(error)")
         }
     }
+    
+    /// Sends an RFQ and options to the PFI to initiate an exchange
+    /// - Parameters:
+    ///   - rfq: The RFQ message that will be sent to the PFI
+    /// - Throws: if message verification fails
+    /// - Throws: if recipient DID resolution fails
+    /// - Throws: if recipient DID does not have a PFI service entry
+    public static func createExchange(rfq: RFQ) async throws {
+        try await sendMessage(message: rfq)
+    }
+    
+    /// Sends the Order message to the PFI
+    /// - Parameters:
+    ///   - order: The Order message that will be sent to the PFI
+    /// - Throws: if message verification fails
+    /// - Throws: if recipient DID resolution fails
+    /// - Throws: if recipient DID does not have a PFI service entry
+    public static func submitOrder(order: Order) async throws {
+        try await sendMessage(message: order)
+    }
+    
+    /// Sends the Close message to the PFI
+    /// - Parameters:
+    ///   - order: The Close message that will be sent to the PFI
+    /// - Throws: if message verification fails
+    /// - Throws: if recipient DID resolution fails
+    /// - Throws: if recipient DID does not have a PFI service entry
+    public static func submitClose(close: Close) async throws {
+        try await sendMessage(message: close)
+    }
 
     /// Sends a message to a PFI
     /// - Parameter message: The message to send
-    public static func sendMessage<D: MessageData>(
+    private static func sendMessage<D: MessageData>(
         message: Message<D>
     ) async throws {
         guard try await message.verify() else {
@@ -61,13 +91,16 @@ public enum tbDEXHttpClient {
         }
 
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         if case .rfq = message.metadata.kind {
+            // Sending an RFQ means creating an exchange, so we POST
+            request.httpMethod = "POST"
             // RFQs are special, and wrap their message in an `rfq` object.
             request.httpBody = try tbDEXJSONEncoder().encode(["rfq": message])
         } else {
+            // Adding messages to an exchange requires a PUT
+            request.httpMethod = "PUT"
             // All other messages encode their messages directly to the http body
             request.httpBody = try tbDEXJSONEncoder().encode(message)
         }
