@@ -16,6 +16,23 @@ final class OrderTests: XCTestCase {
         XCTAssertEqual(order.metadata.to, pfi.uri)
         XCTAssertEqual(order.metadata.exchangeID, "exchange_123")
     }
+    
+    func test_overrideProtocolVersion() {
+        let order = Order(
+            from: did.uri,
+            to: pfi.uri,
+            exchangeID: "exchange_123",
+            data: .init(),
+            externalID: nil,
+            protocol: "2.0"
+        )
+
+        XCTAssertEqual(order.metadata.id.prefix, "order")
+        XCTAssertEqual(order.metadata.from, did.uri)
+        XCTAssertEqual(order.metadata.to, pfi.uri)
+        XCTAssertEqual(order.metadata.exchangeID, "exchange_123")
+        XCTAssertEqual(order.metadata.protocol, "2.0")
+    }
 
     func test_signAndVerify() async throws {
         let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
@@ -43,7 +60,9 @@ final class OrderTests: XCTestCase {
             from: from,
             to: to,
             exchangeID: "exchange_123",
-            data: .init()
+            data: .init(),
+            externalID: nil,
+            protocol: nil
         )
     }
 }

@@ -20,12 +20,14 @@ public struct Message<D: MessageData>: Codable, Equatable {
     /// An ephemeral JSON object used to transmit sensitive data (e.g. PII)
     public let `private`: AnyCodable?
 
-    /// Default Initializer
+    /// Default Initializer. `protocol` defaults to "1.0" if nil
     public init(
         from: String,
         to: String,
         exchangeID: String,
-        data: D
+        data: D,
+        externalID: String?,
+        `protocol`: String?
     ) {
         let now = Date()
         self.metadata = MessageMetadata(
@@ -34,7 +36,9 @@ public struct Message<D: MessageData>: Codable, Equatable {
             from: from,
             to: to,
             exchangeID: exchangeID,
-            createdAt: now
+            createdAt: now,
+            externalID: externalID,
+            protocol: `protocol` ?? "1.0"
         )
         self.data = data
         self.signature = nil
@@ -112,6 +116,12 @@ public struct MessageMetadata: Codable, Equatable {
 
     /// The time at which the message was created. Can be serialized to or from JSON with `tbDEXDateFormatter`. Use `tbDEXJSONDecoder` or `tbDEXJSONEncoder`.
     public let createdAt: Date
+    
+    /// Arbitrary ID for the caller to associate with the message. Optional */
+    public let externalID: String?
+    
+    /// Version of the protocol in use (x.x format). Must be consistent with all other messages in a given exchange */
+    public let `protocol`: String
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -120,5 +130,7 @@ public struct MessageMetadata: Codable, Equatable {
         case to
         case exchangeID = "exchangeId"
         case createdAt
+        case externalID = "externalId"
+        case `protocol`
     }
 }

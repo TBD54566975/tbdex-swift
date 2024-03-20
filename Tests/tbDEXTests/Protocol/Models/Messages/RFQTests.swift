@@ -22,6 +22,32 @@ final class RFQTests: XCTestCase {
         XCTAssertEqual(rfq.data.payinMethod.kind, "DEBIT_CARD")
         XCTAssertEqual(rfq.data.payoutMethod.kind, "BITCOIN_ADDRESS")
     }
+    
+    func test_overrideProtocolVersion() {
+        let rfq = RFQ(
+            to: pfi.uri,
+            from: did.uri,
+            data: .init(
+                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
+                payinAmount: "1.00",
+                payinMethod: .init(
+                    kind: "DEBIT_CARD"
+                ),
+                payoutMethod: .init(
+                    kind: "BITCOIN_ADDRESS"
+                ),
+                claims: []
+            ),
+            externalID: nil,
+            protocol: "2.0"
+        )
+
+        XCTAssertEqual(rfq.metadata.id.prefix, "rfq")
+        XCTAssertEqual(rfq.metadata.from, did.uri)
+        XCTAssertEqual(rfq.metadata.to, pfi.uri)
+        XCTAssertEqual(rfq.metadata.exchangeID, rfq.metadata.id.rawValue)
+        XCTAssertEqual(rfq.metadata.protocol, "2.0")
+    }
 
     func test_signAndVerify() async throws {
         var rfq = createRFQ(from: did.uri, to: pfi.uri)
@@ -56,7 +82,9 @@ final class RFQTests: XCTestCase {
                     kind: "BITCOIN_ADDRESS"
                 ),
                 claims: []
-            )
+            ),
+            externalID: nil,
+            protocol: nil
         )
     }
 }

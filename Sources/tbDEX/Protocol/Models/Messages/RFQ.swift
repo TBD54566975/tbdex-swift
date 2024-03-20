@@ -6,10 +6,13 @@ public typealias RFQ = Message<RFQData>
 
 extension RFQ {
 
+    /// Default Initializer. `protocol` defaults to "1.0" if nil
     public init(
         to: String,
         from: String,
-        data: RFQData
+        data: RFQData,
+        externalID: String?,
+        `protocol`: String?
     ) {
         let id = TypeID(prefix: data.kind().rawValue)!
         self.metadata = MessageMetadata(
@@ -18,7 +21,9 @@ extension RFQ {
             from: from,
             to: to,
             exchangeID: id.rawValue,
-            createdAt: Date()
+            createdAt: Date(),
+            externalID: externalID,
+            protocol: `protocol` ?? "1.0"
         )
         self.data = data
         self.private = nil
