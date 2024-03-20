@@ -27,6 +27,38 @@ final class QuoteTests: XCTestCase {
         XCTAssertEqual(quote.data.payout.fee, "0.50")
         XCTAssertNil(quote.data.payout.paymentInstruction)
     }
+    
+    func test_overrideProtocolVersion() {
+        let quote = Quote(
+            from: did.uri,
+            to: pfi.uri,
+            exchangeID: "exchange_123",
+            data: .init(
+                expiresAt: Date().addingTimeInterval(60),
+                payin: .init(
+                    currencyCode: "USD",
+                    amount: "1.00",
+                    paymentInstruction: .init(
+                        link: "https://example.com",
+                        instruction: "test instruction"
+                    )
+                ),
+                payout: .init(
+                    currencyCode: "AUD",
+                    amount: "2.00",
+                    fee: "0.50"
+                )
+            ),
+            externalID: nil,
+            protocol: "2.0"
+        )
+
+        XCTAssertEqual(quote.metadata.id.prefix, "quote")
+        XCTAssertEqual(quote.metadata.from, did.uri)
+        XCTAssertEqual(quote.metadata.to, pfi.uri)
+        XCTAssertEqual(quote.metadata.exchangeID, "exchange_123")
+        XCTAssertEqual(quote.metadata.protocol, "2.0")
+    }
 
     func test_signAndVerify() async throws {
         var quote = createQuote(from: did.uri, to: pfi.uri)

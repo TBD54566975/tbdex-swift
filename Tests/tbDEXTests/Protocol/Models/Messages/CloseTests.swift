@@ -16,6 +16,26 @@ final class CloseTests: XCTestCase {
         XCTAssertEqual(close.metadata.to, pfi.uri)
         XCTAssertEqual(close.metadata.exchangeID, "exchange_123")
         XCTAssertEqual(close.data.reason, "test reason")
+        XCTAssertEqual(close.metadata.protocol, "1.0")
+    }
+    
+    func test_overrideProtocolVersion() {
+        let close = Close(
+            from: did.uri,
+            to: pfi.uri,
+            exchangeID: "exchange_123",
+            data: .init(
+                reason: "test reason"
+            ),
+            externalID: nil,
+            protocol: "2.0"
+        )
+
+        XCTAssertEqual(close.metadata.id.prefix, "close")
+        XCTAssertEqual(close.metadata.from, did.uri)
+        XCTAssertEqual(close.metadata.to, pfi.uri)
+        XCTAssertEqual(close.metadata.exchangeID, "exchange_123")
+        XCTAssertEqual(close.metadata.protocol, "2.0")
     }
 
     func test_signAndVerify() async throws {
@@ -48,7 +68,7 @@ final class CloseTests: XCTestCase {
                 reason: "test reason"
             ),
             externalID: nil,
-            protocol: "1.0"
+            protocol: nil
         )
     }
 }
