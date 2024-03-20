@@ -14,11 +14,4 @@ public struct OrderStatusData: MessageData {
     public func kind() -> MessageKind {
         return .orderStatus
     }
-
-    /// Default Initializer
-    public init(
-        orderStatus: String
-    ) {
-        self.orderStatus = orderStatus
-    }
 }
