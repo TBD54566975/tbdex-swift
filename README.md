@@ -49,3 +49,8 @@ To release a new version, initiate the `Release` workflow:
 ### Publishing Docs
 
 API reference documentation is automatically updated and available at [https://swiftpackageindex.com/TBD54566975/tbdex-swift/{latest-version}/documentation/tbdex](https://swiftpackageindex.com/TBD54566975/tbdex-swift/main/documentation/tbdex) following each release.
+
+### Additional Links
+
+API Reference Guide: https://swiftpackageindex.com/TBD54566975/tbdex-swift/main/documentation/tbdex
+Developer Docs: https://developer.tbd.website/docs/tbdex/
