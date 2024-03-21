@@ -36,6 +36,7 @@ public struct Resource<D: ResourceData>: Codable, Equatable {
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#resource-kinds)
 public enum ResourceKind: String, Codable {
     case offering
+    case balance
 }
 
 /// The actual content of a `Resource`.

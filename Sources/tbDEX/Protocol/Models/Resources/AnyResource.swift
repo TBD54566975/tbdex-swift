@@ -10,6 +10,7 @@ import Foundation
 /// what kind of `Resource` it is until the JSON response is parsed.
 public enum AnyResource {
     case offering(Offering)
+    case balance(Balance)
 
     
     /// This function takes a JSON string as input and attempts to decode it into an `AnyResource` instance.
@@ -53,6 +54,8 @@ extension AnyResource: Decodable {
         switch metadata.kind {
         case .offering:
             self = .offering(try container.decode(Offering.self))
+        case .balance:
+            self = .balance(try container.decode(Balance.self))
         }
     }
 }
