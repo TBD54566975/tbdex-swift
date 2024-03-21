@@ -40,6 +40,48 @@ public enum tbDEXHttpClient {
         }
     }
     
+    /// Fetch `Balances` from a PFI
+    /// - Parameters:
+    ///   - pfiDIDURI: The DID URI of the PFI
+    ///   - filter: A `GetOfferingFilter` to filter the results
+    /// - Returns: An array of `Balances` matching the request
+    public static func getBalances(
+        pfiDIDURI: String,
+        requesterDID: BearerDID
+    ) async throws -> [Balance] {
+        guard let pfiServiceEndpoint = await getPFIServiceEndpoint(pfiDIDURI: pfiDIDURI) else {
+            throw Error(reason: "DID does not have service of type PFI")
+        }
+
+        guard let url = URL(string: "\(pfiServiceEndpoint)/balances") else {
+            throw Error(reason: "Could not create URL from PFI service endpoint")
+        }
+        
+        let requestToken = try await RequestToken.generate(did: requesterDID, pfiDIDURI: pfiDIDURI)
+
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(requestToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw Error(reason: "Invalid response")
+        }
+
+        switch httpResponse.statusCode {
+        case 200...299:
+            do {
+                let balancesResponse = try tbDEXJSONDecoder().decode(GetBalancesResponse.self, from: data)
+                return balancesResponse.data
+            } catch {
+                throw Error(reason: "Error while getting balances: \(error)")
+            }
+        default:
+            throw buildErrorResponse(data: data, response: httpResponse)
+        }
+    }
+    
     /// Sends an RFQ and options to the PFI to initiate an exchange
     /// - Parameters:
     ///   - rfq: The RFQ message that will be sent to the PFI
@@ -85,7 +127,6 @@ public enum tbDEXHttpClient {
         }
 
         let pfiDidUri = message.metadata.to
-        let kind = message.metadata.kind
 
         guard let pfiServiceEndpoint = await getPFIServiceEndpoint(pfiDIDURI: pfiDidUri) else {
             throw Error(reason: "DID does not have service of type PFI")
@@ -170,7 +211,7 @@ public enum tbDEXHttpClient {
     ///   - pfiDIDURI: The DID URI of the PFI
     ///   - requesterDID: The DID of the requester
     ///   - exchangeId: The ID of the exchange to fetch
-    /// - Returns: 2D array of `AnyMessage` objects, each representing an Exchange between the requester and the PFI
+    /// - Returns: Array of `AnyMessage` objects, representing an Exchange between the requester and the PFI
     public static func getExchange(
         pfiDIDURI: String,
         requesterDID: BearerDID,
@@ -213,6 +254,10 @@ public enum tbDEXHttpClient {
 
     struct GetOfferingsResponse: Decodable {
         public let data: [Offering]
+    }
+    
+    struct GetBalancesResponse: Decodable {
+        public let data: [Balance]
     }
 
     struct GetExchangesResponse: Decodable {
