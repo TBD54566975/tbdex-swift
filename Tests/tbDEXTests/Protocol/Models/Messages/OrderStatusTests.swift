@@ -5,69 +5,60 @@ import XCTest
 
 final class OrderStatusTests: XCTestCase {
     
-    let did = try! DIDJWK.create(keyManager: InMemoryKeyManager())
-    let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
-
-    func test_init() {
-        let orderStatus = createOrderStatus(from: did.uri, to: pfi.uri)
-
-        XCTAssertEqual(orderStatus.metadata.id.prefix, "orderstatus")
-        XCTAssertEqual(orderStatus.metadata.from, did.uri)
-        XCTAssertEqual(orderStatus.metadata.to, pfi.uri)
-        XCTAssertEqual(orderStatus.metadata.exchangeID, "exchange_123")
-        XCTAssertEqual(orderStatus.data.orderStatus, "test status")
+    func test_parseOrderStatusFromStringified() throws {
+        if let orderStatus = try parsedOrderStatus(orderStatus: orderStatusStringJSON) {
+            XCTAssertEqual(orderStatus.metadata.kind, MessageKind.orderStatus)
+        } else {
+            XCTFail("Order status is not a parsed orderStatus")
+        }
     }
     
-    func test_overrideProtocolVersion() {
-        let orderstatus = OrderStatus(
-            from: did.uri,
-            to: pfi.uri,
-            exchangeID: "exchange_123",
-            data: .init(
-                orderStatus: "test status"
-            ),
-            externalID: nil,
-            protocol: "2.0"
-        )
-
-        XCTAssertEqual(orderstatus.metadata.id.prefix, "orderstatus")
-        XCTAssertEqual(orderstatus.metadata.from, did.uri)
-        XCTAssertEqual(orderstatus.metadata.to, pfi.uri)
-        XCTAssertEqual(orderstatus.metadata.exchangeID, "exchange_123")
-        XCTAssertEqual(orderstatus.metadata.protocol, "2.0")
+    func test_parseOrderStatusFromPrettified() throws {
+        if let orderStatus = try parsedOrderStatus(orderStatus: orderStatusPrettyJSON) {
+            XCTAssertEqual(orderStatus.metadata.kind, MessageKind.orderStatus)
+        } else {
+            XCTFail("Order status is not a parsed orderStatus")
+        }
     }
 
-    func test_signAndVerify() async throws {
-        let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        let pfi = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        var orderStatus = createOrderStatus(from: did.uri, to: pfi.uri)
-
-        XCTAssertNil(orderStatus.signature)
-        try orderStatus.sign(did: did)
-        XCTAssertNotNil(orderStatus.signature)
-        let isValid = try await orderStatus.verify()
-        XCTAssertTrue(isValid)
+    func test_verifyOrderStatusIsValid() async throws {
+        if let orderStatus = try parsedOrderStatus(orderStatus: orderStatusPrettyJSON) {
+            XCTAssertNotNil(orderStatus.signature)
+            XCTAssertNotNil(orderStatus.data)
+            XCTAssertNotNil(orderStatus.metadata)
+            let isValid = try await orderStatus.verify()
+            XCTAssertTrue(isValid)
+        } else {
+            XCTFail("Order status is not a parsed orderStatus")
+        }
     }
-
-    func test_verifyWithoutSigningFailure() async throws {
-        let orderStatus = createOrderStatus(from: did.uri, to: pfi.uri)
-
-        await XCTAssertThrowsErrorAsync(try await orderStatus.verify())
+    
+    private func parsedOrderStatus(orderStatus: String) throws -> OrderStatus? {
+        let parsedMessage = try AnyMessage.parse(orderStatus)
+        guard case let .orderStatus(parsedOrderStatus) = parsedMessage else {
+            return nil
+        }
+        return parsedOrderStatus
     }
-
-    private func createOrderStatus(
-        from: String,
-        to: String
-    ) -> OrderStatus {
-        OrderStatus(
-            from: from,
-            to: to,
-            exchangeID: "exchange_123",
-            data: .init(
-                orderStatus: "test status"
-            ),
-            externalID: nil,
-            protocol: nil
-        )
-    }
+    
+    let orderStatusPrettyJSON = """
+      {
+        "metadata": {
+          "from": "did:dht:geiro75xjbn81snmangwc35wkfsra8mt3awbga8drrjde5z9r9jo",
+          "to": "did:dht:n46hom5afi6xrsxmddx5rjecyyx1faz4ocs4ie43tfkyo4darh9y",
+          "exchangeId": "rfq_01hrqn6pp1e48a3meq95dzmkzs",
+          "protocol": "1.0",
+          "kind": "orderstatus",
+          "id": "orderstatus_01hrqn6pp1e48a3meq9b3brgta",
+          "createdAt": "2024-03-11T21:02:55.681Z"
+        },
+        "data": {
+          "orderStatus": "wee"
+        },
+        "signature": "eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDpkaHQ6Z2Vpcm83NXhqYm44MXNubWFuZ3djMzV3a2ZzcmE4bXQzYXdiZ2E4ZHJyamRlNXo5cjlqbyMwIn0..aHifNdyzwVZ-bvqyp8H6WHE_K_24y1-sdPIohXPvdBZXIxjqMb2tDaeJLKbtz1mcoYDau_N-_5kVqVSeGtUYCA"
+      }
+    """
+    
+    let orderStatusStringJSON = 
+      "{\"metadata\":{\"from\":\"did:dht:geiro75xjbn81snmangwc35wkfsra8mt3awbga8drrjde5z9r9jo\",\"to\":\"did:dht:n46hom5afi6xrsxmddx5rjecyyx1faz4ocs4ie43tfkyo4darh9y\",\"exchangeId\":\"rfq_01hrqn6pp1e48a3meq95dzmkzs\",\"protocol\":\"1.0\",\"kind\":\"orderstatus\",\"id\":\"orderstatus_01hrqn6pp1e48a3meq9b3brgta\",\"createdAt\":\"2024-03-11T21:02:55.681Z\"},\"data\":{\"orderStatus\":\"wee\"},\"signature\":\"eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDpkaHQ6Z2Vpcm83NXhqYm44MXNubWFuZ3djMzV3a2ZzcmE4bXQzYXdiZ2E4ZHJyamRlNXo5cjlqbyMwIn0..aHifNdyzwVZ-bvqyp8H6WHE_K_24y1-sdPIohXPvdBZXIxjqMb2tDaeJLKbtz1mcoYDau_N-_5kVqVSeGtUYCA\"}"
 }

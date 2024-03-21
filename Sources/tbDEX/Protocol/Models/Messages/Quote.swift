@@ -20,17 +20,6 @@ public struct QuoteData: MessageData {
     public func kind() -> MessageKind {
         return .quote
     }
-
-    /// Default Initializer
-    public init(
-        expiresAt: Date,
-        payin: QuoteDetails,
-        payout: QuoteDetails
-    ) {
-        self.expiresAt = expiresAt
-        self.payin = payin
-        self.payout = payout
-    }
 }
 
 /// Details about a quoted amount
@@ -50,18 +39,6 @@ public struct QuoteDetails: Codable, Equatable {
     /// Object that describes how to pay the PFI, and how to get paid by the PFI (e.g. BTC address, payment link)
     public let paymentInstruction: PaymentInstruction?
 
-    /// Default Initializer
-    public init(
-        currencyCode: String, 
-        amount: String,
-        fee: String? = nil,
-        paymentInstruction: PaymentInstruction? = nil
-    ) {
-        self.currencyCode = currencyCode
-        self.amount = amount
-        self.fee = fee
-        self.paymentInstruction = paymentInstruction
-    }
 }
 
 /// Instruction about how to pay or be paid by the PFI
@@ -75,12 +52,4 @@ public struct PaymentInstruction: Codable, Equatable {
     /// Instruction on how Alice can pay PFI, or how Alice can be paid by the PFI
     public let instruction: String?
 
-    /// Default Initializer
-    public init(
-        link: String? = nil,
-        instruction: String? = nil
-    ) {
-        self.link = link
-        self.instruction = instruction
-    }
 }
