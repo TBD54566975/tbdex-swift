@@ -17,6 +17,7 @@ final class CloseTests: XCTestCase {
         XCTAssertEqual(close.metadata.exchangeID, "exchange_123")
         XCTAssertEqual(close.data.reason, "test reason")
         XCTAssertEqual(close.metadata.protocol, "1.0")
+        XCTAssertEqual(close.data.success, nil)
     }
     
     func test_overrideProtocolVersion() {
