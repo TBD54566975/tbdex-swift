@@ -11,8 +11,8 @@ extension RFQ {
         to: String,
         from: String,
         data: RFQData,
-        externalID: String?,
-        `protocol`: String?
+        externalID: String? = nil,
+        `protocol`: String? = nil
     ) {
         let id = TypeID(prefix: data.kind().rawValue)!
         self.metadata = MessageMetadata(

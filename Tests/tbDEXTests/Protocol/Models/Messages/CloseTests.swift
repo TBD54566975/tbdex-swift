@@ -27,7 +27,6 @@ final class CloseTests: XCTestCase {
             data: .init(
                 reason: "test reason"
             ),
-            externalID: nil,
             protocol: "2.0"
         )
 
@@ -66,9 +65,7 @@ final class CloseTests: XCTestCase {
             exchangeID: "exchange_123",
             data: .init(
                 reason: "test reason"
-            ),
-            externalID: nil,
-            protocol: nil
+            )
         )
     }
 }

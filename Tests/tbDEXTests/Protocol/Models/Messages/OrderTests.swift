@@ -23,7 +23,6 @@ final class OrderTests: XCTestCase {
             to: pfi.uri,
             exchangeID: "exchange_123",
             data: .init(),
-            externalID: nil,
             protocol: "2.0"
         )
 
@@ -60,9 +59,7 @@ final class OrderTests: XCTestCase {
             from: from,
             to: to,
             exchangeID: "exchange_123",
-            data: .init(),
-            externalID: nil,
-            protocol: nil
+            data: .init()
         )
     }
 }
