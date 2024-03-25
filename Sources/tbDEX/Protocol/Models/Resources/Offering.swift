@@ -1,6 +1,7 @@
 import AnyCodable
 import Foundation
 import TypeID
+import Web5
 
 public typealias Offering = Resource<OfferingData>
 
@@ -29,9 +30,8 @@ public struct OfferingData: ResourceData {
     /// from the PFI in order to qualify for this offering.
     public let payoutMethods: [PaymentMethod]
 
-    // TODO: amika - Update to PresentationDefinitionV2, requires third-party or custom implementation
     /// Articulates the claim(s) required when submitting an RFQ for this offering.
-    public let requiredClaims: AnyCodable
+    public let requiredClaims: PresentationDefinitionV2?
 
     /// Returns the MessageKind of offering
     public func kind() -> ResourceKind {
