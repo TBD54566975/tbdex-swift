@@ -26,8 +26,8 @@ public struct Message<D: MessageData>: Codable, Equatable {
         to: String,
         exchangeID: String,
         data: D,
-        externalID: String?,
-        `protocol`: String?
+        externalID: String? = nil,
+        `protocol`: String? = nil
     ) {
         let now = Date()
         self.metadata = MessageMetadata(

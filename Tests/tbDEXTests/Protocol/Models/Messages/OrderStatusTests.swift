@@ -26,7 +26,6 @@ final class OrderStatusTests: XCTestCase {
             data: .init(
                 orderStatus: "test status"
             ),
-            externalID: nil,
             protocol: "2.0"
         )
 
@@ -65,9 +64,7 @@ final class OrderStatusTests: XCTestCase {
             exchangeID: "exchange_123",
             data: .init(
                 orderStatus: "test status"
-            ),
-            externalID: nil,
-            protocol: nil
+            )
         )
     }
 }

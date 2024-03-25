@@ -9,7 +9,7 @@ public struct CloseData: MessageData {
 
     /// An explanation of why the exchange is being closed/completed
     public let reason: String?
-
+    
     /// Returns the MessageKind of close
     public func kind() -> MessageKind {
         return .close
