@@ -39,14 +39,11 @@ public struct RFQData: MessageData {
     /// Offering which Alice would like to get a quote for.
     public let offeringId: String
 
-    /// Amount of payin currency you want in exchange for payout currency.
-    public let payinAmount: String
+    /// Details and options associated to the payin currency
+    public let payin: SelectedPayinMethod
 
-    /// Specify which payment method to send payin currency.
-    public let payinMethod: SelectedPaymentMethod
-
-    /// Specify which payment method to receive payout currency.
-    public let payoutMethod: SelectedPaymentMethod
+    /// Details and options associated to the payout currency
+    public let payout: SelectedPayoutMethod
     
     /// An array of claims that fulfill the requirements declared in an Offering.
     public let claims: [String]
@@ -58,23 +55,46 @@ public struct RFQData: MessageData {
 
     public init(
         offeringId: TypeID,
-        payinAmount: String,
-        payinMethod: SelectedPaymentMethod,
-        payoutMethod: SelectedPaymentMethod,
+        payin: SelectedPayinMethod,
+        payout: SelectedPayoutMethod,
         claims: [String]
     ) {
         self.offeringId = offeringId.rawValue
-        self.payinAmount = payinAmount
-        self.payinMethod = payinMethod
-        self.payoutMethod = payoutMethod
+        self.payin = payin
+        self.payout = payout
         self.claims = claims
     }
 }
 
-/// Details about a selected payment method
+/// Details about a selected payin method
 ///
-/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#selectedpaymentmethod)
-public struct SelectedPaymentMethod: Codable, Equatable {
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/blob/main/specs/protocol/README.md#selectedpayinmethod)
+public struct SelectedPayinMethod: Codable, Equatable {
+    
+    /// Amount of payin currency you want in exchange for payout currency
+    public let amount: String
+
+    /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
+    public let kind: String
+
+    /// An object containing the properties defined in an Offering's `requiredPaymentDetails` json schema
+    public let paymentDetails: AnyCodable?
+
+    public init(
+        amount: String,
+        kind: String,
+        paymentDetails: AnyCodable? = nil
+    ) {
+        self.amount = amount
+        self.kind = kind
+        self.paymentDetails = paymentDetails
+    }
+}
+
+/// Details about a selected payout method
+///
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#selectedpayoutmethod)
+public struct SelectedPayoutMethod: Codable, Equatable {
 
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String

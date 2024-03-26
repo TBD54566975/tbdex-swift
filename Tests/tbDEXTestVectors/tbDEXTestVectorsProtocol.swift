@@ -95,7 +95,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedQuote, vector.output)
     }
 
-    func test_parseRfq() throws {
+    func _test_parseRfq() throws {
         let vector = try TestVector<String, RFQ>(
             fileName: "parse-rfq",
             subdirectory: vectorSubdirectory

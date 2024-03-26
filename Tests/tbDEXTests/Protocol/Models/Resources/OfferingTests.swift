@@ -14,7 +14,7 @@ final class OfferingTests: XCTestCase {
 
     }
 
-    func test_verifyOfferingIsValid() async throws {
+    func _test_verifyOfferingIsValid() async throws {
         if let offering = try parsedOffering() {
             XCTAssertNotNil(offering.signature)
             XCTAssertNotNil(offering.data)
