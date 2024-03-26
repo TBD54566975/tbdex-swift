@@ -27,7 +27,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
         exchangeID: String,
         data: D,
         externalID: String? = nil,
-        `protocol`: String? = nil
+        `protocol`: String = "1.0"
     ) {
         let now = Date()
         self.metadata = MessageMetadata(
@@ -38,7 +38,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
             exchangeID: exchangeID,
             createdAt: now,
             externalID: externalID,
-            protocol: `protocol` ?? "1.0"
+            protocol: `protocol`
         )
         self.data = data
         self.signature = nil
