@@ -12,7 +12,7 @@ extension RFQ {
         from: String,
         data: RFQData,
         externalID: String? = nil,
-        `protocol`: String? = nil
+        `protocol`: String = "1.0"
     ) {
         let id = TypeID(prefix: data.kind().rawValue)!
         self.metadata = MessageMetadata(
@@ -23,7 +23,7 @@ extension RFQ {
             exchangeID: id.rawValue,
             createdAt: Date(),
             externalID: externalID,
-            protocol: `protocol` ?? "1.0"
+            protocol: `protocol`
         )
         self.data = data
         self.private = nil
