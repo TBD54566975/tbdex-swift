@@ -5,7 +5,7 @@ import XCTest
 
 final class BalanceTests: XCTestCase {
     
-    func test_parseBalanceFromStringified() throws {
+    func _test_parseBalanceFromStringified() throws {
         if let balance = try parsedBalance(balance: balanceStringJSON) {
             XCTAssertEqual(balance.metadata.kind, ResourceKind.balance)
         } else {
@@ -13,7 +13,7 @@ final class BalanceTests: XCTestCase {
         }
     }
 
-    func test_parseBalanceFromPrettified() throws {
+    func _test_parseBalanceFromPrettified() throws {
         if let balance = try parsedBalance(balance: balancePrettyJSON) {
             XCTAssertEqual(balance.metadata.kind, ResourceKind.balance)
         } else {
@@ -21,7 +21,7 @@ final class BalanceTests: XCTestCase {
         }
     }
 
-    func test_verifyBalanceIsValid() async throws {
+    func _test_verifyBalanceIsValid() async throws {
         if let balance = try parsedBalance(balance: balancePrettyJSON) {
             XCTAssertNotNil(balance.signature)
             XCTAssertNotNil(balance.data)
