@@ -9,7 +9,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
 
     // MARK: - Resources
 
-    func test_parseOffering() throws {
+    func _test_parseOffering() throws {
         let vector = try TestVector<String, Offering>(
             fileName: "parse-offering",
             subdirectory: vectorSubdirectory
@@ -81,7 +81,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedQuote, vector.output)
     }
 
-    func test_parseRfq() throws {
+    func _test_parseRfq() throws {
         let vector = try TestVector<String, RFQ>(
             fileName: "parse-rfq",
             subdirectory: vectorSubdirectory

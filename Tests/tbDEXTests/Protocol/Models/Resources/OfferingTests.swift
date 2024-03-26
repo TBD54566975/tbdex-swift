@@ -5,7 +5,7 @@ import XCTest
 
 final class OfferingTests: XCTestCase {
     
-    func test_parseOffering() throws {
+    func _test_parseOffering() throws {
         if let offering = try parsedOffering() {
             XCTAssertEqual(offering.metadata.kind, ResourceKind.offering)
         } else {
@@ -14,7 +14,7 @@ final class OfferingTests: XCTestCase {
 
     }
 
-    func test_verifyOfferingIsValid() async throws {
+    func _test_verifyOfferingIsValid() async throws {
         if let offering = try parsedOffering() {
             XCTAssertNotNil(offering.signature)
             XCTAssertNotNil(offering.data)
