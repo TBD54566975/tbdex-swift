@@ -10,6 +10,9 @@ public struct CloseData: MessageData {
     /// An explanation of why the exchange is being closed/completed
     public let reason: String?
     
+    /// Indicates whether or not the exchange successfully completed
+    public private(set) var success: Bool?
+
     /// Returns the MessageKind of close
     public func kind() -> MessageKind {
         return .close
