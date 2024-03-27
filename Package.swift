@@ -19,6 +19,7 @@ let package = Package(
         .package(url: "https://github.com/TBD54566975/web5-swift", exact: "0.1.2"),
         .package(url: "https://github.com/allegro/swift-junit.git", from: "2.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.1.2"),
+        .package(url: "https://github.com/WeTransfer/Mocker.git", .upToNextMajor(from: "3.0.1")),
     ],
     targets: [
         .target(
@@ -32,7 +33,8 @@ let package = Package(
         .testTarget(
             name: "tbDEXTests",
             dependencies: [
-                "tbDEX"
+                "tbDEX",
+                .product(name: "Mocker", package: "Mocker"),
             ]
         ),
         .testTarget(
