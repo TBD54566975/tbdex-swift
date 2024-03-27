@@ -354,7 +354,8 @@ final class tbDEXHttpClientTests: XCTestCase {
         await XCTAssertThrowsErrorAsync(try await tbDEXHttpClient.getExchanges(pfiDIDURI: pfiDid, requesterDID: did)) { error in
                 XCTAssertNotNil(error)
                 XCTAssertTrue(error is tbDEXHttpClient.Error)
-                XCTAssertTrue(error.localizedDescription.contains("Error while fetching exchanges"))
+            print(error)
+                XCTAssertTrue(error.localizedDescription.contains("Error while decoding exchanges"))
         }
     }
     
