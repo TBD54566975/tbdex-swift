@@ -52,5 +52,5 @@ API reference documentation is automatically updated and available at [https://s
 
 ### Additional Links
 
-API Reference Guide: https://swiftpackageindex.com/TBD54566975/tbdex-swift/main/documentation/tbdex
-Developer Docs: https://developer.tbd.website/docs/tbdex/
+- [API Reference Guide](https://swiftpackageindex.com/TBD54566975/tbdex-swift/main/documentation/tbdex)
+- [Developer Docs](https://developer.tbd.website/docs/tbdex/)
