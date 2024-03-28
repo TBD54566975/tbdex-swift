@@ -16,19 +16,11 @@ public struct OfferingData: ResourceData {
     /// Number of payout units alice would get for 1 payin unit
     public let payoutUnitsPerPayinUnit: String
 
-    /// Details about the currency that the PFI is accepting as payment.
-    public let payinCurrency: CurrencyDetails
+    /// Details and options associated to the payin currency
+    public let payin: PayinDetails
 
-    /// Details about the currency that the PFI is selling.
-    public let payoutCurrency: CurrencyDetails
-
-    /// A list of payment methods the counterparty (Alice) can choose to send payment
-    /// to the PFI from in order to qualify for this offering.
-    public let payinMethods: [PaymentMethod]
-
-    /// A list of payment methods the counterparty (Alice) can choose to receive payment
-    /// from the PFI in order to qualify for this offering.
-    public let payoutMethods: [PaymentMethod]
+    /// Details and options associated to the payout currency
+    public let payout: PayoutDetails
 
     /// Articulates the claim(s) required when submitting an RFQ for this offering.
     public let requiredClaims: PresentationDefinitionV2?
@@ -39,32 +31,107 @@ public struct OfferingData: ResourceData {
     }
 }
 
-/// Details about currency within an Offering
+/// Details about payin currency within an Offering
 ///
-/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#currencydetails)
-public struct CurrencyDetails: Codable, Equatable {
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/blob/main/specs/protocol/README.md#payindetails)
+public struct PayinDetails: Codable, Equatable {
 
     /// ISO 3166 currency code string
     public let currencyCode: String
 
     /// Minimum amount of currency that the offer is valid for
-    public let minAmount: String?
+    public let min: String?
 
     /// Maximum amount of currency that the offer is valid for
-    public let maxAmount: String?
+    public let max: String?
+    
+    /// A list of payment methods to select from
+    public let methods: [PayinMethod]
 
 }
 
-/// Details about payment methods within an Offering
+/// Details about payout currency within an Offering
 ///
-/// [Specficication Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#paymentmethod)
-public struct PaymentMethod: Codable, Equatable {
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/blob/main/specs/protocol/README.md#payoutdetails)
+public struct PayoutDetails: Codable, Equatable {
+
+    /// ISO 3166 currency code string
+    public let currencyCode: String
+
+    /// Minimum amount of currency that the offer is valid for
+    public let min: String?
+
+    /// Maximum amount of currency that the offer is valid for
+    public let max: String?
+    
+    /// A list of payment methods to select from
+    public let methods: [PayoutMethod]
+
+}
+
+/// Details about payin methods within an Offering
+///
+/// [Specficication Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#payinmethod)
+public struct PayinMethod: Codable, Equatable {
 
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String
+    
+    /// Payment Method name. Expected to be rendered on screen.
+    public let name: String?
+    
+    /// Blurb containing helpful information about the payment method. Expected to be rendered on screen. e.g. "segwit addresses only"
+    public let description: String?
+    
+    /// Value that can be used to group specific payment methods together e.g. Mobile Money vs. Direct Bank Deposit
+    public let group: String?
 
     // TODO: amika - Update to JSONSchema, requires third-party or custom implementation
     /// A JSON Schema containing the fields that need to be collected in order to use this payment method
     public let requiredPaymentDetails: AnyCodable?
+    
+    /// Fee charged to use this payment method. absence of this field implies that there is no additional fee associated to the respective payment method
+    public let fee: String?
+    
+    /// Minimum amount required to use this payment method.
+    public let min: String?
+    
+    /// Maximum amount allowed when using this payment method.
+    public let max: String?
+
+}
+
+/// Details about payout methods within an Offering
+///
+/// [Specficication Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#payoutmethod)
+public struct PayoutMethod: Codable, Equatable {
+
+    /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
+    public let kind: String
+    
+    /// Estimated time taken to settle an order. expressed in seconds
+    public let estimatedSettlementTime: UInt
+    
+    /// Payment Method name. Expected to be rendered on screen.
+    public let name: String?
+    
+    /// Blurb containing helpful information about the payment method. Expected to be rendered on screen. e.g. "segwit addresses only"
+    public let description: String?
+    
+    /// Value that can be used to group specific payment methods together e.g. Mobile Money vs. Direct Bank Deposit
+    public let group: String?
+
+    // TODO: amika - Update to JSONSchema, requires third-party or custom implementation
+    /// A JSON Schema containing the fields that need to be collected in order to use this payment method
+    public let requiredPaymentDetails: AnyCodable?
+    
+    /// Fee charged to use this payment method. absence of this field implies that there is no additional fee associated to the respective payment method
+    public let fee: String?
+    
+    /// Minimum amount required to use this payment method.
+    public let min: String?
+    
+    /// Maximum amount allowed when using this payment method.
+    public let max: String?
 
 }
