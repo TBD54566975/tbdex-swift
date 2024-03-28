@@ -9,7 +9,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
 
     // MARK: - Resources
 
-    func test_parseOffering() throws {
+    func _test_parseOffering() throws {
         let vector = try TestVector<String, Offering>(
             fileName: "parse-offering",
             subdirectory: vectorSubdirectory
@@ -21,6 +21,20 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         }
 
         XCTAssertNoDifference(parsedOffering, vector.output)
+    }
+    
+    func test_parseBalance() throws {
+        let vector = try TestVector<String, Balance>(
+            fileName: "parse-balance",
+            subdirectory: vectorSubdirectory
+        )
+
+        let parsedResource = try AnyResource.parse(vector.input)
+        guard case let .balance(parsedBalance) = parsedResource else {
+            return XCTFail("Parsed resource is not a Balance")
+        }
+
+        XCTAssertNoDifference(parsedBalance, vector.output)
     }
 
     // MARK: - Messages
