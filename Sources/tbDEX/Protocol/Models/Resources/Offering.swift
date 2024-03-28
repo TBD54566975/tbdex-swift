@@ -2,7 +2,6 @@ import AnyCodable
 import Foundation
 import TypeID
 import Web5
-import Sextant
 
 public typealias Offering = Resource<OfferingData>
 
