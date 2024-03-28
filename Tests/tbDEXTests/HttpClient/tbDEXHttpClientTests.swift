@@ -7,7 +7,7 @@ import TypeID
 
 /*
  These tests verify the private method `tbDEXHttpClient.sendMessage` functionality primarily through tests for `tbDEXHttpClient.createExchange`.
- They also verify repetitive functionality in `tbDEXHttpClient.getExchange` primarily through tests for `tbDEXHttpClient.getExchanges`. This pair of methods will be refactored to a tidier shared private method in future.
+ They also verify repetitive functionality in `tbDEXHttpClient.getExchange` primarily through tests for `tbDEXHttpClient.getExchanges`. Similarly with `tbDEXHttpClient.getOfferings` and `tbDEXHttpClient.getBalances`. These pairs of methods will be refactored to tidier shared private methods in future.
  */
 final class tbDEXHttpClientTests: XCTestCase {
     
@@ -81,6 +81,27 @@ final class tbDEXHttpClientTests: XCTestCase {
         XCTAssertNotNil(offerings[0].metadata)
         XCTAssertNotNil(offerings[0].data)
         XCTAssertNotNil(offerings[0].signature)
+    }
+    
+    func test_getBalancesWithOneValidBalance() async throws {
+        let response = validBalance
+        
+        Mocker.mode = .optin
+        Mock(
+            url: URL(string: "\(endpoint)/balances")!,
+            contentType: .json,
+            statusCode: 200,
+            data: [
+                .get: response.data(using: .utf8)!
+            ]
+        ).register()
+        let balances = try await tbDEXHttpClient.getBalances(pfiDIDURI: pfiDid, requesterDID: did)
+        
+        XCTAssertNotNil(balances)
+        XCTAssertEqual(balances.count, 1)
+        XCTAssertNotNil(balances[0].metadata)
+        XCTAssertNotNil(balances[0].data)
+        XCTAssertNotNil(balances[0].signature)
     }
     
     func test_createExchangeWhenSignatureMissing() async throws {
@@ -474,3 +495,9 @@ let validOffering = """
                         }
                         """
 
+let validBalance = """
+                    {\"data": [
+                         {\"metadata\":{\"from\":\"did:dht:t6gdbr4qs95b4j6pbdxe4rzp41am735pm9c65135gajusam9xx8o\",\"kind\":\"balance\",\"id\":\"balance_01ht38w02ae2kbhwbcakmnp8qb\",\"createdAt\":\"2024-03-28T19:33:56.938Z\",\"protocol\":\"1.0\"},\"data\":{\"currencyCode\":\"USD\",\"available\":\"400.00\"},\"signature\":\"eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDpkaHQ6dDZnZGJyNHFzOTViNGo2cGJkeGU0cnpwNDFhbTczNXBtOWM2NTEzNWdhanVzYW05eHg4byMwIn0..t-cVr4Djf9APYgEESNd4BO7DX6HMGd8KRzm_7sFP_oba4Ngh16BMagx_IBDcZJyeEKlUD51CdUy-ffJ4WWH_AQ\"}
+                        ]
+                    }
+                    """
