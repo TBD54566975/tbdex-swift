@@ -239,10 +239,10 @@ enum DevTools {
         from: String,
         to: String,
         exchangeID: String = "exchange_123",
-        data: OrderStatusData? = nil,
+        data: CloseData? = nil,
         protocol: String? = nil
     ) -> Close {
-        let closeData = CloseData(
+        let closeData = data ?? CloseData(
             reason: "test reason"
         )
         
