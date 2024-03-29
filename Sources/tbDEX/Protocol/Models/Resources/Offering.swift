@@ -33,7 +33,7 @@ public struct OfferingData: ResourceData {
     /// Articulates the claim(s) required when submitting an RFQ for this offering.
     public let requiredClaims: PresentationDefinitionV2?
 
-    /// Returns the MessageKind of offering
+    /// Returns the ResourceKind of offering
     public func kind() -> ResourceKind {
         return .offering
     }
