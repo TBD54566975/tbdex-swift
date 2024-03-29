@@ -20,8 +20,10 @@ public struct CloseData: MessageData {
 
     /// Default Initializer
     public init(
-        reason: String? = nil
+        reason: String? = nil,
+        success: Bool? = nil
     ) {
         self.reason = reason
+        self.success = success
     }
 }

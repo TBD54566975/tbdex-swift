@@ -15,10 +15,44 @@ public struct Resource<D: ResourceData>: Codable, Equatable {
     public let data: D
 
     /// Signature that verifies the authenticity and integrity of the Resource
-    public let signature: String?
+    public private(set) var signature: String?
+    
+    /// Default Initializer. `protocol` defaults to "1.0" if nil
+    public init(
+        from: String,
+        data: D,
+        `protocol`: String = "1.0"
+    ) {
+        let now = Date()
+        self.metadata = ResourceMetadata(
+            id: TypeID(prefix: data.kind().rawValue)!,
+            kind: data.kind(),
+            from: from,
+            createdAt: now,
+            updatedAt: now,
+            protocol: `protocol`
+        )
+        self.data = data
+        self.signature = nil
+    }
 
     private func digest() throws -> Data {
         try CryptoUtils.digest(data: data, metadata: metadata)
+    }
+    
+    /// Signs the message as a JWS with detached content with an optional key alias
+    /// - Parameters:
+    ///   - did: The Bearer DID with which to sign the resource
+    ///   - keyAlias: An optional key alias to use instead of the default provided by the Bearer DID
+    public mutating func sign(did: BearerDID, keyAlias: String? = nil) throws {
+        self.signature = try JWS.sign(
+            did: did,
+            payload: try digest(),
+            options: .init(
+                detached: true,
+                verificationMethodID: keyAlias
+            )
+        )
     }
 
     /// Validates the resource structure and verifies the cryptographic signature

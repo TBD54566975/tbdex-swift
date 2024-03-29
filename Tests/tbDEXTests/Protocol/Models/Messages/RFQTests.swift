@@ -10,7 +10,7 @@ final class RFQTests: XCTestCase {
     let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
 
     func test_init() {
-        let rfq = createRFQ(from: did.uri, to: pfi.uri)
+        let rfq = DevTools.createRFQ(from: did.uri, to: pfi.uri)
 
         XCTAssertEqual(rfq.metadata.id.prefix, "rfq")
         XCTAssertEqual(rfq.metadata.from, did.uri)
@@ -24,64 +24,34 @@ final class RFQTests: XCTestCase {
     }
     
     func test_overrideProtocolVersion() {
-        let rfq = RFQ(
-            to: pfi.uri,
+        let rfq = DevTools.createRFQ(
             from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            ),
+            to: pfi.uri,
             protocol: "2.0"
         )
 
-        XCTAssertEqual(rfq.metadata.id.prefix, "rfq")
-        XCTAssertEqual(rfq.metadata.from, did.uri)
-        XCTAssertEqual(rfq.metadata.to, pfi.uri)
-        XCTAssertEqual(rfq.metadata.exchangeID, rfq.metadata.id.rawValue)
         XCTAssertEqual(rfq.metadata.protocol, "2.0")
     }
-
-    func test_signAndVerify() async throws {
-        var rfq = createRFQ(from: did.uri, to: pfi.uri)
+    
+    func test_signSuccess() async throws {
+        var rfq = DevTools.createRFQ(from: did.uri, to: pfi.uri)
 
         XCTAssertNil(rfq.signature)
         try rfq.sign(did: did)
         XCTAssertNotNil(rfq.signature)
+    }
+    
+    func test_verifySuccess() async throws {
+        var rfq = DevTools.createRFQ(from: did.uri, to: pfi.uri)
+        try rfq.sign(did: did)
+
         let isValid = try await rfq.verify()
         XCTAssertTrue(isValid)
     }
 
     func test_verifyWithoutSigningFailure() async throws {
-        let rfq = createRFQ(from: did.uri, to: pfi.uri)
+        let rfq = DevTools.createRFQ(from: did.uri, to: pfi.uri)
 
         await XCTAssertThrowsErrorAsync(try await rfq.verify())
-    }
-
-    private func createRFQ(
-        from: String,
-        to: String
-    ) -> RFQ {
-        RFQ(
-            to: to,
-            from: from,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
     }
 }

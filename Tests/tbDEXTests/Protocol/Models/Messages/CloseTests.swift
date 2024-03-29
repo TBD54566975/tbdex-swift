@@ -9,7 +9,7 @@ final class CloseTests: XCTestCase {
     let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
 
     func test_init() {
-        let close = createClose(from: did.uri, to: pfi.uri)
+        let close = DevTools.createClose(from: did.uri, to: pfi.uri)
 
         XCTAssertEqual(close.metadata.id.prefix, "close")
         XCTAssertEqual(close.metadata.from, did.uri)
@@ -21,52 +21,34 @@ final class CloseTests: XCTestCase {
     }
     
     func test_overrideProtocolVersion() {
-        let close = Close(
+        let close = DevTools.createClose(
             from: did.uri,
             to: pfi.uri,
-            exchangeID: "exchange_123",
-            data: .init(
-                reason: "test reason"
-            ),
             protocol: "2.0"
         )
 
-        XCTAssertEqual(close.metadata.id.prefix, "close")
-        XCTAssertEqual(close.metadata.from, did.uri)
-        XCTAssertEqual(close.metadata.to, pfi.uri)
-        XCTAssertEqual(close.metadata.exchangeID, "exchange_123")
         XCTAssertEqual(close.metadata.protocol, "2.0")
     }
 
-    func test_signAndVerify() async throws {
-        let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        let pfi = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        var close = createClose(from: did.uri, to: pfi.uri)
+    func test_signSuccess() async throws {
+        var close = DevTools.createClose(from: did.uri, to: pfi.uri)
 
         XCTAssertNil(close.signature)
         try close.sign(did: did)
         XCTAssertNotNil(close.signature)
+    }
+    
+    func test_verifySuccess() async throws {
+        var close = DevTools.createClose(from: did.uri, to: pfi.uri)
+        try close.sign(did: did)
+        
         let isValid = try await close.verify()
         XCTAssertTrue(isValid)
     }
 
     func test_verifyWithoutSigningFailure() async throws {
-        let close = createClose(from: did.uri, to: pfi.uri)
+        let close = DevTools.createClose(from: did.uri, to: pfi.uri)
 
         await XCTAssertThrowsErrorAsync(try await close.verify())
-    }
-
-    private func createClose(
-        from: String,
-        to: String
-    ) -> Close {
-        Close(
-            from: from,
-            to: to,
-            exchangeID: "exchange_123",
-            data: .init(
-                reason: "test reason"
-            )
-        )
     }
 }

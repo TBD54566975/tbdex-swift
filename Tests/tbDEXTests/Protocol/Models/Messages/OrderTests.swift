@@ -9,7 +9,7 @@ final class OrderTests: XCTestCase {
     let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
 
     func test_init() {
-        let order = createOrder(from: did.uri, to: pfi.uri)
+        let order = DevTools.createOrder(from: did.uri, to: pfi.uri)
 
         XCTAssertEqual(order.metadata.id.prefix, "order")
         XCTAssertEqual(order.metadata.from, did.uri)
@@ -18,11 +18,9 @@ final class OrderTests: XCTestCase {
     }
     
     func test_overrideProtocolVersion() {
-        let order = Order(
+        let order = DevTools.createOrder(
             from: did.uri,
             to: pfi.uri,
-            exchangeID: "exchange_123",
-            data: .init(),
             protocol: "2.0"
         )
 
@@ -33,33 +31,26 @@ final class OrderTests: XCTestCase {
         XCTAssertEqual(order.metadata.protocol, "2.0")
     }
 
-    func test_signAndVerify() async throws {
-        let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        let pfi = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        var order = createOrder(from: did.uri, to: pfi.uri)
+    func test_signSuccess() async throws {
+        var order = DevTools.createOrder(from: did.uri, to: pfi.uri)
 
         XCTAssertNil(order.signature)
         try order.sign(did: did)
         XCTAssertNotNil(order.signature)
+    }
+    
+    func test_verifySuccess() async throws {
+        var order = DevTools.createOrder(from: did.uri, to: pfi.uri)
+        try order.sign(did: did)
+        
         let isValid = try await order.verify()
         XCTAssertTrue(isValid)
     }
 
     func test_verifyWithoutSigningFailure() async throws {
-        let order = createOrder(from: did.uri, to: pfi.uri)
+        let order = DevTools.createOrder(from: did.uri, to: pfi.uri)
 
         await XCTAssertThrowsErrorAsync(try await order.verify())
     }
 
-    private func createOrder(
-        from: String,
-        to: String
-    ) -> Order {
-        Order(
-            from: from,
-            to: to,
-            exchangeID: "exchange_123",
-            data: .init()
-        )
-    }
 }
