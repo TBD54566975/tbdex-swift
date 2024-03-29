@@ -17,10 +17,10 @@ final class RFQTests: XCTestCase {
         XCTAssertEqual(rfq.metadata.to, pfi.uri)
         XCTAssertEqual(rfq.metadata.exchangeID, rfq.metadata.id.rawValue)
 
-        XCTAssertEqual(rfq.data.payinAmount, "1.00")
+        XCTAssertEqual(rfq.data.payin.amount, "1.00")
         XCTAssertEqual(rfq.data.claims, [])
-        XCTAssertEqual(rfq.data.payinMethod.kind, "DEBIT_CARD")
-        XCTAssertEqual(rfq.data.payoutMethod.kind, "BITCOIN_ADDRESS")
+        XCTAssertEqual(rfq.data.payin.kind, "DEBIT_CARD")
+        XCTAssertEqual(rfq.data.payout.kind, "BITCOIN_ADDRESS")
     }
     
     func test_overrideProtocolVersion() {
@@ -29,11 +29,11 @@ final class RFQTests: XCTestCase {
             from: did.uri,
             data: .init(
                 offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payinAmount: "1.00",
-                payinMethod: .init(
+                payin: .init(
+                    amount: "1.00",
                     kind: "DEBIT_CARD"
                 ),
-                payoutMethod: .init(
+                payout: .init(
                     kind: "BITCOIN_ADDRESS"
                 ),
                 claims: []
@@ -73,11 +73,11 @@ final class RFQTests: XCTestCase {
             from: from,
             data: .init(
                 offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payinAmount: "1.00",
-                payinMethod: .init(
+                payin: .init(
+                    amount: "1.00",
                     kind: "DEBIT_CARD"
                 ),
-                payoutMethod: .init(
+                payout: .init(
                     kind: "BITCOIN_ADDRESS"
                 ),
                 claims: []
