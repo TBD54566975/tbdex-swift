@@ -83,6 +83,47 @@ final class tbDEXHttpClientTests: XCTestCase {
         XCTAssertNotNil(offerings[0].signature)
     }
     
+    func test_getBalancesWhenPFIInvalid() async throws {
+        await XCTAssertThrowsErrorAsync(try await tbDEXHttpClient.getBalances(pfiDIDURI: "123", requesterDID: did)) { error in
+                XCTAssertNotNil(error)
+                XCTAssertTrue(error is tbDEXHttpClient.Error)
+                XCTAssertTrue(error.localizedDescription.contains("DID does not have service of type PFI"))
+            }
+    }
+
+    func test_getBalancesWhenEmpty() async throws {
+        let response = emptyResponse
+        Mocker.mode = .optin
+        Mock(
+            url: URL(string: "\(endpoint)/balances")!,
+            contentType: .json,
+            statusCode: 200,
+            data: [
+                .get: response.data(using: .utf8)!
+            ]
+        ).register()
+        let balances = try await tbDEXHttpClient.getBalances(pfiDIDURI: pfiDid, requesterDID: did)
+        XCTAssertEqual(balances, [])
+    }
+    
+    func test_getBalancesWithOneInvalidBalance() async throws {
+        let response = invalidResponse
+        Mocker.mode = .optin
+        Mock(
+            url: URL(string: "\(endpoint)/balances")!,
+            contentType: .json,
+            statusCode: 200,
+            data: [
+                .get: response.data(using: .utf8)!
+            ]
+        ).register()
+        await XCTAssertThrowsErrorAsync(try await tbDEXHttpClient.getBalances(pfiDIDURI: pfiDid, requesterDID: did)) { error in
+                XCTAssertNotNil(error)
+                XCTAssertTrue(error is tbDEXHttpClient.Error)
+                XCTAssertTrue(error.localizedDescription.contains("Error while getting balances"))
+        }
+    }
+    
     func test_getBalancesWithOneValidBalance() async throws {
         let response = validBalance
         
@@ -423,6 +464,32 @@ final class tbDEXHttpClientTests: XCTestCase {
             XCTAssertNotNil(rfq.signature)
         default:
             XCTFail("First message in exchange must be RFQ")
+        }
+    }
+    
+    func test_getExchangeWhenPFIInvalid() async throws {
+        await XCTAssertThrowsErrorAsync(try await tbDEXHttpClient.getExchange(pfiDIDURI: "123", requesterDID: did, exchangeId: "123")) { error in
+                XCTAssertNotNil(error)
+                XCTAssertTrue(error is tbDEXHttpClient.Error)
+                XCTAssertTrue(error.localizedDescription.contains("DID does not have service of type PFI"))
+            }
+    }
+    
+    func test_getExchangeWithInvalidExchange() async throws {
+        let response = invalidResponse
+        Mocker.mode = .optin
+        Mock(
+            url: URL(string: "\(endpoint)/exchanges/123")!,
+            contentType: .json,
+            statusCode: 200,
+            data: [
+                .get: response.data(using: .utf8)!
+            ]
+        ).register()
+        await XCTAssertThrowsErrorAsync(try await tbDEXHttpClient.getExchange(pfiDIDURI: pfiDid, requesterDID: did, exchangeId: "123")) { error in
+                XCTAssertNotNil(error)
+                XCTAssertTrue(error is tbDEXHttpClient.Error)
+                XCTAssertTrue(error.localizedDescription.contains("Error while decoding exchange"))
         }
     }
     

@@ -243,7 +243,7 @@ public enum tbDEXHttpClient {
                 let exchangesResponse = try tbDEXJSONDecoder().decode(GetExchangeResponse.self, from: data)
                 return exchangesResponse.data
             } catch {
-                throw Error(reason: "Error while decoding exchanges: \(error)")
+                throw Error(reason: "Error while decoding exchange: \(error)")
             }
         default:
             throw buildErrorResponse(data: data, response: httpResponse)
