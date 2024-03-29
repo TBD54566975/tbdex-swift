@@ -18,10 +18,23 @@ enum DevTools {
         let offeringData = data ?? OfferingData(
             description: "test offering",
             payoutUnitsPerPayinUnit: "1",
-            payinCurrency: .init(currencyCode: "AUD"),
-            payoutCurrency: .init(currencyCode: "BTC"),
-            payinMethods: [],
-            payoutMethods: [],
+            payin: .init(
+                currencyCode: "USD",
+                methods: [
+                    .init(
+                        kind: "DEBIT_CARD"
+                    )
+                ]
+            ),
+            payout: .init(
+                currencyCode: "BTC",
+                methods: [
+                    .init(
+                        kind: "BITCOIN_ADDRESS",
+                        estimatedSettlementTime: 10
+                    )
+                ]
+            ),
             requiredClaims: nil
         )
         
@@ -72,9 +85,13 @@ enum DevTools {
     ) -> RFQ {
         let rfqData = data ?? RFQData(
             offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-            payinAmount: "1.00",
-            payinMethod: .init(kind: "DEBIT_CARD"),
-            payoutMethod: .init(kind: "BITCOIN_ADDRESS"),
+            payin: .init(
+                amount: "1.00",
+                kind: "DEBIT_CARD"
+            ),
+            payout: .init(
+                kind: "BITCOIN_ADDRESS"
+            ),
             claims: []
         )
         

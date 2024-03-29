@@ -128,7 +128,6 @@ public struct PayinMethod: Codable, Equatable {
     /// Default initializer
     init(
         kind: String,
-        estimatedSettlementTime: UInt,
         name: String? = nil,
         description: String? = nil,
         group: String? = nil,
@@ -138,7 +137,6 @@ public struct PayinMethod: Codable, Equatable {
         max: String? = nil
     ) {
         self.kind = kind
-        self.estimatedSettlementTime = estimatedSettlementTime
         self.name = name
         self.description = description
         self.group = group

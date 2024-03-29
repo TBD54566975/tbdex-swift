@@ -14,8 +14,8 @@ final class OfferingTests: XCTestCase {
         XCTAssertEqual(offering.metadata.from, "pfi")
         XCTAssertEqual(offering.data.description, "test offering")
         XCTAssertEqual(offering.data.payoutUnitsPerPayinUnit, "1")
-        XCTAssertEqual(offering.data.payinCurrency.currencyCode, "AUD")
-        XCTAssertEqual(offering.data.payoutCurrency.currencyCode, "BTC")
+        XCTAssertEqual(offering.data.payin.currencyCode, "USD")
+        XCTAssertEqual(offering.data.payout.currencyCode, "BTC")
     }
     
     func test_verifySuccess() async throws {
