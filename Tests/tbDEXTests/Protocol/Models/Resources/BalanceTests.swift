@@ -5,44 +5,29 @@ import XCTest
 
 final class BalanceTests: XCTestCase {
     
-    func _test_parseBalanceFromStringified() throws {
-        if let balance = try parsedBalance(balance: balanceStringJSON) {
-            XCTAssertEqual(balance.metadata.kind, ResourceKind.balance)
-        } else {
-            XCTFail("Balance is not a parsed balance")
-        }
-    }
+    let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
+    
+    func test_init() throws {
+        let balance = DevTools.createBalance(from: "pfi")
 
-    func _test_parseBalanceFromPrettified() throws {
-        if let balance = try parsedBalance(balance: balancePrettyJSON) {
-            XCTAssertEqual(balance.metadata.kind, ResourceKind.balance)
-        } else {
-            XCTFail("Balance is not a parsed balance")
-        }
-    }
-
-    func _test_verifyBalanceIsValid() async throws {
-        if let balance = try parsedBalance(balance: balancePrettyJSON) {
-            XCTAssertNotNil(balance.signature)
-            XCTAssertNotNil(balance.data)
-            XCTAssertNotNil(balance.metadata)
-        } else {
-            XCTFail("Balance is not a parsed balance")
-        }
+        XCTAssertEqual(balance.metadata.id.prefix, "balance")
+        XCTAssertEqual(balance.metadata.from, "pfi")
+        XCTAssertEqual(balance.data.currencyCode, "USD")
+        XCTAssertEqual(balance.data.available, "100.00")
     }
     
-    private func parsedBalance(balance: String) throws -> Balance? {
-        let parsedResource = try AnyResource.parse(balance)
-        guard case let .balance(parsedBalance) = parsedResource else {
-            return nil
-        }
-        return parsedBalance
+    func test_verifySuccess() async throws {
+        var balance = DevTools.createBalance(from: pfi.uri)
+        try balance.sign(did: pfi)
+
+        let isValid = try await balance.verify()
+        XCTAssertTrue(isValid)
     }
 
-    let balancePrettyJSON = """
-    """
-    
-    let balanceStringJSON =
-    ""
+    func test_verifyWithoutSigningFailure() async throws {
+        let balance = DevTools.createBalance(from: pfi.uri)
+
+        await XCTAssertThrowsErrorAsync(try await balance.verify())
+    }
 
 }

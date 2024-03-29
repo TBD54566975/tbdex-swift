@@ -47,6 +47,19 @@ public struct PayinDetails: Codable, Equatable {
     
     /// A list of payment methods to select from
     public let methods: [PayinMethod]
+    
+    /// Default initializer
+    init(
+        currencyCode: String,
+        min: String? = nil,
+        max: String? = nil,
+        methods: [PayinMethod]
+    ) {
+        self.currencyCode = currencyCode
+        self.min = min
+        self.max = max
+        self.methods = methods
+    }
 
 }
 
@@ -66,6 +79,19 @@ public struct PayoutDetails: Codable, Equatable {
     
     /// A list of payment methods to select from
     public let methods: [PayoutMethod]
+
+    /// Default initializer
+    init(
+        currencyCode: String,
+        min: String? = nil,
+        max: String? = nil,
+        methods: [PayoutMethod]
+    ) {
+        self.currencyCode = currencyCode
+        self.min = min
+        self.max = max
+        self.methods = methods
+    }
 
 }
 
@@ -98,7 +124,29 @@ public struct PayinMethod: Codable, Equatable {
     
     /// Maximum amount allowed when using this payment method.
     public let max: String?
-
+    
+    /// Default initializer
+    init(
+        kind: String,
+        estimatedSettlementTime: UInt,
+        name: String? = nil,
+        description: String? = nil,
+        group: String? = nil,
+        requiredPaymentDetails: AnyCodable? = nil,
+        fee: String? = nil,
+        min: String? = nil,
+        max: String? = nil
+    ) {
+        self.kind = kind
+        self.estimatedSettlementTime = estimatedSettlementTime
+        self.name = name
+        self.description = description
+        self.group = group
+        self.requiredPaymentDetails = requiredPaymentDetails
+        self.fee = fee
+        self.min = min
+        self.max = max
+    }
 }
 
 /// Details about payout methods within an Offering
@@ -133,5 +181,27 @@ public struct PayoutMethod: Codable, Equatable {
     
     /// Maximum amount allowed when using this payment method.
     public let max: String?
-
+    
+    /// Default initializer
+    init(
+        kind: String,
+        estimatedSettlementTime: UInt,
+        name: String? = nil,
+        description: String? = nil,
+        group: String? = nil,
+        requiredPaymentDetails: AnyCodable? = nil,
+        fee: String? = nil,
+        min: String? = nil,
+        max: String? = nil
+    ) {
+        self.kind = kind
+        self.estimatedSettlementTime = estimatedSettlementTime
+        self.name = name
+        self.description = description
+        self.group = group
+        self.requiredPaymentDetails = requiredPaymentDetails
+        self.fee = fee
+        self.min = min
+        self.max = max
+    }
 }

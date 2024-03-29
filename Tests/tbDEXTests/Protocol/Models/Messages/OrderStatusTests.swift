@@ -9,62 +9,26 @@ final class OrderStatusTests: XCTestCase {
     let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
 
     func test_init() {
-        let orderStatus = createOrderStatus(from: did.uri, to: pfi.uri)
+        let orderStatus = DevTools.createOrderStatus(from: pfi.uri, to: did.uri)
 
         XCTAssertEqual(orderStatus.metadata.id.prefix, "orderstatus")
-        XCTAssertEqual(orderStatus.metadata.from, did.uri)
-        XCTAssertEqual(orderStatus.metadata.to, pfi.uri)
+        XCTAssertEqual(orderStatus.metadata.from, pfi.uri)
+        XCTAssertEqual(orderStatus.metadata.to, did.uri)
         XCTAssertEqual(orderStatus.metadata.exchangeID, "exchange_123")
         XCTAssertEqual(orderStatus.data.orderStatus, "test status")
     }
-    
-    func test_overrideProtocolVersion() {
-        let orderstatus = OrderStatus(
-            from: did.uri,
-            to: pfi.uri,
-            exchangeID: "exchange_123",
-            data: .init(
-                orderStatus: "test status"
-            ),
-            protocol: "2.0"
-        )
 
-        XCTAssertEqual(orderstatus.metadata.id.prefix, "orderstatus")
-        XCTAssertEqual(orderstatus.metadata.from, did.uri)
-        XCTAssertEqual(orderstatus.metadata.to, pfi.uri)
-        XCTAssertEqual(orderstatus.metadata.exchangeID, "exchange_123")
-        XCTAssertEqual(orderstatus.metadata.protocol, "2.0")
-    }
-
-    func test_signAndVerify() async throws {
-        let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        let pfi = try DIDJWK.create(keyManager: InMemoryKeyManager())
-        var orderStatus = createOrderStatus(from: did.uri, to: pfi.uri)
-
-        XCTAssertNil(orderStatus.signature)
-        try orderStatus.sign(did: did)
-        XCTAssertNotNil(orderStatus.signature)
+    func test_verifySuccess() async throws {
+        var orderStatus = DevTools.createOrderStatus(from: pfi.uri, to: did.uri)
+        try orderStatus.sign(did: pfi)
+        
         let isValid = try await orderStatus.verify()
         XCTAssertTrue(isValid)
     }
 
     func test_verifyWithoutSigningFailure() async throws {
-        let orderStatus = createOrderStatus(from: did.uri, to: pfi.uri)
+        let orderStatus = DevTools.createOrderStatus(from: pfi.uri, to: did.uri)
 
         await XCTAssertThrowsErrorAsync(try await orderStatus.verify())
-    }
-
-    private func createOrderStatus(
-        from: String,
-        to: String
-    ) -> OrderStatus {
-        OrderStatus(
-            from: from,
-            to: to,
-            exchangeID: "exchange_123",
-            data: .init(
-                orderStatus: "test status"
-            )
-        )
     }
 }

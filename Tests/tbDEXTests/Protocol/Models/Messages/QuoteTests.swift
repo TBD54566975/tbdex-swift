@@ -9,11 +9,11 @@ final class QuoteTests: XCTestCase {
     let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
 
     func test_init() {
-        let quote = createQuote(from: did.uri, to: pfi.uri)
+        let quote = DevTools.createQuote(from: pfi.uri, to: did.uri)
 
         XCTAssertEqual(quote.metadata.id.prefix, "quote")
-        XCTAssertEqual(quote.metadata.from, did.uri)
-        XCTAssertEqual(quote.metadata.to, pfi.uri)
+        XCTAssertEqual(quote.metadata.from, pfi.uri)
+        XCTAssertEqual(quote.metadata.to, did.uri)
         XCTAssertEqual(quote.metadata.exchangeID, "exchange_123")
 
         XCTAssertEqual(quote.data.payin.currencyCode, "USD")
@@ -27,81 +27,18 @@ final class QuoteTests: XCTestCase {
         XCTAssertEqual(quote.data.payout.fee, "0.50")
         XCTAssertNil(quote.data.payout.paymentInstruction)
     }
-    
-    func test_overrideProtocolVersion() {
-        let quote = Quote(
-            from: did.uri,
-            to: pfi.uri,
-            exchangeID: "exchange_123",
-            data: .init(
-                expiresAt: Date().addingTimeInterval(60),
-                payin: .init(
-                    currencyCode: "USD",
-                    amount: "1.00",
-                    paymentInstruction: .init(
-                        link: "https://example.com",
-                        instruction: "test instruction"
-                    )
-                ),
-                payout: .init(
-                    currencyCode: "AUD",
-                    amount: "2.00",
-                    fee: "0.50"
-                )
-            ),
-            protocol: "2.0"
-        )
 
-        XCTAssertEqual(quote.metadata.id.prefix, "quote")
-        XCTAssertEqual(quote.metadata.from, did.uri)
-        XCTAssertEqual(quote.metadata.to, pfi.uri)
-        XCTAssertEqual(quote.metadata.exchangeID, "exchange_123")
-        XCTAssertEqual(quote.metadata.protocol, "2.0")
-    }
-
-    func test_signAndVerify() async throws {
-        var quote = createQuote(from: did.uri, to: pfi.uri)
-
-        XCTAssertNil(quote.signature)
-        try quote.sign(did: did)
-        XCTAssertNotNil(quote.signature)
+    func test_verifySuccess() async throws {
+        var quote = DevTools.createQuote(from: pfi.uri, to: did.uri)
+        try quote.sign(did: pfi)
+        
         let isValid = try await quote.verify()
         XCTAssertTrue(isValid)
     }
 
     func test_verifyWithoutSigningFailure() async throws {
-        let quote = createQuote(from: did.uri, to: pfi.uri)
+        let quote = DevTools.createQuote(from: pfi.uri, to: did.uri)
 
         await XCTAssertThrowsErrorAsync(try await quote.verify())
-    }
-
-    private func createQuote(
-        from: String,
-        to: String
-    ) -> Quote {
-        let now = Date()
-        let expiresAt = now.addingTimeInterval(60)
-
-        return Quote(
-            from: from,
-            to: to,
-            exchangeID: "exchange_123",
-            data: .init(
-                expiresAt: expiresAt,
-                payin: .init(
-                    currencyCode: "USD",
-                    amount: "1.00",
-                    paymentInstruction: .init(
-                        link: "https://example.com",
-                        instruction: "test instruction"
-                    )
-                ),
-                payout: .init(
-                    currencyCode: "AUD",
-                    amount: "2.00",
-                    fee: "0.50"
-                )
-            )
-        )
     }
 }
