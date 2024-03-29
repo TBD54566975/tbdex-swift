@@ -9,7 +9,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
 
     // MARK: - Resources
 
-    func _test_parseOffering() throws {
+    func test_parseOffering() throws {
         let vector = try TestVector<String, Offering>(
             fileName: "parse-offering",
             subdirectory: vectorSubdirectory
