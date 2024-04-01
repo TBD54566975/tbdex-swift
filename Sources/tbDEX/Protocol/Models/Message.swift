@@ -18,7 +18,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
     public private(set) var signature: String?
 
     /// An ephemeral JSON object used to transmit sensitive data (e.g. PII)
-    public let `private`: AnyCodable?
+    public let privateData: RFQPrivateData?
 
     /// Default Initializer. `protocol` defaults to "1.0" if nil
     public init(
@@ -42,7 +42,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
         )
         self.data = data
         self.signature = nil
-        self.private = nil
+        self.privateData = nil
     }
 
     private func digest() throws -> Data {

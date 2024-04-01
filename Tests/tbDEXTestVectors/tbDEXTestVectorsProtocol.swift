@@ -95,9 +95,23 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedQuote, vector.output)
     }
 
-    func _test_parseRfq() throws {
+    func test_parseRfq() throws {
         let vector = try TestVector<String, RFQ>(
             fileName: "parse-rfq",
+            subdirectory: vectorSubdirectory
+        )
+
+        let parsedMessage = try AnyMessage.parse(vector.input)
+        guard case let .rfq(parsedRFQ) = parsedMessage else {
+            return XCTFail("Parsed message is not an RFQ")
+        }
+
+        XCTAssertNoDifference(parsedRFQ, vector.output)
+    }
+    
+    func test_parseRfqOmitPrivateData() throws {
+        let vector = try TestVector<String, RFQ>(
+            fileName: "parse-rfq-omit-private-data",
             subdirectory: vectorSubdirectory
         )
 

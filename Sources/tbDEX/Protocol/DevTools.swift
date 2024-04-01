@@ -80,10 +80,10 @@ enum DevTools {
         from: String,
         to: String,
         externalID: String? = nil,
-        data: RFQData? = nil,
+        data: CreateRFQData? = nil,
         protocol: String? = nil
-    ) -> RFQ {
-        let rfqData = data ?? RFQData(
+    ) throws -> RFQ {
+        let rfqData = data ?? CreateRFQData(
             offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
             payin: .init(
                 amount: "1.00",
@@ -91,12 +91,11 @@ enum DevTools {
             ),
             payout: .init(
                 kind: "BITCOIN_ADDRESS"
-            ),
-            claims: []
+            )
         )
         
         if let `protocol` = `protocol` {
-            return RFQ(
+            return try RFQ(
                 to: to,
                 from: from,
                 data: rfqData,
@@ -104,7 +103,11 @@ enum DevTools {
                 protocol: `protocol`
             )
         } else {
-            return RFQ(to: to, from: from, data: rfqData, externalID: externalID)
+            return try RFQ(
+                to: to,
+                from: from,
+                data: rfqData,
+                externalID: externalID)
         }
     }
     

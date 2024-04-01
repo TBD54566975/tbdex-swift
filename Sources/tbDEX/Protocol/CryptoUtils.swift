@@ -19,6 +19,19 @@ extension CryptoUtils {
         let digest = SHA256.hash(data: serializedPayload)
         return Data(digest)
     }
+    
+    static func digestToByteArray(payload: Codable) throws -> [UInt8] {
+        let serializedPayload = try tbDEXJSONEncoder().encode(payload)
+        let digest = SHA256.hash(data: serializedPayload)
+        return digest.bytes
+    }
+    
+    static func digestRFQPrivateData(salt: String, value: Codable) throws -> String? {
+        let encodedSalt = try tbDEXJSONEncoder().encode(salt)
+        let encodedData = try tbDEXJSONEncoder().encode(value)
+        let byteArray = try CryptoUtils.digestToByteArray(payload: [encodedSalt, encodedData])
+        return byteArray.base64UrlEncodedString()
+    }
 
     /// Encapsulates data and metadata for digest computation.
     private struct DigestPayload<D: Codable, M: Codable>: Codable {

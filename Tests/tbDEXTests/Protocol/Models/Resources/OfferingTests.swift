@@ -27,7 +27,6 @@ final class OfferingTests: XCTestCase {
     }
 
     func test_verifyWithoutSigningFailure() async throws {
-        let did = try DIDJWK.create(keyManager: InMemoryKeyManager())
         let offering = DevTools.createOffering(from: pfi.uri)
 
         await XCTAssertThrowsErrorAsync(try await offering.verify())
