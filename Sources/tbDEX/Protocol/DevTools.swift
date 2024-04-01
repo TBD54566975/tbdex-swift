@@ -98,7 +98,7 @@ enum DevTools {
             return try RFQ(
                 to: to,
                 from: from,
-                rfqData: rfqData,
+                data: rfqData,
                 externalID: externalID,
                 protocol: `protocol`
             )
@@ -106,8 +106,7 @@ enum DevTools {
             return try RFQ(
                 to: to,
                 from: from,
-                rfqData:
-                    rfqData,
+                data: rfqData,
                 externalID: externalID)
         }
     }

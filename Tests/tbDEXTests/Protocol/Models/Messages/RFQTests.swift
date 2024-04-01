@@ -1,6 +1,7 @@
 import Web5
 import XCTest
 import TypeID
+import AnyCodable
 
 @testable import tbDEX
 
@@ -54,4 +55,51 @@ final class RFQTests: XCTestCase {
 
         await XCTAssertThrowsErrorAsync(try await rfq.verify())
     }
+    
+    func test_createWithPrivateDataSuccess() async throws {
+        let rfq = try DevTools.createRFQ(from: did.uri, to: pfi.uri, data: CreateRFQData(
+            offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
+            payin: .init(
+                amount: "1.00",
+                kind: "DEBIT_CARD",
+                paymentDetails: [
+                    "accountNumber": "1234567890"
+                ]
+            ),
+            payout: .init(
+                kind: "BITCOIN_ADDRESS",
+                paymentDetails: [
+                    "btc_address": "qwertyuiop"
+                ]
+            ),
+            claims: ["123"]
+        ))
+
+        XCTAssertTrue(try verifyHash(
+            hash: rfq.data.claimsHash!,
+            salt: rfq.privateData!.salt,
+            field: try convertToAnyCodable(input: rfq.privateData!.claims!)
+        ))
+        XCTAssertTrue(try verifyHash(
+            hash: rfq.data.payin.paymentDetailsHash!,
+            salt: rfq.privateData!.salt,
+            field: rfq.privateData!.payin!.paymentDetails!
+        ))
+        XCTAssertTrue(try verifyHash(
+            hash: rfq.data.payout.paymentDetailsHash!,
+            salt: rfq.privateData!.salt,
+            field: rfq.privateData!.payout!.paymentDetails!
+        ))
+    }
+}
+
+private func verifyHash(hash: String, salt: String, field: AnyCodable) throws -> Bool {
+    let digest = try CryptoUtils.digestRFQPrivateData(salt: salt, value: field)
+
+    return digest == hash
+}
+
+private func convertToAnyCodable<T: Encodable>(input: T) throws -> AnyCodable {
+    let jsonData = try tbDEXJSONEncoder().encode(input)
+    return try tbDEXJSONDecoder().decode(AnyCodable.self, from: jsonData)
 }

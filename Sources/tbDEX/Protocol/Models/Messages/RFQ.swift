@@ -10,18 +10,18 @@ extension RFQ {
     public init(
         to: String,
         from: String,
-        rfqData: CreateRFQData,
+        data: CreateRFQData,
         externalID: String? = nil,
         `protocol`: String = "1.0"
     ) throws {
-        let hashedData = try hashPrivateData(rfqData: rfqData)
+        let hashedData = try hashPrivateData(rfqData: data)
         self.data = hashedData["data"] as! RFQData
         self.privateData = hashedData["privateData"] as? RFQPrivateData
         
-        let id = TypeID(prefix: data.kind().rawValue)!
+        let id = TypeID(prefix: self.data.kind().rawValue)!
         self.metadata = MessageMetadata(
             id: id,
-            kind: data.kind(),
+            kind: self.data.kind(),
             from: from,
             to: to,
             exchangeID: id.rawValue,
@@ -36,18 +36,7 @@ private func generateSalt(_ count: Int) throws -> String? {
     let randomBytes = [UInt8](repeating: UInt8.random(in: 0...255), count: count)
 
     let encodedBytes = try tbDEXJSONEncoder().encode(randomBytes)
-    return encodedBytes.base64EncodedString()
-}
-
-private func digestPrivateData(salt: String, value: Codable) throws -> String? {
-    do {
-        let encodedSalt = try tbDEXJSONEncoder().encode(salt)
-        let encodedData = try tbDEXJSONEncoder().encode(value)
-        let byteArray = try CryptoUtils.digestToByteArray(payload: [encodedSalt, encodedData])
-        return byteArray.base64UrlEncodedString()
-    } catch {
-        throw Error(reason: "Error digesting privateData: \(error)")
-    }
+    return encodedBytes.base64UrlEncodedString()
 }
 
 private func hashPrivateData(rfqData: CreateRFQData) throws -> [String: Any] {
@@ -55,33 +44,38 @@ private func hashPrivateData(rfqData: CreateRFQData) throws -> [String: Any] {
         throw Error(reason: "Failed to generate salt")
     }
     
-    let data = RFQData(
-        offeringId: rfqData.offeringId,
-        payin: .init(
-            amount: rfqData.payin.amount,
-            kind: rfqData.payin.kind,
-            paymentDetailsHash: try digestPrivateData(salt: salt, value: rfqData.payin.paymentDetails)
-        ),
-        payout: .init(
-            kind: rfqData.payout.kind,
-            paymentDetailsHash: try digestPrivateData(salt: salt, value: rfqData.payout.paymentDetails)
-        ),
-        claimsHash: rfqData.claims?.isEmpty ?? (rfqData.claims == nil) ? nil :
-            try digestPrivateData(salt: salt, value: rfqData.claims)
-    )
-    
-    let privateData = RFQPrivateData(
-        salt: salt,
-        payin: .init(
-            paymentDetails: rfqData.payin.paymentDetails
-        ),
-        payout: .init(
-            paymentDetails: rfqData.payout.paymentDetails
-        ),
-        claims: rfqData.claims
-    )
-    
-    return ["data": data, "privateData": privateData]
+    do {
+        let data = RFQData(
+            offeringId: rfqData.offeringId,
+            payin: .init(
+                amount: rfqData.payin.amount,
+                kind: rfqData.payin.kind,
+                paymentDetailsHash: try CryptoUtils.digestRFQPrivateData(salt: salt, value: rfqData.payin.paymentDetails)
+            ),
+            payout: .init(
+                kind: rfqData.payout.kind,
+                paymentDetailsHash: try CryptoUtils.digestRFQPrivateData(salt: salt, value: rfqData.payout.paymentDetails)
+            ),
+            claimsHash: rfqData.claims?.isEmpty ?? (rfqData.claims == nil) ? nil :
+                try CryptoUtils.digestRFQPrivateData(salt: salt, value: rfqData.claims)
+        )
+        let privateData = RFQPrivateData(
+            salt: salt,
+            payin: .init(
+                paymentDetails: rfqData.payin.paymentDetails
+            ),
+            payout: .init(
+                paymentDetails: rfqData.payout.paymentDetails
+            ),
+            claims: rfqData.claims
+        )
+        
+        return ["data": data, "privateData": privateData]
+        
+    } catch {
+        throw Error(reason: "Error digesting privateData: \(error)")
+    }
+
 }
 
 /// Data that makes up a RFQ Message.
@@ -233,7 +227,6 @@ public struct CreateRFQPayoutMethod: Codable, Equatable {
 }
 
 /// Private data contained in a RFQ message
-//public typealias RFQPrivateData = RFQUnhashedData
 
 public struct RFQPrivateData: Codable, Equatable {
     /// Randomly generated cryptographic salt used to hash `privateData` fields
