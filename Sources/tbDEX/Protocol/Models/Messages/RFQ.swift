@@ -33,7 +33,8 @@ extension RFQ {
 }
 
 private func generateSalt(_ count: Int) throws -> String? {
-    let randomBytes = [UInt8](repeating: UInt8.random(in: 0...255), count: count)
+    var randomBytes = [UInt8](repeating: 0, count: count)
+        _ = SecRandomCopyBytes(kSecRandomDefault, count, &randomBytes)
 
     let encodedBytes = try tbDEXJSONEncoder().encode(randomBytes)
     return encodedBytes.base64UrlEncodedString()
@@ -146,7 +147,7 @@ public struct SelectedPayoutMethod: Codable, Equatable {
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String
 
-    /// A salted hash of `privateData.payin.paymentDetails`
+    /// A salted hash of `privateData.payout.paymentDetails`
     public let paymentDetailsHash: String?
 
     public init(
@@ -195,7 +196,7 @@ public struct CreateRFQPayinMethod: Codable, Equatable {
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String
 
-    /// A salted hash of `privateData.payin.paymentDetails`
+    /// An object containing the properties defined in an Offering's `payout.methods.requiredPaymentDetails` json schema
     public let paymentDetails: AnyCodable?
 
     public init(
@@ -214,7 +215,7 @@ public struct CreateRFQPayoutMethod: Codable, Equatable {
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String
 
-    /// A salted hash of `privateData.payin.paymentDetails`
+    /// An object containing the properties defined in an Offering's `payout.methods.requiredPaymentDetails` json schema
     public let paymentDetails: AnyCodable?
 
     public init(
