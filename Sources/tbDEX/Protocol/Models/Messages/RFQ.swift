@@ -10,11 +10,11 @@ extension RFQ {
     public init(
         to: String,
         from: String,
-        unhashedData: RFQUnhashedData,
+        rfqData: CreateRFQData,
         externalID: String? = nil,
         `protocol`: String = "1.0"
     ) throws {
-        let hashedData = try hashPrivateData(unhashedData: unhashedData)
+        let hashedData = try hashPrivateData(rfqData: rfqData)
         self.data = hashedData["data"] as! RFQData
         self.privateData = hashedData["privateData"] as? RFQPrivateData
         
@@ -50,35 +50,35 @@ private func digestPrivateData(salt: String, value: Codable) throws -> String? {
     }
 }
 
-private func hashPrivateData(unhashedData: RFQUnhashedData) throws -> [String: Any] {
+private func hashPrivateData(rfqData: CreateRFQData) throws -> [String: Any] {
     guard let salt = try generateSalt(16) else {
         throw Error(reason: "Failed to generate salt")
     }
     
     let data = RFQData(
-        offeringId: unhashedData.offeringId,
+        offeringId: rfqData.offeringId,
         payin: .init(
-            amount: unhashedData.payin.amount,
-            kind: unhashedData.payin.kind,
-            paymentDetailsHash: try digestPrivateData(salt: salt, value: unhashedData.payin.paymentDetails)
+            amount: rfqData.payin.amount,
+            kind: rfqData.payin.kind,
+            paymentDetailsHash: try digestPrivateData(salt: salt, value: rfqData.payin.paymentDetails)
         ),
         payout: .init(
-            kind: unhashedData.payout.kind,
-            paymentDetailsHash: try digestPrivateData(salt: salt, value: unhashedData.payout.paymentDetails)
+            kind: rfqData.payout.kind,
+            paymentDetailsHash: try digestPrivateData(salt: salt, value: rfqData.payout.paymentDetails)
         ),
-        claimsHash: unhashedData.claims?.isEmpty ?? (unhashedData.claims == nil) ? nil :
-            try digestPrivateData(salt: salt, value: unhashedData.claims)
+        claimsHash: rfqData.claims?.isEmpty ?? (rfqData.claims == nil) ? nil :
+            try digestPrivateData(salt: salt, value: rfqData.claims)
     )
     
     let privateData = RFQPrivateData(
         salt: salt,
         payin: .init(
-            paymentDetails: unhashedData.payin.paymentDetails
+            paymentDetails: rfqData.payin.paymentDetails
         ),
         payout: .init(
-            paymentDetails: unhashedData.payout.paymentDetails
+            paymentDetails: rfqData.payout.paymentDetails
         ),
-        claims: unhashedData.claims
+        claims: rfqData.claims
     )
     
     return ["data": data, "privateData": privateData]
@@ -165,16 +165,16 @@ public struct SelectedPayoutMethod: Codable, Equatable {
 }
 
 /// Data contained in a RFQ message, including data which will be placed in `RfqPrivateData`
-public struct RFQUnhashedData: Codable, Equatable {
+public struct CreateRFQData: Codable, Equatable {
     
     /// Offering which Alice would like to get a quote for.
     public let offeringId: String
     
     /// A container for the unhashed `payin.paymentDetails`
-    public let payin: UnhashedPayinMethod
+    public let payin: CreateRFQPayinMethod
     
     /// A container for the unhashed `payout.paymentDetails`
-    public let payout: UnhashedPayoutMethod
+    public let payout: CreateRFQPayoutMethod
     
     /// An array of claims that fulfill the requirements declared in an Offering.
     public let claims: [String]?
@@ -182,8 +182,8 @@ public struct RFQUnhashedData: Codable, Equatable {
     /// Default initializer
     public init(
         offeringId: TypeID,
-        payin: UnhashedPayinMethod,
-        payout: UnhashedPayoutMethod,
+        payin: CreateRFQPayinMethod,
+        payout: CreateRFQPayoutMethod,
         claims: [String]? = nil
     ) {
         self.offeringId = offeringId.rawValue
@@ -193,7 +193,7 @@ public struct RFQUnhashedData: Codable, Equatable {
     }
 }
 
-public struct UnhashedPayinMethod: Codable, Equatable {
+public struct CreateRFQPayinMethod: Codable, Equatable {
     
     /// Amount of payin currency you want in exchange for payout currency
     public let amount: String
@@ -215,7 +215,7 @@ public struct UnhashedPayinMethod: Codable, Equatable {
     }
 }
 
-public struct UnhashedPayoutMethod: Codable, Equatable {
+public struct CreateRFQPayoutMethod: Codable, Equatable {
 
     /// Type of payment method (i.e. `DEBIT_CARD`, `BITCOIN_ADDRESS`, `SQUARE_PAY`)
     public let kind: String

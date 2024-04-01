@@ -80,10 +80,10 @@ enum DevTools {
         from: String,
         to: String,
         externalID: String? = nil,
-        data: RFQUnhashedData? = nil,
+        data: CreateRFQData? = nil,
         protocol: String? = nil
     ) throws -> RFQ {
-        let rfqData = data ?? RFQUnhashedData(
+        let rfqData = data ?? CreateRFQData(
             offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
             payin: .init(
                 amount: "1.00",
@@ -98,7 +98,7 @@ enum DevTools {
             return try RFQ(
                 to: to,
                 from: from,
-                unhashedData: rfqData,
+                rfqData: rfqData,
                 externalID: externalID,
                 protocol: `protocol`
             )
@@ -106,7 +106,7 @@ enum DevTools {
             return try RFQ(
                 to: to,
                 from: from,
-                unhashedData:
+                rfqData:
                     rfqData,
                 externalID: externalID)
         }
