@@ -16,8 +16,17 @@ extension CryptoUtils {
     static func digest<D: Codable, M: Codable>(data: D, metadata: M) throws -> Data {
         let payload = DigestPayload(data: data, metadata: metadata)
         let serializedPayload = try tbDEXJSONEncoder().encode(payload)
+        
         let digest = SHA256.hash(data: serializedPayload)
         return Data(digest)
+    }
+    
+    static func digestToByteArray(payload: Codable) throws -> [UInt8] {
+        let serializedPayload = try tbDEXJSONEncoder().encode(payload)
+        
+        let digest = SHA256.hash(data: serializedPayload)
+        
+        return digest.bytes
     }
 
     /// Encapsulates data and metadata for digest computation.
