@@ -63,7 +63,8 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_getOfferingsWithOneValidOffering() async throws {
-        let response = validOffering
+        var offering = DevTools.createOffering(from: altDid.uri)
+        try offering.sign(did: altDid)
         
         Mocker.mode = .optin
         Mock(
@@ -71,7 +72,7 @@ final class tbDEXHttpClientTests: XCTestCase {
             contentType: .json,
             statusCode: 200,
             data: [
-                .get: response.data(using: .utf8)!
+                .get: try tbDEXJSONEncoder().encode(["data": [offering]])
             ]
         ).register()
         let offerings = try await tbDEXHttpClient.getOfferings(pfiDIDURI: pfiDid)
@@ -125,7 +126,8 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_getBalancesWithOneValidBalance() async throws {
-        let response = validBalance
+        var balance = DevTools.createBalance(from: altDid.uri)
+        try balance.sign(did: altDid)
         
         Mocker.mode = .optin
         Mock(
@@ -133,7 +135,7 @@ final class tbDEXHttpClientTests: XCTestCase {
             contentType: .json,
             statusCode: 200,
             data: [
-                .get: response.data(using: .utf8)!
+                .get: try tbDEXJSONEncoder().encode(["data": [balance]])
             ]
         ).register()
         let balances = try await tbDEXHttpClient.getBalances(pfiDIDURI: pfiDid, requesterDID: did)
@@ -146,21 +148,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_createExchangeWhenSignatureMissing() async throws {
-        let rfq = RFQ(
-            to: pfiDid,
-            from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
+        let rfq = try DevTools.createRFQ(from: did.uri, to: pfiDid)
         
         Mocker.mode = .optin
         Mock(
@@ -180,21 +168,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_createExchangeWhenSignatureInvalid() async throws {
-        var rfq = RFQ(
-            to: pfiDid,
-            from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
+        var rfq = try DevTools.createRFQ(from: did.uri, to: pfiDid)
         
         try rfq.sign(did: altDid)
         
@@ -216,21 +190,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_createExchangeWhenPFIInvalid() async throws {
-        var rfq = RFQ(
-            to: "123",
-            from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
+        var rfq = try DevTools.createRFQ(from: did.uri, to: altDid.uri)
         
         try rfq.sign(did: did)
         
@@ -252,21 +212,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_createExchangeWhenResponseNotOk() async throws {
-        var rfq = RFQ(
-            to: pfiDid,
-            from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
+        var rfq = try DevTools.createRFQ(from: did.uri, to: pfiDid)
         
         try rfq.sign(did: did)
         
@@ -288,21 +234,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_createExchangeWhenSuccess() async throws {
-        var rfq = RFQ(
-            to: pfiDid,
-            from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
+        var rfq = try DevTools.createRFQ(from: did.uri, to: pfiDid)
         
         try rfq.sign(did: did)
         
@@ -324,12 +256,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_submitOrderWhenSuccess() async throws {
-        var order = Order(
-            from: did.uri,
-            to: pfiDid,
-            exchangeID: "exchange_123",
-            data: .init()
-        )
+        var order = DevTools.createOrder(from: did.uri, to: pfiDid)
         
         try order.sign(did: did)
         
@@ -351,14 +278,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_submitCloseWhenSuccess() async throws {
-        var close = Close(
-            from: did.uri,
-            to: pfiDid,
-            exchangeID: "exchange_123",
-            data: .init(
-                reason: "test reason"
-            )
-        )
+        var close = DevTools.createClose(from: did.uri, to: pfiDid)
         
         try close.sign(did: did)
         
@@ -422,21 +342,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_getExchangesWithOneValidExchange() async throws {
-        var rfq = RFQ(
-            to: pfiDid,
-            from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
+        var rfq = try DevTools.createRFQ(from: did.uri, to: pfiDid)
 
         try rfq.sign(did: did)
         
@@ -494,21 +400,7 @@ final class tbDEXHttpClientTests: XCTestCase {
     }
     
     func test_getExchangeWithValidExchange() async throws {
-        var rfq = RFQ(
-            to: pfiDid,
-            from: did.uri,
-            data: .init(
-                offeringId: TypeID(rawValue:"offering_01hmz7ehw6e5k9bavj0ywypfpy")!,
-                payin: .init(
-                    amount: "1.00",
-                    kind: "DEBIT_CARD"
-                ),
-                payout: .init(
-                    kind: "BITCOIN_ADDRESS"
-                ),
-                claims: []
-            )
-        )
+        var rfq = try DevTools.createRFQ(from: did.uri, to: pfiDid)
 
         try rfq.sign(did: did)
         
@@ -540,31 +432,17 @@ final class tbDEXHttpClientTests: XCTestCase {
 }
 
 let emptyResponse = """
-                        {
-                          "data": []
-                        }
-                        """
+                    {
+                      "data": []
+                    }
+                    """
 
 let invalidResponse = """
+                    {
+                      "data": [
                         {
-                          "data": [
-                            {
-                                "invalid": "response"
-                            }
-                          ]
+                            "invalid": "response"
                         }
-                        """
-
-let validOffering = """
-                        {\"data": [
-                                    {\"metadata\":{\"from\":\"did:dht:fsr94cz6r989iixo9cf9dik8zc6hkwgd753r1cwhor5trq9xgfxy\",\"kind\":\"offering\",\"id\":\"offering_01ht3esrwvffgve6dj4jter1g4\",\"createdAt\":\"2024-03-28T21:17:35.516Z\",\"protocol\":\"1.0\"},\"data\":{\"description\":\"Selling BTC for USD\",\"payin\":{\"currencyCode\":\"USD\",\"min\":\"0.0\",\"max\":\"999999.99\",\"methods\":[{\"kind\":\"DEBIT_CARD\",\"requiredPaymentDetails\":{\"$schema\":\"http://json-schema.org/draft-07/schema\",\"type\":\"object\",\"properties\":{\"cardNumber\":{\"type\":\"string\",\"description\":\"The 16-digit debit card number\",\"minLength\":16,\"maxLength\":16},\"expiryDate\":{\"type\":\"string\",\"description\":\"The expiry date of the card in MM/YY format\",\"pattern\":\"^(0[1-9]|1[0-2])\\\\/([0-9]{2})$\"},\"cardHolderName\":{\"type\":\"string\",\"description\":\"Name of the cardholder as it appears on the card\"},\"cvv\":{\"type\":\"string\",\"description\":\"The 3-digit CVV code\",\"minLength\":3,\"maxLength\":3}},\"required\":[\"cardNumber\",\"expiryDate\",\"cardHolderName\",\"cvv\"],\"additionalProperties\":false}}]},\"payout\":{\"currencyCode\":\"BTC\",\"max\":\"999526.11\",\"methods\":[{\"kind\":\"BTC_ADDRESS\",\"requiredPaymentDetails\":{\"$schema\":\"http://json-schema.org/draft-07/schema\",\"type\":\"object\",\"properties\":{\"btcAddress\":{\"type\":\"string\",\"description\":\"your Bitcoin wallet address\"}},\"required\":[\"btcAddress\"],\"additionalProperties\":false},\"estimatedSettlementTime\":10}]},\"payoutUnitsPerPayinUnit\":\"0.00003826\",\"requiredClaims\":{\"id\":\"7ce4004c-3c38-4853-968b-e411bafcd945\",\"input_descriptors\":[{\"id\":\"bbdb9b7c-5754-4f46-b63b-590bada959e0\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"filter\":{\"type\":\"string\",\"const\":\"YoloCredential\"}}]}}]}},\"signature\":\"eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDpkaHQ6ZnNyOTRjejZyOTg5aWl4bzljZjlkaWs4emM2aGt3Z2Q3NTNyMWN3aG9yNXRycTl4Z2Z4eSMwIn0..9gLhrop_I90AhpuwjDz-afDB4ouowArbi5K-jEOUwzPy26EGB3jOidNAGtVoMM2sCKmfV4enhe6uofYq4wuVCQ\"}
-                          ]
-                        }
-                        """
-
-let validBalance = """
-                    {\"data": [
-                         {\"metadata\":{\"from\":\"did:dht:t6gdbr4qs95b4j6pbdxe4rzp41am735pm9c65135gajusam9xx8o\",\"kind\":\"balance\",\"id\":\"balance_01ht38w02ae2kbhwbcakmnp8qb\",\"createdAt\":\"2024-03-28T19:33:56.938Z\",\"protocol\":\"1.0\"},\"data\":{\"currencyCode\":\"USD\",\"available\":\"400.00\"},\"signature\":\"eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDpkaHQ6dDZnZGJyNHFzOTViNGo2cGJkeGU0cnpwNDFhbTczNXBtOWM2NTEzNWdhanVzYW05eHg4byMwIn0..t-cVr4Djf9APYgEESNd4BO7DX6HMGd8KRzm_7sFP_oba4Ngh16BMagx_IBDcZJyeEKlUD51CdUy-ffJ4WWH_AQ\"}
-                        ]
+                      ]
                     }
                     """
