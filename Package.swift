@@ -16,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Frizlab/swift-typeid.git", from: "0.3.0"),
         .package(url: "https://github.com/flight-school/anycodable.git", from: "0.6.7"),
-        .package(url: "https://github.com/TBD54566975/web5-swift", branch: "release/v1.0.0-rc"),
+        .package(url: "https://github.com/TBD54566975/web5-swift", exact: "1.0.0"),
         .package(url: "https://github.com/allegro/swift-junit.git", from: "2.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.1.2"),
         .package(url: "https://github.com/WeTransfer/Mocker.git", .upToNextMajor(from: "3.0.1")),
