@@ -23,4 +23,43 @@ jobs:
       run: swift build
 
     - name: Run tests
-      run: swift test
+      run: swift test --enable-code-coverage
+    
+    - name: Convert the coverage data
+      run: llvm-cov export -format="lcov" .build/x86_64-apple-macosx/debug/TbdexPackageTests.xctest/Contents/MacOS/TbdexPackageTests -instr-profile .build/x86_64-apple-macosx/debug/codecov/default.profdata > info.lcov
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@c16abc29c95fcf9174b58eb7e1abf4c866893bc8 # 4.1.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: TBD54566975/web5-swift
+        files: info.lcov
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          tests.xml
+
+    - name: Generate an access token to trigger downstream repo
+      uses: actions/create-github-app-token@2986852ad836768dfea7781f31828eb3e17990fa # v1.6.2
+      id: generate_token
+      if: github.ref == 'refs/heads/main'
+      with:
+        app-id: ${{ secrets.CICD_ROBOT_GITHUB_APP_ID }}
+        private-key: ${{ secrets.CICD_ROBOT_GITHUB_APP_PRIVATE_KEY }}
+        owner: TBD54566975
+        repositories: sdk-report-runner
+
+    - name: Trigger sdk-report-runner report build
+      if: github.ref == 'refs/heads/main'
+      run: |
+        curl -L \
+        -H "Authorization: Bearer ${APP_TOKEN}" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        -H "Content-Type: application/json" \
+        --fail \
+        --data '{"ref": "main"}' \
+        https://api.github.com/repos/TBD54566975/sdk-report-runner/actions/workflows/build-report.yaml/dispatches
+      env:
+        APP_TOKEN: ${{ steps.generate_token.outputs.token }}
