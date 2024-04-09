@@ -32,7 +32,7 @@ jobs:
       uses: codecov/codecov-action@c16abc29c95fcf9174b58eb7e1abf4c866893bc8 # 4.1.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        slug: TBD54566975/web5-swift
+        slug: TBD54566975/tbdex-swift
         files: info.lcov
 
     - uses: actions/upload-artifact@v3
