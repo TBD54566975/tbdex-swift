@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 import Web5
+import AnyCodable
 
 enum CryptoUtils {}
 
@@ -20,16 +21,14 @@ extension CryptoUtils {
         return Data(digest)
     }
     
-    static func digestToByteArray(payload: Codable) throws -> [UInt8] {
+    static func digestToByteArray(payload: AnyCodable) throws -> [UInt8] {
         let serializedPayload = try tbDEXJSONEncoder().encode(payload)
         let digest = SHA256.hash(data: serializedPayload)
         return digest.bytes
     }
     
     static func digestRFQPrivateData(salt: String, value: Codable) throws -> String? {
-        let encodedSalt = try tbDEXJSONEncoder().encode(salt)
-        let encodedData = try tbDEXJSONEncoder().encode(value)
-        let byteArray = try CryptoUtils.digestToByteArray(payload: [encodedSalt, encodedData])
+        let byteArray = try CryptoUtils.digestToByteArray(payload: [salt, value])
         return byteArray.base64UrlEncodedString()
     }
 
