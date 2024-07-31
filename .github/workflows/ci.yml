@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+  # Allow manually or automated triggers
+  workflow_dispatch:
+
 jobs:
   build-and-test:
     runs-on: macos-latest
