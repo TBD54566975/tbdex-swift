@@ -133,11 +133,8 @@ enum DevTools {
             expiresAt: expiresAt,
             payin: .init(
                 currencyCode: "USD",
-                amount: "1.00",
-                paymentInstruction: .init(
-                    link: "https://example.com",
-                    instruction: "test instruction"
-                )
+                amount: "1.00"
+               
             ),
             payout: .init(
                 currencyCode: "AUD",
@@ -191,6 +188,49 @@ enum DevTools {
                 to: to,
                 exchangeID: exchangeID,
                 data: .init()
+            )
+        }
+    }
+    
+    /// Creates a mock `OrderInstructions`. Optionally override the `OrderInstructionsData`
+    /// - Parameters:
+    ///   - from: The DID the `OrderInstructions` should be from. Included in the metadata.
+    ///   - to: The DID the `OrderInstructions` should be sent to. Included in the metadata.
+    ///   - exchangeID: The exchangeID of the associated exchange. Included in the metadata.
+    ///   - protocol: Optional. The protocol version to use if different from the default. Included in the metadata.
+    /// - Returns: The `OrderInstructions`
+    static func createOrderInstructions(
+        from: String,
+        to: String,
+        exchangeID: String = "exchange_123",
+        data: OrderInstructionsData? = nil,
+        protocol: String? = nil
+    ) -> OrderInstructions {
+        let orderInstructionsData = data ?? OrderInstructionsData(
+            payin: .init(
+                link: "https://example.com",
+                instruction: "test instruction"
+            ),
+            payout: .init(
+                link: "https://example.com",
+                instruction: "test instruction"
+            )
+        )
+        
+        if let `protocol` = `protocol` {
+            return OrderInstructions(
+                from: from,
+                to: to,
+                exchangeID: exchangeID,
+                data: orderInstructionsData,
+                protocol: `protocol`
+            )
+        } else {
+            return OrderInstructions(
+                from: from,
+                to: to,
+                exchangeID: exchangeID,
+                data: orderInstructionsData
             )
         }
     }
