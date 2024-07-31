@@ -19,13 +19,10 @@ final class QuoteTests: XCTestCase {
         XCTAssertEqual(quote.data.payin.currencyCode, "USD")
         XCTAssertEqual(quote.data.payin.amount, "1.00")
         XCTAssertNil(quote.data.payin.fee)
-        XCTAssertEqual(quote.data.payin.paymentInstruction?.link, "https://example.com")
-        XCTAssertEqual(quote.data.payin.paymentInstruction?.instruction, "test instruction")
 
         XCTAssertEqual(quote.data.payout.currencyCode, "AUD")
         XCTAssertEqual(quote.data.payout.amount, "2.00")
         XCTAssertEqual(quote.data.payout.fee, "0.50")
-        XCTAssertNil(quote.data.payout.paymentInstruction)
     }
 
     func test_verifySuccess() async throws {
