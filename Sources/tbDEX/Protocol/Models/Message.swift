@@ -82,6 +82,7 @@ public enum MessageKind: String, Codable {
     case close
     case quote
     case order
+    case orderInstructions = "orderinstructions"
     case orderStatus = "orderstatus"
 }
 

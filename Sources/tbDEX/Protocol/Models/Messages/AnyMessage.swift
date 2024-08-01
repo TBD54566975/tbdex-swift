@@ -11,6 +11,7 @@ import Foundation
 public enum AnyMessage {
     case close(Close)
     case order(Order)
+    case orderInstructions(OrderInstructions)
     case orderStatus(OrderStatus)
     case quote(Quote)
     case rfq(RFQ)
@@ -58,6 +59,8 @@ extension AnyMessage: Decodable {
             self = .close(try container.decode(Close.self))
         case .order:
             self = .order(try container.decode(Order.self))
+        case .orderInstructions:
+            self = .orderInstructions(try container.decode(OrderInstructions.self))
         case .orderStatus:
             self = .orderStatus(try container.decode(OrderStatus.self))
         case .quote:
