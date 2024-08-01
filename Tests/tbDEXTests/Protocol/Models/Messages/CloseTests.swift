@@ -9,11 +9,11 @@ final class CloseTests: XCTestCase {
     let pfi = try! DIDJWK.create(keyManager: InMemoryKeyManager())
 
     func test_init() {
-        let close = DevTools.createClose(from: did.uri, to: pfi.uri)
+        let close = DevTools.createClose(from: pfi.uri, to: did.uri)
 
         XCTAssertEqual(close.metadata.id.prefix, "close")
-        XCTAssertEqual(close.metadata.from, did.uri)
-        XCTAssertEqual(close.metadata.to, pfi.uri)
+        XCTAssertEqual(close.metadata.from, pfi.uri)
+        XCTAssertEqual(close.metadata.to, did.uri)
         XCTAssertEqual(close.metadata.exchangeID, "exchange_123")
         XCTAssertEqual(close.data.reason, "test reason")
         XCTAssertEqual(close.metadata.protocol, "1.0")
@@ -22,8 +22,8 @@ final class CloseTests: XCTestCase {
     
     func test_overrideProtocolVersion() {
         let close = DevTools.createClose(
-            from: did.uri,
-            to: pfi.uri,
+            from: pfi.uri,
+            to: did.uri,
             protocol: "2.0"
         )
 
@@ -31,23 +31,23 @@ final class CloseTests: XCTestCase {
     }
 
     func test_signSuccess() async throws {
-        var close = DevTools.createClose(from: did.uri, to: pfi.uri)
+        var close = DevTools.createClose(from: pfi.uri, to: did.uri)
 
         XCTAssertNil(close.signature)
-        try close.sign(did: did)
+        try close.sign(did: pfi)
         XCTAssertNotNil(close.signature)
     }
     
     func test_verifySuccess() async throws {
-        var close = DevTools.createClose(from: did.uri, to: pfi.uri)
-        try close.sign(did: did)
+        var close = DevTools.createClose(from: pfi.uri, to: did.uri)
+        try close.sign(did: pfi)
         
         let isValid = try await close.verify()
         XCTAssertTrue(isValid)
     }
 
     func test_verifyWithoutSigningFailure() async throws {
-        let close = DevTools.createClose(from: did.uri, to: pfi.uri)
+        let close = DevTools.createClose(from: pfi.uri, to: did.uri)
 
         await XCTAssertThrowsErrorAsync(try await close.verify())
     }
