@@ -9,6 +9,7 @@ import Foundation
 /// Example: When calling an endpoint that returns `Message`s, but it's impossible to know exactly
 /// what kind of `Message` it is until the JSON response is parsed.
 public enum AnyMessage {
+    case cancel(Cancel)
     case close(Close)
     case order(Order)
     case orderInstructions(OrderInstructions)
@@ -55,6 +56,8 @@ extension AnyMessage: Decodable {
 
         // Decode the message itself into it's strongly-typed representation, indicated by the `metadata.kind` field
         switch metadata.kind {
+        case .cancel:
+            self = .cancel(try container.decode(Cancel.self))
         case .close:
             self = .close(try container.decode(Close.self))
         case .order:

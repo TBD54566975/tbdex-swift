@@ -79,6 +79,7 @@ public struct Message<D: MessageData>: Codable, Equatable {
 /// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#message-kinds)
 public enum MessageKind: String, Codable {
     case rfq
+    case cancel
     case close
     case quote
     case order

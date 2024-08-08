@@ -271,6 +271,43 @@ enum DevTools {
         }
     }
     
+    /// Creates a mock `Cancel`. Optionally override the `CancelData`
+    /// - Parameters:
+    ///   - from: The DID the `Cancel` should be from. Included in the metadata.
+    ///   - to: The DID the `Cancel` should be sent to. Included in the metadata.
+    ///   - exchangeID: The exchangeID of the associated exchange. Included in the metadata.
+    ///   - protocol: Optional. The protocol version to use if different from the default. Included in the metadata.
+    /// - Returns: The `Cancel`
+    static func createCancel(
+        from: String,
+        to: String,
+        exchangeID: String = "exchange_123",
+        data: CancelData? = nil,
+        protocol: String? = nil
+    ) -> Cancel {
+        let cancelData = data ?? CancelData(
+            reason: "test reason"
+        )
+        
+        if let `protocol` = `protocol` {
+            return Cancel(
+                from: from,
+                to: to,
+                exchangeID: exchangeID,
+                data: cancelData,
+                protocol: `protocol`
+            )
+        } else {
+            return Cancel(
+                from: from,
+                to: to,
+                exchangeID: exchangeID,
+                data: cancelData
+            )
+        }
+    }
+
+    
     /// Creates a mock `Close`. Optionally override the `CloseData`
     /// - Parameters:
     ///   - from: The DID the `Close` should be from. Included in the metadata.
@@ -305,7 +342,6 @@ enum DevTools {
                 data: closeData
             )
         }
-
     }
 }
 
