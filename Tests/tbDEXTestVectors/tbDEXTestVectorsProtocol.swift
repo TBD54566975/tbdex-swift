@@ -9,7 +9,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
 
     // MARK: - Resources
 
-    func test_parseOffering() throws {
+    func test_parse_offering() throws {
         let vector = try TestVector<String, Offering>(
             fileName: "parse-offering",
             subdirectory: vectorSubdirectory
@@ -23,7 +23,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedOffering, vector.output)
     }
     
-    func test_parseBalance() throws {
+    func test_parse_balance() throws {
         let vector = try TestVector<String, Balance>(
             fileName: "parse-balance",
             subdirectory: vectorSubdirectory
@@ -39,7 +39,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
 
     // MARK: - Messages
 
-    func test_parseClose() throws {
+    func test_parse_close() throws {
         let vector = try TestVector<String, Close>(
             fileName: "parse-close",
             subdirectory: vectorSubdirectory
@@ -53,7 +53,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedClose, vector.output)
     }
 
-    func test_parseOrder() throws {
+    func test_parse_order() throws {
         let vector = try TestVector<String, Order>(
             fileName: "parse-order",
             subdirectory: vectorSubdirectory
@@ -67,7 +67,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedOrder, vector.output)
     }
 
-    func test_parseOrderStatus() throws {
+    func test_parse_orderstatus() throws {
         let vector = try TestVector<String, OrderStatus>(
             fileName: "parse-orderstatus",
             subdirectory: vectorSubdirectory
@@ -81,7 +81,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedOrderStatus, vector.output)
     }
 
-    func test_parseQuote() throws {
+    func test_parse_quote() throws {
         let vector = try TestVector<String, Quote>(
             fileName: "parse-quote",
             subdirectory: vectorSubdirectory
@@ -95,7 +95,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedQuote, vector.output)
     }
 
-    func test_parseRfq() throws {
+    func test_parse_rfq() throws {
         let vector = try TestVector<String, RFQ>(
             fileName: "parse-rfq",
             subdirectory: vectorSubdirectory
@@ -109,7 +109,7 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         XCTAssertNoDifference(parsedRFQ, vector.output)
     }
     
-    func test_parseRfqOmitPrivateData() throws {
+    func test_parse_rfq_omit_private_data() throws {
         let vector = try TestVector<String, RFQ>(
             fileName: "parse-rfq-omit-private-data",
             subdirectory: vectorSubdirectory

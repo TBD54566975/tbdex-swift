@@ -34,7 +34,7 @@ jobs:
       uses: TBD54566975/sdk-report-runner/.github/actions/specs-report@main
       with:
         junit-report-paths: tests.xml
-        spec-path: tbdex
+        spec-path: Tests/tbDEXTestVectors/tbdex-spec
         suite-name-regex: tbDEXTestVectors
         feature-regex: tbDEXTestVectors(\w+)
         vector-regex: test_(\w+)
