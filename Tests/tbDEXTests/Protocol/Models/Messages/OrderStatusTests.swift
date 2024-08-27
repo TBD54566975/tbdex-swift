@@ -15,7 +15,7 @@ final class OrderStatusTests: XCTestCase {
         XCTAssertEqual(orderStatus.metadata.from, pfi.uri)
         XCTAssertEqual(orderStatus.metadata.to, did.uri)
         XCTAssertEqual(orderStatus.metadata.exchangeID, "exchange_123")
-        XCTAssertEqual(orderStatus.data.orderStatus, "test status")
+        XCTAssertEqual(orderStatus.data.status, Status.payinInitiated)
     }
 
     func test_verifySuccess() async throws {
