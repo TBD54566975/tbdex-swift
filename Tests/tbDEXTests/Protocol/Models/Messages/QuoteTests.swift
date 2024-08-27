@@ -17,12 +17,14 @@ final class QuoteTests: XCTestCase {
         XCTAssertEqual(quote.metadata.exchangeID, "exchange_123")
 
         XCTAssertEqual(quote.data.payin.currencyCode, "USD")
-        XCTAssertEqual(quote.data.payin.amount, "1.00")
+        XCTAssertEqual(quote.data.payin.total, "1.00")
         XCTAssertNil(quote.data.payin.fee)
 
         XCTAssertEqual(quote.data.payout.currencyCode, "AUD")
-        XCTAssertEqual(quote.data.payout.amount, "2.00")
+        XCTAssertEqual(quote.data.payout.subtotal, "2.00")
         XCTAssertEqual(quote.data.payout.fee, "0.50")
+        XCTAssertEqual(quote.data.payout.total, "2.50")
+
     }
 
     func test_verifySuccess() async throws {
