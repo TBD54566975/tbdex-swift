@@ -52,6 +52,20 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
 
         XCTAssertNoDifference(parsedClose, vector.output)
     }
+    
+    func test_parse_cancel() throws {
+        let vector = try TestVector<String, Cancel>(
+            fileName: "parse-cancel",
+            subdirectory: vectorSubdirectory
+        )
+
+        let parsedMessage = try AnyMessage.parse(vector.input)
+        guard case let .cancel(parsedCancel) = parsedMessage else {
+            return XCTFail("Parsed message is not a Cancel")
+        }
+
+        XCTAssertNoDifference(parsedCancel, vector.output)
+    }
 
     func test_parse_order() throws {
         let vector = try TestVector<String, Order>(
@@ -65,6 +79,20 @@ final class tbDEXTestVectorsProtocol: XCTestCase {
         }
 
         XCTAssertNoDifference(parsedOrder, vector.output)
+    }
+    
+    func test_parse_orderinstructions() throws {
+        let vector = try TestVector<String, OrderInstructions>(
+            fileName: "parse-orderinstructions",
+            subdirectory: vectorSubdirectory
+        )
+
+        let parsedMessage = try AnyMessage.parse(vector.input)
+        guard case let .orderInstructions(parsedOrderInstructions) = parsedMessage else {
+            return XCTFail("Parsed message is not an OrderInstructions")
+        }
+
+        XCTAssertNoDifference(parsedOrderInstructions, vector.output)
     }
 
     func test_parse_orderstatus() throws {

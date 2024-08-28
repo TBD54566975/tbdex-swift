@@ -131,15 +131,17 @@ enum DevTools {
         
         let quoteData = data ?? QuoteData(
             expiresAt: expiresAt,
+            payoutUnitsPerPayinUnit: "1.0",
             payin: .init(
                 currencyCode: "USD",
-                amount: "1.00"
-               
+                subtotal: "1.00",
+                total: "1.00"
             ),
             payout: .init(
                 currencyCode: "AUD",
-                amount: "2.00",
-                fee: "0.50"
+                subtotal: "2.00",
+                fee: "0.50",
+                total: "2.50"
             )
         )
         
@@ -250,7 +252,7 @@ enum DevTools {
         protocol: String? = nil
     ) -> OrderStatus {
         let orderStatusData = data ?? OrderStatusData(
-            orderStatus: "test status"
+            status: Status.payinInitiated
         )
         
         if let `protocol` = `protocol` {
