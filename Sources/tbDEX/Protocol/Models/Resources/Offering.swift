@@ -22,8 +22,11 @@ public struct OfferingData: ResourceData {
     /// Details and options associated to the payout currency
     public let payout: PayoutDetails
 
-    /// Articulates the claim(s) required when submitting an RFQ for this offering.
+    /// Articulates the claim(s) required when submitting an RFQ for this offering
     public let requiredClaims: PresentationDefinitionV2?
+    
+    /// Details about PFI's cancellation policy
+    public let cancellation: CancellationDetails
 
     /// Returns the ResourceKind of offering
     public func kind() -> ResourceKind {
@@ -201,5 +204,31 @@ public struct PayoutMethod: Codable, Equatable {
         self.fee = fee
         self.min = min
         self.max = max
+    }
+}
+
+/// Details about cancellation within an Offering
+///
+/// [Specification Reference](https://github.com/TBD54566975/tbdex/tree/main/specs/protocol#cancellationdetails)
+public struct CancellationDetails: Codable, Equatable {
+    
+    /// Whether cancellation is enabled for this offering
+    public let enabled: Bool
+    
+    /// A link to a page that describes the terms of cancellation
+    public let termsUrl: URL?
+    
+    /// A human-readable description of the terms of cancellation in plaintext
+    public let terms: String?
+    
+    /// Default initializer
+    init(
+        enabled: Bool,
+        termsUrl: URL? = nil,
+        terms: String? = nil
+    ) {
+        self.enabled = enabled
+        self.termsUrl = termsUrl
+        self.terms = terms
     }
 }

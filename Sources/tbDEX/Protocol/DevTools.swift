@@ -35,7 +35,8 @@ enum DevTools {
                     )
                 ]
             ),
-            requiredClaims: nil
+            requiredClaims: nil,
+            cancellation: .init(enabled: false)
         )
         
         if let `protocol` = `protocol` {
