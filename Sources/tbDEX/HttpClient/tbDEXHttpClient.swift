@@ -103,15 +103,15 @@ public enum tbDEXHttpClient {
         try await sendMessage(message: order, messageEndpoint: "/exchanges/\(exchangeID)")
     }
     
-    /// Sends the Close message to the PFI
+    /// Sends the Cancel message to the PFI
     /// - Parameters:
-    ///   - order: The Close message that will be sent to the PFI
+    ///   - cancel: The Cancel message that will be sent to the PFI
     /// - Throws: if message verification fails
     /// - Throws: if recipient DID resolution fails
     /// - Throws: if recipient DID does not have a PFI service entry
-    public static func submitClose(close: Close) async throws {
-        let exchangeID = close.metadata.exchangeID
-        try await sendMessage(message: close, messageEndpoint: "/exchanges/\(exchangeID)")
+    public static func submitCancel(cancel: Cancel) async throws {
+        let exchangeID = cancel.metadata.exchangeID
+        try await sendMessage(message: cancel, messageEndpoint: "/exchanges/\(exchangeID)")
     }
 
     /// Sends a message to a PFI

@@ -277,10 +277,10 @@ final class tbDEXHttpClientTests: XCTestCase {
         }
     }
     
-    func test_submitCloseWhenSuccess() async throws {
-        var close = DevTools.createClose(from: did.uri, to: pfiDid)
+    func test_submitCancelWhenSuccess() async throws {
+        var cancel = DevTools.createCancel(from: did.uri, to: pfiDid)
         
-        try close.sign(did: did)
+        try cancel.sign(did: did)
         
         Mocker.mode = .optin
         Mock(
@@ -288,14 +288,14 @@ final class tbDEXHttpClientTests: XCTestCase {
             contentType: .json,
             statusCode: 200,
             data: [
-                .put: try tbDEXJSONEncoder().encode(close)
+                .put: try tbDEXJSONEncoder().encode(cancel)
             ]
         ).register()
         
         do {
-            try await tbDEXHttpClient.submitClose(close: close)
+            try await tbDEXHttpClient.submitCancel(cancel: cancel)
         } catch {
-            XCTFail("Error on submit order: \(error)")
+            XCTFail("Error on submit cancel: \(error)")
         }
     }
     
